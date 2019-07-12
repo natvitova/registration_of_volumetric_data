@@ -1,0 +1,174 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Drawing;
+using System.Drawing.Imaging;
+
+namespace DataView
+{
+    /// <summary>
+    /// 
+    /// </summary>
+    class Program
+    {
+        private static Data sample;
+        private static VolumetricData vData;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="args"></param>
+        static void Main(string[] args)
+        {
+            string fileName = @"P01_a_MikroCT-nejhrubsi_rozliseni_DICOM_liver-1st-important_Macro_pixel-size53.0585um.mhd";
+            string fileName2 = @"P01_b_Prase_1_druhe_vys.mhd";
+
+            //sample = new Data();
+            //sample.SetFeatures(fileName2);
+            //vData = new VolumetricData(sample);
+            //vData.Read();
+            //FeatureComputer fc = new FeatureComputer();
+            //Sampler s = new Sampler();
+
+            //Point3D[] points = s.Sample(vData, 15);
+            //double[][] featureVectors = new double[points.Length][];
+
+            //for (int i = 0; i < points.Length; i++)
+            //{
+            //    featureVectors[0] = fc.ComputeFeatureVector(vData, points[i]);
+            //    Console.WriteLine(points[i].x + " " + points[i].y + " " + points[i].z);
+            //}
+            //Console.ReadKey();
+
+            int distance = 250;
+            int direction = 2;
+
+            double[] point = { 150, 500, 150};
+            double[] v1 = { 1, 0, 0};
+            double[] v2 = { 0, 0, 1 };
+            double[] v3 = { 2, 1, 5 };
+            int xRes = 500;
+            int yRes = 500;
+            double spacing = 0.5;
+            string finalFile = GenerateFinalFileName(point, v1, v2, xRes, yRes, spacing);
+
+            //sample = new Data();
+            //sample.SetFeatures(fileName);
+            //vData = new VolumetricData(sample);
+            //double[] vertical2 = vData.Orthogonalize2D(v1, v2);
+            //double[] vertical3 = vData.Orthogonalize3D(v1, vertical2, v3);
+
+            //double scalar12 = vData.ScalarProduct(v1, vertical2);
+            //double scalar13 = vData.ScalarProduct(v1, vertical3);
+            //double scalar23 = vData.ScalarProduct(vertical2, vertical3);
+
+            //Console.WriteLine(v1[0] + " " + v1[1] + " " + v1[2]);
+            //Console.WriteLine(vertical2[0] + " " + vertical2[1] + " " + vertical2[2]);
+            //Console.WriteLine(vertical3[0] + " " + vertical3[1] + " " + vertical3[2]);
+            //Console.WriteLine(scalar12 + " " + scalar13 + " " + scalar23);
+            //Console.ReadKey();
+
+            if (ControlData(fileName2, distance, direction))
+            {
+                //int[] dimenses = vData.GetMeassures();
+                //Console.WriteLine(dimenses[0] + " " + dimenses[1] + " " + dimenses[2]);
+                //Console.ReadKey();
+                double[] spacings = { vData.GetXSpacing(), vData.GetYSpacing(), vData.GetZSpacing() };
+                double[] realPoint = new double[3];
+                for(int i = 0; i < realPoint.Length; i++)
+                {
+                    realPoint[i] = point[i] * spacings[i];
+                }
+                int[,] cut = vData.Cut(realPoint, v1, v2, xRes, yRes, spacing);
+
+                Console.WriteLine("Cut finished");
+                PictureMaker pm = new PictureMaker(cut);
+                Bitmap bitmap = pm.MakeBitmap();
+                Console.WriteLine("Bitmap finished");
+                Console.ReadKey();
+
+                try
+                {
+                    bitmap.Save(finalFile, System.Drawing.Imaging.ImageFormat.Bmp);
+                }
+                catch (Exception e)
+                {
+
+                    Console.Write(e.Message);
+                }
+            }
+            else
+            {
+                Console.WriteLine("The distance is higher than the dimension.");
+                Console.ReadKey();
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="fileName"></param>
+        public static void TestData(string fileName)
+        {
+            Data d = new Data();
+            d.SetFeatures(fileName);
+            string s = "type: " + d.ElementType + " file: " + d.ElementDataFile + " dimSize: ";
+            for (int i = 0; i < d.DimSize.Length; i++)
+            {
+                s += d.DimSize[i] + " ";
+            }
+            s += "spacing: ";
+            for (int i = 0; i < d.ElementSpacing.Length; i++)
+            {
+                s += d.ElementSpacing[i] + " ";
+            }
+
+            Console.Write(s);
+            Console.ReadKey();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="fileName"></param>
+        public static Boolean ControlData(string fileName, int distance, int direction)
+        {
+            sample = new Data();
+            sample.SetFeatures(fileName);
+            vData = new VolumetricData(sample);
+            vData.Read();
+
+            if (distance < sample.DimSize[direction])
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="distance"></param>
+        /// <param name="direction"></param>
+        /// <param name="iSpacing"></param>
+        /// <returns></returns>
+        public static string GenerateFinalFileName(double[] point, double[] v1, double[] v2, int xRes, int yRes, double spacing)
+        {
+            string p = "p" + point[0] + "-" + point[1] + "-" + point[2];
+            string v = "v" + v1[0] + "-" + v1[1] + "-" + v1[2] + "_" + v2[0] + "-" + v2[1] + "-" + v2[2];
+            string r = "r" + xRes + "-" + yRes;
+
+            return "testCut" + "_" + p + "_" + v + "_" + r + "_" + spacing + ".bmp";
+        }
+
+    }
+}
+
