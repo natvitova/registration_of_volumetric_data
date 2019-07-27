@@ -1,0 +1,13 @@
+C:\Users\natal\source\repos\DataView\DataView\bin\Debug\DataView.exe.config
+C:\Users\natal\source\repos\DataView\DataView\bin\Debug\DataView.exe
+C:\Users\natal\source\repos\DataView\DataView\bin\Debug\DataView.pdb
+C:\Users\natal\source\repos\DataView\DataView\obj\Debug\DataView.csproj.CoreCompileInputs.cache
+C:\Users\natal\source\repos\DataView\DataView\obj\Debug\DataView.exe
+C:\Users\natal\source\repos\DataView\DataView\obj\Debug\DataView.pdb
+C:\Users\Ja\source\repos\DataView\DataView\obj\Debug\DataView.csprojAssemblyReference.cache
+C:\Users\Ja\source\repos\DataView\DataView\obj\Debug\DataView.csproj.CoreCompileInputs.cache
+C:\Users\Ja\source\repos\DataView\DataView\obj\Debug\DataView.exe
+C:\Users\Ja\source\repos\DataView\DataView\obj\Debug\DataView.pdb
+C:\Users\Ja\source\repos\DataView\DataView\bin\Debug\DataView.exe.config
+C:\Users\Ja\source\repos\DataView\DataView\bin\Debug\DataView.exe
+C:\Users\Ja\source\repos\DataView\DataView\bin\Debug\DataView.pdb
