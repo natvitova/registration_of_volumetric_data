@@ -17,15 +17,13 @@ namespace DataView
 
         Node root;
 
-        VertexWithNormal[] pnts;
+        FeatureVector[] fVectors;
 
-        public KDTree(Vertex3D[] points, Vertex3D[] normals)
+        public KDTree(FeatureVector[] fVectors)
         {
-            this.pnts = new VertexWithNormal[points.Length];
-            for (int i = 0; i < points.Length; i++)
-                pnts[i] = new VertexWithNormal(points[i], normals[i]);
+            this.fVectors = fVectors;
             List<int> list = new List<int>();
-            for (int i = 0; i < points.Length; i++)
+            for (int i = 0; i < fVectors.Length; i++)
                 list.Add(i);
             root = new Node();
             AddChildren(root, list, 0);
@@ -33,16 +31,15 @@ namespace DataView
 
         double smDist, smDistSq, maxDist;
         int nearest;
-        VertexWithNormal searchVertex;
+        FeatureVector searchFeatureVector;
 
-        public int FindNearest(VertexWithNormal p, double maxDist)
+        public int FindNearest(FeatureVector p, double maxDist)
         {
-
             smDist = double.MaxValue;
             smDistSq = double.MaxValue;
             nearest = -1;
             this.maxDist = maxDist;
-            searchVertex = p;
+            searchFeatureVector = p;
             SearchSubtree(root);
 
             // debug
@@ -54,35 +51,22 @@ namespace DataView
                     Console.WriteLine("Error in KDTree");
             }*/
             // end debug
-            if (pnts[nearest].DistTo2(searchVertex) > (maxDist * maxDist))
+            if (fVectors[nearest].DistTo2(searchFeatureVector) > (maxDist * maxDist))
                 return -1;
             return nearest;
         }
 
-        private int FullSearch(VertexWithNormal p)
-        {
-            int result = 0;
-            double minDist = p.DistTo2(pnts[0]);
-            for (int i = 1; i < pnts.Length; i++)
-                if (p.DistTo2(pnts[i]) < minDist)
-                {
-                    minDist = p.DistTo2(pnts[i]);
-                    result = i;
-                }
-            return result;
-        }
-
-        void SearchSubtree(Node n)
+        private void SearchSubtree(Node n)
         {
             // node point
-            VertexWithNormal np = pnts[n.point];
+            FeatureVector np = fVectors[n.point];
 
-            if (searchVertex.Coordinate(n.axis) < np.Coordinate(n.axis))
+            if (searchFeatureVector.Coordinate(n.axis) < np.Coordinate(n.axis))
             {
-                double minDist = np.Coordinate(n.axis) - searchVertex.Coordinate(n.axis);
+                double minDist = np.Coordinate(n.axis) - searchFeatureVector.Coordinate(n.axis);
                 if (minDist < smDist)
                 {
-                    double dist = searchVertex.DistTo2(np);
+                    double dist = searchFeatureVector.DistTo2(np);
                     if (dist < smDistSq)
                     {
                         smDistSq = dist;
@@ -103,10 +87,10 @@ namespace DataView
             }
             else
             {
-                double minDist = searchVertex.Coordinate(n.axis) - np.Coordinate(n.axis);
+                double minDist = searchFeatureVector.Coordinate(n.axis) - np.Coordinate(n.axis);
                 if (minDist < smDist)
                 {
-                    double dist = searchVertex.DistTo2(np);
+                    double dist = searchFeatureVector.DistTo2(np);
                     if (dist < smDistSq)
                     {
                         smDist = Math.Sqrt(dist);
@@ -147,7 +131,7 @@ namespace DataView
             {
                 if (i == med)
                     continue;
-                if (pnts[list[i]].Coordinate(axis) < pnts[list[med]].Coordinate(axis))
+                if (fVectors[list[i]].Coordinate(axis) < fVectors[list[med]].Coordinate(axis))
                     left.Add(list[i]);
                 else
                     right.Add(list[i]);
@@ -156,16 +140,16 @@ namespace DataView
             if (left.Count > 0)
             {
                 n.left = new Node();
-                AddChildren(n.left, left, (axis + 1) % 6);
+                AddChildren(n.left, left, (axis + 1) % 5);
             }
             if (right.Count > 0)
             {
                 n.right = new Node();
-                AddChildren(n.right, right, (axis + 1) % 6);
+                AddChildren(n.right, right, (axis + 1) % 5);
             }
         }
 
-        public int Median(List<int> points, int axis)
+        private int Median(List<int> points, int axis)
         {
             return (FindMedian(points, 0, points.Count, axis));
         }
@@ -178,7 +162,7 @@ namespace DataView
                 return (min);
             if (min == (max - 1))
             {
-                if (pnts[points[min]].Coordinate(axis) > pnts[points[max]].Coordinate(axis))
+                if (fVectors[points[min]].Coordinate(axis) > fVectors[points[max]].Coordinate(axis))
                 {
                     int tmp = points[min];
                     points[min] = points[max];
@@ -191,9 +175,9 @@ namespace DataView
             int r = max - 1;
             while (l < r)
             {
-                while (pnts[points[l]].Coordinate(axis) < pnts[points[pivot]].Coordinate(axis))
+                while (fVectors[points[l]].Coordinate(axis) < fVectors[points[pivot]].Coordinate(axis))
                     l++;
-                while (pnts[points[r]].Coordinate(axis) > pnts[points[pivot]].Coordinate(axis))
+                while (fVectors[points[r]].Coordinate(axis) > fVectors[points[pivot]].Coordinate(axis))
                     r--;
                 if (l < r)
                 {
@@ -208,7 +192,6 @@ namespace DataView
                 return (FindMedian(points, l, max, axis));
             else
                 return (FindMedian(points, min, l, axis));
-
         }
 
     }

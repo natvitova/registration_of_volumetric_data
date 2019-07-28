@@ -45,6 +45,7 @@
   <ItemGroup>
     <Compile Include="Cut.cs" />
     <Compile Include="FeatureComputer.cs" />
+    <Compile Include="FeatureVector.cs" />
     <Compile Include="IFeatureComputer.cs" />
     <Compile Include="IMatcher.cs" />
     <Compile Include="ISampler.cs" />

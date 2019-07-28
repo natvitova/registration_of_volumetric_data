@@ -40,7 +40,7 @@ namespace DataView
                 for (int j = 0; j < height; j++)
                 {
                     c = array[i, j];
-                   // Console.Write(c + " ");//
+                   // Console.Write(ccc + " ");//
                     if (c > max)
                     {
                         max = c;

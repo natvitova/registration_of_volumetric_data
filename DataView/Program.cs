@@ -72,40 +72,53 @@ namespace DataView
             //Console.WriteLine(scalar12 + " " + scalar13 + " " + scalar23);
             //Console.ReadKey();
 
-            if (ControlData(fileName2, distance, direction))
-            {
-                //int[] dimenses = vData.GetMeassures();
-                //Console.WriteLine(dimenses[0] + " " + dimenses[1] + " " + dimenses[2]);
-                //Console.ReadKey();
-                double[] spacings = { vData.GetXSpacing(), vData.GetYSpacing(), vData.GetZSpacing() };
-                double[] realPoint = new double[3];
-                for(int i = 0; i < realPoint.Length; i++)
-                {
-                    realPoint[i] = point[i] * spacings[i];
-                }
-                int[,] cut = vData.Cut(realPoint, v1, v2, xRes, yRes, spacing);
+            //if (ControlData(fileName2, distance, direction))
+            //{
+            //    //int[] dimenses = vData.GetMeassures();
+            //    //Console.WriteLine(dimenses[0] + " " + dimenses[1] + " " + dimenses[2]);
+            //    //Console.ReadKey();
+            //    double[] spacings = { vData.GetXSpacing(), vData.GetYSpacing(), vData.GetZSpacing() };
+            //    double[] realPoint = new double[3];
+            //    for(int i = 0; i < realPoint.Length; i++)
+            //    {
+            //        realPoint[i] = point[i] * spacings[i];
+            //    }
+            //    int[,] cut = vData.Cut(realPoint, v1, v2, xRes, yRes, spacing);
 
-                Console.WriteLine("Cut finished");
-                PictureMaker pm = new PictureMaker(cut);
-                Bitmap bitmap = pm.MakeBitmap();
-                Console.WriteLine("Bitmap finished");
-                Console.ReadKey();
+            //    Console.WriteLine("Cut finished");
+            //    PictureMaker pm = new PictureMaker(cut);
+            //    Bitmap bitmap = pm.MakeBitmap();
+            //    Console.WriteLine("Bitmap finished");
+            //    Console.ReadKey();
 
-                try
-                {
-                    bitmap.Save(finalFile, System.Drawing.Imaging.ImageFormat.Bmp);
-                }
-                catch (Exception e)
-                {
+            //    try
+            //    {
+            //        bitmap.Save(finalFile, System.Drawing.Imaging.ImageFormat.Bmp);
+            //    }
+            //    catch (Exception e)
+            //    {
 
-                    Console.Write(e.Message);
-                }
-            }
-            else
-            {
-                Console.WriteLine("The distance is higher than the dimension.");
-                Console.ReadKey();
-            }
+            //        Console.Write(e.Message);
+            //    }
+            //}
+            //else
+            //{
+            //    Console.WriteLine("The distance is higher than the dimension.");
+            //    Console.ReadKey();
+            //}
+
+            FeatureVector f = new FeatureVector(1, 2, 3, 4, 5);
+
+            FeatureVector f1 = new FeatureVector(2, 2, 3, 8, 5);
+            FeatureVector f2 = new FeatureVector(2, 8, 4, 5, 8);
+            FeatureVector f3 = new FeatureVector(8, 2, 3, 4, 5);
+            FeatureVector[] fvs = new FeatureVector[] {f1, f2, f3 };
+
+            KDTree tree = new KDTree(fvs);
+            int ii = tree.FindNearest(f, 5);
+
+            Console.WriteLine("Nearest vector to f (1,2,3,4,5) is f" + (ii+1));
+            Console.ReadKey();
         }
 
         /// <summary>

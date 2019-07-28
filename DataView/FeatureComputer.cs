@@ -9,7 +9,6 @@ namespace DataView
     class FeatureComputer : IFeatureComputer
     {
 
-
         public List<Point3D> GetSphere(Point3D x, VolumetricData d, double r)
         {
             List<Point3D> points = new List<Point3D>();
@@ -41,9 +40,9 @@ namespace DataView
             return points;
         }
 
-        public double[] ComputeFeatureVector(VolumetricData d, Point3D p)
+        public FeatureVector ComputeFeatureVector(VolumetricData d, Point3D p)
         {
-            double[] featureVector = new double[5];
+            double[] fv = new double[5];
             for (double r = 0.5; r <= 2.5; r += 0.5) // prumer ?
             {
                 double sum = 0;
@@ -53,10 +52,11 @@ namespace DataView
                     sum += d.GetValue(point.x, point.y, point.z);
                 }
                 int i = (int)(r / 0.5) - 1;
-                featureVector[i] = sum;
+                fv[i] = sum;
             }
 
-            return featureVector;
+            return new FeatureVector(fv[0], fv[1], fv[2], fv[3], fv[4]);
         }
+
     }
 }
