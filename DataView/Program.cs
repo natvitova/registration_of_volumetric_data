@@ -106,19 +106,6 @@ namespace DataView
             //    Console.WriteLine("The distance is higher than the dimension.");
             //    Console.ReadKey();
             //}
-
-            FeatureVector f = new FeatureVector(1, 2, 3, 4, 5);
-
-            FeatureVector f1 = new FeatureVector(2, 2, 3, 8, 5);
-            FeatureVector f2 = new FeatureVector(2, 8, 4, 5, 8);
-            FeatureVector f3 = new FeatureVector(8, 2, 3, 4, 5);
-            FeatureVector[] fvs = new FeatureVector[] {f1, f2, f3 };
-
-            KDTree tree = new KDTree(fvs);
-            int ii = tree.FindNearest(f, 5);
-
-            Console.WriteLine("Nearest vector to f (1,2,3,4,5) is f" + (ii+1));
-            Console.ReadKey();
         }
 
         /// <summary>

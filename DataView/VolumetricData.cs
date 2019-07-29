@@ -188,6 +188,18 @@ namespace DataView
             return vData;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="point"></param>
+        /// <param name="v1"></param>
+        /// <param name="v2"></param>
+        /// <param name="v3"></param>
+        /// <param name="xRes"></param>
+        /// <param name="yRes"></param>
+        /// <param name="zRes"></param>
+        /// <param name="spacing"></param>
+        /// <returns></returns>
         public int[][,] Cut3D2(double[] point, double[] v1, double[] v2, double[] v3, int xRes, int yRes, int zRes, double spacing)
         {
             iSpacing = spacing;
@@ -361,7 +373,7 @@ namespace DataView
         public void SetVData(int [][,] vData)
         {
             this.vData = vData;
-        } //TODO nastavit private?
+        } //TODO set private?
 
 
         // methods for testing

@@ -6,8 +6,14 @@ using System.Threading.Tasks;
 
 namespace DataView
 {
+    /// <summary>
+    /// 
+    /// </summary>
     class KDTree
     {
+        /// <summary>
+        /// 
+        /// </summary>
         class Node
         {
             public Node left, right;
@@ -16,9 +22,16 @@ namespace DataView
         }
 
         Node root;
-
         FeatureVector[] fVectors;
+        double smDist, smDistSq, maxDist;
+        int nearest;
+        FeatureVector searchFeatureVector;
+        Random rnd = new Random(0);
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="fVectors"></param>
         public KDTree(FeatureVector[] fVectors)
         {
             this.fVectors = fVectors;
@@ -29,10 +42,12 @@ namespace DataView
             AddChildren(root, list, 0);
         }
 
-        double smDist, smDistSq, maxDist;
-        int nearest;
-        FeatureVector searchFeatureVector;
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="p"></param>
+        /// <param name="maxDist"></param>
+        /// <returns></returns>
         public int FindNearest(FeatureVector p, double maxDist)
         {
             smDist = double.MaxValue;
@@ -56,6 +71,10 @@ namespace DataView
             return nearest;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="n"></param>
         private void SearchSubtree(Node n)
         {
             // node point
@@ -111,6 +130,12 @@ namespace DataView
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="n"></param>
+        /// <param name="list"></param>
+        /// <param name="axis"></param>
         private void AddChildren(Node n, List<int> list, int axis)
         {
             n.axis = axis;
@@ -149,13 +174,25 @@ namespace DataView
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="points"></param>
+        /// <param name="axis"></param>
+        /// <returns></returns>
         private int Median(List<int> points, int axis)
         {
             return (FindMedian(points, 0, points.Count, axis));
         }
 
-        Random rnd = new Random(0);
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="points"></param>
+        /// <param name="min"></param>
+        /// <param name="max"></param>
+        /// <param name="axis"></param>
+        /// <returns></returns>
         private int FindMedian(List<int> points, int min, int max, int axis)
         {
             if (min == max)

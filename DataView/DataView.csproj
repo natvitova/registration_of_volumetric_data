@@ -52,6 +52,7 @@
     <Compile Include="ITransformer.cs" />
     <Compile Include="KDTree.cs" />
     <Compile Include="Match.cs" />
+    <Compile Include="Matcher.cs" />
     <Compile Include="PictureMaker.cs" />
     <Compile Include="Point3D.cs" />
     <Compile Include="Data.cs" />

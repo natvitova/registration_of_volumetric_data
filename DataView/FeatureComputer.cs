@@ -6,10 +6,19 @@ using System.Threading.Tasks;
 
 namespace DataView
 {
+    /// <summary>
+    /// 
+    /// </summary>
     class FeatureComputer : IFeatureComputer
     {
-
-        public List<Point3D> GetSphere(Point3D x, VolumetricData d, double r)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="d"></param>
+        /// <param name="r"></param>
+        /// <returns></returns>
+        private List<Point3D> GetSphere(Point3D x, VolumetricData d, double r)
         {
             List<Point3D> points = new List<Point3D>();
 
@@ -40,6 +49,12 @@ namespace DataView
             return points;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="d"></param>
+        /// <param name="p"></param>
+        /// <returns></returns>
         public FeatureVector ComputeFeatureVector(VolumetricData d, Point3D p)
         {
             double[] fv = new double[5];
@@ -57,6 +72,5 @@ namespace DataView
 
             return new FeatureVector(fv[0], fv[1], fv[2], fv[3], fv[4]);
         }
-
     }
 }
