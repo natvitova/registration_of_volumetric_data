@@ -62,6 +62,7 @@
     <Compile Include="RatedPoint.cs" />
     <Compile Include="Sampler.cs" />
     <Compile Include="SamplerFeatureVector.cs" />
+    <Compile Include="TestDataBuilder.cs" />
     <Compile Include="Transform3D.cs" />
     <Compile Include="VolumetricData.cs" />
     <Compile Include="Program.cs" />

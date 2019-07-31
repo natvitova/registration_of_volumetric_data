@@ -16,7 +16,7 @@ namespace DataView
 
         }
 
-        public void BuildData()
+        public void BuildData(string cylinderRotation)
         {
 
             double[] elementSpacing = new double[3];
@@ -34,14 +34,14 @@ namespace DataView
 
             elementType = "MET_UCHAR";
 
-            string fileName = "testData100";
+            string fileName = cylinderRotation;
 
-            CreateDataFile(fileName, dimSize);
+            CreateDataFile(fileName, dimSize, cylinderRotation);
             CreateMetaDataFile(fileName, elementType);
 
         }
 
-        public void CreateDataFile(string fileName, int[] dimSize)
+        public void CreateDataFile(string fileName, int[] dimSize, string cylinderRotation)
         {
             
 
@@ -56,12 +56,107 @@ namespace DataView
             }
 
             //WriteConstantToFile(bw, dimSize, 100);
-            WriteConstantsToHalves(bw, dimSize, 0, 255);
+            //WriteConstantsToHalves(bw, dimSize, 0, 255);
+            //int[] center = { dimSize[0] / 2, dimSize[1] / 2, dimSize[2] / 2 };
+            int[] center = { 50, 50, 50 };
+            WriteCylinder(bw, dimSize, center, 50, 0, 127, cylinderRotation);
             bw.Close();
            
         }
 
-        public void WriteConstantsToHalves(BinaryWriter bw, int[] dimSize, byte c1, byte c2)
+        private void WriteCylinder(BinaryWriter bw, int[] dimSize, int[] center, double radius, byte c1, byte c2, string rotation)
+        {
+            double distance;
+            
+
+            int width = dimSize[0];//x
+            int depth = dimSize[1];//y
+            int height = dimSize[2];//z
+
+            try
+            {
+                for (int z = 0; z < height; z++)
+                {
+                    for (int x = 0; x < width; x++)
+                    {
+                        for (int y = 0; y < depth; y++)
+                        {
+                            if (rotation.Equals("x"))
+                            {
+                                distance = Math.Sqrt(Math.Pow(y - center[1], 2) + Math.Pow(z - center[2], 2));
+                                
+                            }
+                            else if(rotation.Equals("y"))
+                            {
+                                distance = Math.Sqrt(Math.Pow(x - center[0], 2) + Math.Pow(z - center[2], 2));
+
+                            }
+                            else if (rotation.Equals("z"))
+                            {
+                                distance = Math.Sqrt(Math.Pow(x - center[0], 2) + Math.Pow(y - center[1], 2));
+
+                            }
+                            else
+                            {
+                                throw new ArgumentException();
+                            }
+
+                            if (distance < radius)
+                                bw.Write(c1);
+                            else
+                                bw.Write(c2);
+                      
+                        }
+                    }
+                }
+            }
+            catch (IOException e)
+            {
+                Console.WriteLine(e.Message + "\n Cannot write to file.");
+                return;
+            }
+        }
+
+
+        /// <summary>
+        /// Writes a circle of colour c1, everything else is c2
+        /// </summary>
+        /// <param name="bw"></param>
+        /// <param name="dimSize"></param>
+        /// <param name="c1"></param>
+        /// <param name="c2"></param>
+        private void WriteCircle(BinaryWriter bw, int[] dimSize, int[] center, double diameter, byte c1, byte c2)
+        {
+            double distance;
+            double thickness = 10;
+            try
+            {
+                for (int i = 0; i < dimSize[0]; i++)
+                {
+                    for (int j = 0; j < dimSize[1]; j++)
+                    {
+                        for (int k = 0; k < dimSize[2]; k++)
+                        {
+
+                            
+                            distance = Math.Sqrt(Math.Pow(i - center[0], 2) + Math.Pow(j - center[1], 2) + Math.Pow(k - center[2], 2));
+                            if ((Math.Abs(distance - diameter) < thickness) && (dimSize[2]/2 -5 < k) && (k < dimSize[2] / 2 + 5)) 
+                                bw.Write(c1);
+                            else
+                                bw.Write(c2);
+                                
+                        }
+                    }
+                }
+            }
+            catch (IOException e)
+            {
+                Console.WriteLine(e.Message + "\n Cannot write to file.");
+                return;
+            }
+        }
+
+        private void WriteConstantsToHalves(BinaryWriter bw, int[] dimSize, byte c1, byte c2)
         {
             try
             {
@@ -90,7 +185,7 @@ namespace DataView
         /// Sets the whole image to a constant color
         /// </summary>
         /// <param name="c"></param>
-        public void WriteConstantToFile(BinaryWriter bw, int[] dimSize, byte c)
+        private void WriteConstantToFile(BinaryWriter bw, int[] dimSize, byte c)
         {
             try
             {

@@ -11,3 +11,6 @@ C:\Users\Ja\source\repos\DataView\DataView\obj\Debug\DataView.pdb
 C:\Users\Ja\source\repos\DataView\DataView\bin\Debug\DataView.exe.config
 C:\Users\Ja\source\repos\DataView\DataView\bin\Debug\DataView.exe
 C:\Users\Ja\source\repos\DataView\DataView\bin\Debug\DataView.pdb
+C:\Users\Ja\source\repos\DataView\DataView\bin\Debug\MathNet.Numerics.dll
+C:\Users\Ja\source\repos\DataView\DataView\bin\Debug\MathNet.Numerics.xml
+C:\Users\Ja\source\repos\DataView\DataView\obj\Debug\DataView.csproj.CopyComplete

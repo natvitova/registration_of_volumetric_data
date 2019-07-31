@@ -9,22 +9,45 @@ namespace DataView
 {
     class Transform3D : ITransformer
     {
+
+        Matrix<double> changeOfBasisMatrixFromA1toA2;
+
+        Matrix<double> A1;
+        Matrix<double> A2;
+
         public Transform3D GetTransformation(Match m, VolumetricData d1, VolumetricData d2)
         {
-            int count = 1000;
+            int count = 10000000;
 
-            Matrix<double> A1 = getSymetricMatrixForEigenVectors(d1, count);
+            A1 = getSymetricMatrixForEigenVectors(d1, count);
             var evd1 = A1.Evd();//eigenvalues for d1
 
-            Matrix<double> A2 = getSymetricMatrixForEigenVectors(d2, count);
+            A2 = getSymetricMatrixForEigenVectors(d2, count);
             var evd2 = A2.Evd();//eigenvalues for d2
 
             //var svd = A2.Svd();
             
-            Matrix<double> changeOfBasisMatrixFromA1toA2 = ComputeChangeOfBasisMatrix(evd1.EigenVectors, evd2.EigenVectors); //eigenvectors make up an orthogonal basis 
+            changeOfBasisMatrixFromA1toA2 = ComputeChangeOfBasisMatrix(evd1.EigenVectors, evd2.EigenVectors); //eigenvectors make up an orthogonal basis 
             //TODO: potrebuju pridat translaci, ale nemam tuseni jak ji zjistit...
 
             return null;
+        }
+
+        public void CalculateRotation(VolumetricData d1, VolumetricData d2)
+        {
+            int count = 1_000_000_0;
+
+            A1 = getSymetricMatrixForEigenVectors(d1, count);
+            var evd1 = A1.Evd();//eigenvalues for d1
+
+            A2 = getSymetricMatrixForEigenVectors(d2, count);
+            var evd2 = A2.Evd();//eigenvalues for d2
+
+            //var svd = A2.Svd();
+
+            changeOfBasisMatrixFromA1toA2 = ComputeChangeOfBasisMatrix(evd1.EigenVectors, evd2.EigenVectors); //eigenvectors make up an orthogonal basis 
+
+            
         }
 
         /// <summary>
@@ -71,7 +94,7 @@ namespace DataView
         /// <returns></returns>
         private Matrix<double> getSymetricMatrixForEigenVectors(VolumetricData d, int count)
         {
-            ISampler sampler = new SamplerFeatureVector();
+            ISampler sampler = new Sampler();
             Point3D[] sample1 = sampler.Sample(d, count);
             Matrix<double> sampleMatrix = Point3DArrayToMatrix(sample1); //matrix D
             double[] averageCoordinates = getAverageCoordinate(sampleMatrix); // vector overline{x}
