@@ -24,9 +24,14 @@ namespace DataView
         /// <param name="args"></param>
         static void Main(string[] args)
         {
+            /*
+            Transform3D transform = new Transform3D();
+            transform.testPCA();
+            Console.ReadLine();
+            */
             
             string fileName1 = "x.mhd";
-            string fileName2 = "x.mhd";
+            string fileName2 = "y.mhd";
 
             Data data1 = new Data();
             data1.SetFeatures(fileName1);

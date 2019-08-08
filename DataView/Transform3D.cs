@@ -30,12 +30,13 @@ namespace DataView
             changeOfBasisMatrixFromA1toA2 = ComputeChangeOfBasisMatrix(evd1.EigenVectors, evd2.EigenVectors); //eigenvectors make up an orthogonal basis 
             //TODO: potrebuju pridat translaci, ale nemam tuseni jak ji zjistit...
 
+           
+
             return null;
         }
-
         public void CalculateRotation(VolumetricData d1, VolumetricData d2)
         {
-            int count = 1_000_000_0;
+            int count = 10_000_000;
 
             A1 = getSymetricMatrixForEigenVectors(d1, count);
             var evd1 = A1.Evd();//eigenvalues for d1
@@ -45,8 +46,123 @@ namespace DataView
 
             //var svd = A2.Svd();
 
-            changeOfBasisMatrixFromA1toA2 = ComputeChangeOfBasisMatrix(evd1.EigenVectors, evd2.EigenVectors); //eigenvectors make up an orthogonal basis 
+            changeOfBasisMatrixFromA1toA2 = ComputeChangeOfBasisMatrixUsingTransposition(evd1.EigenVectors, evd2.EigenVectors); //eigenvectors make up an orthonormal basis    
+            Console.WriteLine("Change of basis matrix:");
+            Console.WriteLine(changeOfBasisMatrixFromA1toA2.ToString());
 
+            TestChangeOfBasisMatrixCorrectness(changeOfBasisMatrixFromA1toA2, evd1.EigenVectors, evd2.EigenVectors);
+
+        }
+
+        private void TestChangeOfBasisMatrixCorrectness(Matrix<double> transformMatrix, Matrix<double> base1, Matrix<double> base2)
+        {
+            Vector<double> v1t = transformMatrix.Multiply(base1.Column(0));
+            Vector<double> v2t = transformMatrix.Multiply(base1.Column(1));
+            Vector<double> v3t = transformMatrix.Multiply(base1.Column(2));
+            Console.Write("v1: " + base2.Column(0));
+            Console.WriteLine("v1t: " + v1t.ToString());
+
+            Console.Write("v2: " + base2.Column(1));
+            Console.WriteLine("v2t: " + v2t.ToString());
+
+            Console.Write("v3: " + base2.Column(2));
+            Console.WriteLine("v3t: " + v3t.ToString());
+
+
+            return;
+        }
+
+        /// <summary>
+        /// PCA works as intended
+        /// </summary>
+        public void testPCA()
+        {
+            PCATester pcatester = new PCATester(1000);
+            Matrix<double> baseMatrix = getSymetricMatrixForEigenVectors(pcatester.Qs);
+            var evd = baseMatrix.Evd();
+            Matrix<double> output = evd.EigenVectors;
+
+            Console.WriteLine("Input vectors:");
+            Console.WriteLine(String.Format("{0} {1} {2}", pcatester.v1[0], pcatester.v2[0], pcatester.v3[0]));
+            Console.WriteLine(String.Format("{0} {1} {2}", pcatester.v1[1], pcatester.v2[1], pcatester.v3[1]));
+            Console.WriteLine(String.Format("{0} {1} {2}", pcatester.v1[2], pcatester.v2[2], pcatester.v3[2]));
+      
+           
+
+            Console.WriteLine("PCA output:");
+            Console.WriteLine(output.ToMatrixString());
+        }
+
+        
+
+        /// <summary>
+        /// if v1 x v2 != v3
+        /// then v3 = -v3
+        /// </summary>
+        /// <param name="matrix"></param>
+        private void MakeBaseRightHanded(Matrix<double> matrix)
+        {
+            if (IsBaseRightHanded(matrix))
+                return;
+            matrix.SetRow(2, matrix.Row(2).Multiply(-1));
+            
+        }
+
+        /// <summary>
+        /// Tests whether v1 x v2 = v3
+        /// </summary>
+        /// <param name="matrix"></param>
+        /// <returns></returns>
+        private bool IsBaseRightHanded(Matrix<double> matrix)
+        {
+            double epsilon = 0.000001;
+            Vector<double> cross = CrossProduct(matrix.Column(0), matrix.Column(1));
+
+            if ((Math.Abs(cross[0] - matrix.Column(2)[0]) < epsilon) && (Math.Abs(cross[1] - matrix.Column(2)[1]) < epsilon) && (Math.Abs(cross[2] - matrix.Column(2)[2]) < epsilon)){
+                return true;
+            }
+            return false;
+        }
+        
+
+        /// <summary>
+        /// ForTesting
+        /// Computes the crossProduct of vectors size 3
+        /// </summary>
+        /// <param name="u"></param>
+        /// <param name="v"></param>
+        /// <returns></returns>
+        public static Vector<double> CrossProduct(Vector<double> u, Vector<double> v)
+        {
+
+            Vector<double> w = Vector<double>.Build.Dense(3);
+            /*
+            uvi = u2 * v3 - v2 * u3;
+
+            uvj = v1 * u3 - u1 * v3;
+
+            uvk = u1 * v2 - v1 * u2;
+            */
+            w[0] = u[1] * v[2] - v[1] * u[2];
+            w[1] = v[0] * u[2] - u[0] * v[2];
+            w[2] = u[0] * v[1] - v[0] * u[1];
+            return w;
+        }
+
+        /// <summary>
+        /// ForTesting
+        /// Sets the norm of column vectors in a matrix to 1
+        /// </summary>
+        /// <param name="matrix"></param>
+        private void NormalizeCollumnVectorsInMatrix(Matrix<double> matrix)
+        {
+
+            for(int i = 0; i < matrix.ColumnCount; i++)
+            {
+                Vector<double> v = matrix.Column(i);
+                v.Divide(Math.Sqrt(PCATester.ScalarProduct(v, v)));
+                matrix.SetColumn(i, v);
+            }
             
         }
 
@@ -65,6 +181,19 @@ namespace DataView
         /// <returns></returns>
         private Matrix<double> ComputeChangeOfBasisMatrix(Matrix<double> base1, Matrix<double> base2)
         {
+            //NormalizeCollumnVectorsInMatrix(base1); //base1 and base2 are already orthonormal
+            //NormalizeCollumnVectorsInMatrix(base2);
+
+
+            MakeBaseRightHanded(base1);
+            MakeBaseRightHanded(base2);
+
+            if (!IsBaseRightHanded(base1))
+                Console.WriteLine("base1 is not righthanded :( ");
+            if (!IsBaseRightHanded(base2))
+                Console.WriteLine("base2 is not righthanded :( ");
+            
+
             Matrix<double> base2Inverse = base2.Inverse();
 
             Vector<double> u1 = base1.Column(0);
@@ -77,6 +206,28 @@ namespace DataView
             Vector<double> a3 = base2Inverse.Multiply(u3);
 
             Matrix<double> changeOfBasisMatrix = Matrix<double>.Build.DenseOfColumnVectors(a1, a2, a3);
+
+            return changeOfBasisMatrix;
+        }
+
+        private Matrix<double> ComputeChangeOfBasisMatrixUsingTransposition(Matrix<double> base1, Matrix<double> base2)
+        {
+            //NormalizeCollumnVectorsInMatrix(base1); //base1 and base2 are already orthonormal
+            //NormalizeCollumnVectorsInMatrix(base2);
+
+
+            MakeBaseRightHanded(base1);
+            MakeBaseRightHanded(base2);
+
+            if (!IsBaseRightHanded(base1))
+                Console.WriteLine("base1 is not righthanded :( ");
+            if (!IsBaseRightHanded(base2))
+                Console.WriteLine("base2 is not righthanded :( ");
+
+
+
+
+            Matrix<double> changeOfBasisMatrix = base1.Multiply(base2.Transpose());
 
             return changeOfBasisMatrix;
         }
@@ -97,6 +248,17 @@ namespace DataView
             ISampler sampler = new Sampler();
             Point3D[] sample1 = sampler.Sample(d, count);
             Matrix<double> sampleMatrix = Point3DArrayToMatrix(sample1); //matrix D
+            double[] averageCoordinates = getAverageCoordinate(sampleMatrix); // vector overline{x}
+            Matrix<double> sampleMatrix1Subtracted = subtractVectorFromMatrix(sampleMatrix, averageCoordinates); //matrix D*
+            Matrix<double> A = sampleMatrix1Subtracted.TransposeAndMultiply(sampleMatrix1Subtracted); // D* times transpose(D*)
+            return A;
+        }
+
+        
+        private Matrix<double> getSymetricMatrixForEigenVectors(Point3D[] points)
+        {
+
+            Matrix<double> sampleMatrix = Point3DArrayToMatrix(points); //matrix D
             double[] averageCoordinates = getAverageCoordinate(sampleMatrix); // vector overline{x}
             Matrix<double> sampleMatrix1Subtracted = subtractVectorFromMatrix(sampleMatrix, averageCoordinates); //matrix D*
             Matrix<double> A = sampleMatrix1Subtracted.TransposeAndMultiply(sampleMatrix1Subtracted); // D* times transpose(D*)

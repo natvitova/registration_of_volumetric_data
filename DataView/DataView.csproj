@@ -55,6 +55,7 @@
     <Compile Include="ISampler.cs" />
     <Compile Include="ITransformer.cs" />
     <Compile Include="Match.cs" />
+    <Compile Include="PCATester.cs" />
     <Compile Include="PictureMaker.cs" />
     <Compile Include="Point3D.cs" />
     <Compile Include="Data.cs" />
