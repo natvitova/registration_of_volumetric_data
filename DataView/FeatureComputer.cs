@@ -10,7 +10,7 @@ namespace DataView
     {
 
 
-        public List<Point3D> GetSphere(Point3D x, VolumetricData d, double r)
+        public static List<Point3D> GetSphere(Point3D x, VolumetricData d, double r)
         {
             List<Point3D> points = new List<Point3D>();
 

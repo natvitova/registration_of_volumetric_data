@@ -8,6 +8,7 @@ namespace DataView
 {
     interface IMatcher
     {
-        Match[] Match(double[,] f1, double[,] f2);
+
+        Match[] Match(FeatureVector[] f1, FeatureVector[] f2);
     }
 }

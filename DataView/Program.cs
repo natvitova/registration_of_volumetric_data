@@ -24,14 +24,40 @@ namespace DataView
         /// <param name="args"></param>
         static void Main(string[] args)
         {
+
+            string fileName1 = "x.mhd";
+            string fileName2 = "y.mhd";
+
+
+            Console.WriteLine("Reading vData1");
+            Data data1 = new Data();
+            data1.SetFeatures(fileName1);
+            VolumetricData vData1 = new VolumetricData(data1);
+            vData1.Read();
+            Console.WriteLine("vData1 read");
+
+            Console.WriteLine("Reading vData2");
+            Data data2 = new Data();
+            data2.SetFeatures(fileName2);
+            VolumetricData vData2 = new VolumetricData(data2);
+            vData2.Read();
+            Console.WriteLine("vData2 read");
+
+            Console.WriteLine("Calculating transformation");
+            Transform3D transform = new Transform3D();
+            Point3D a = new Point3D(100, 100, 100);
+            Point3D b = new Point3D(100, 100, 100);
+            transform.GetTransformation(a, b, vData1, vData2);
+            Console.WriteLine("Transformation calculation finished");
+            Console.ReadLine();
+
             /*
             Transform3D transform = new Transform3D();
             transform.testPCA();
             Console.ReadLine();
             */
+            /*
             
-            string fileName1 = "x.mhd";
-            string fileName2 = "y.mhd";
 
             Data data1 = new Data();
             data1.SetFeatures(fileName1);
@@ -50,7 +76,7 @@ namespace DataView
             Console.WriteLine("Transformation calculation finished");
             Console.ReadLine();
             
-
+            */
 
             /*
             string rotation = "x";
@@ -120,8 +146,8 @@ namespace DataView
             
             Console.WriteLine("\n\n\nHOTOVO");
             Console.ReadLine();
+            
             */
-
 
             //string fileName = @"P01_a_MikroCT-nejhrubsi_rozliseni_DICOM_liver-1st-important_Macro_pixel-size53.0585um.mhd";
             //string fileName2 = @"P01_b_Prase_1_druhe_vys.mhd";
@@ -142,9 +168,10 @@ namespace DataView
             //    Console.WriteLine(points[i].x + " " + points[i].y + " " + points[i].z);
             //}
             //Console.ReadKey();
-
-
             /*
+
+            string fileName1 = "P01_a_MikroCT-nejhrubsi_rozliseni_DICOM_liver-1st-important_Macro_pixel-size53.0585um.raw";
+            string fileName2 = "P01_a_MikroCT-nejhrubsi_rozliseni_DICOM_liver-1st-important_Macro_pixel-size53.0585um.mhd";
             int distance = 750;
             int direction = 2;
 
@@ -159,20 +186,24 @@ namespace DataView
             Console.WriteLine("Final file name: " + finalFile);
 
             Console.WriteLine("Controlling data...");
-            if (ControlData(fileName, distance, direction))
-            {
-                Console.WriteLine("Data passed");
-                Console.WriteLine("Sampling...");
-                ISampler sampler = new SamplerFeatureVector();
-                sampler.Sample(vData, 100);
-                Console.WriteLine("Creating cuts...");
+            sample = new Data();
+            sample.SetFeatures(fileName2);
 
-                CreateCutsInDirection(v1, v2, xRes, yRes, spacing);
+            vData = new VolumetricData(sample);
+            vData.Read();
+
+            Console.WriteLine("Data passed");
+            Console.WriteLine("Sampling...");
+            ISampler sampler = new SamplerFeatureVector();
+            sampler.Sample(vData, 100);
+            Console.WriteLine("Creating cuts...");
+
+                //CreateCutsInDirection(v1, v2, xRes, yRes, spacing);
 
                 Console.WriteLine("All cuts created");
 
                 Console.ReadLine();
-            }
+
             */
             //sample = new Data();
             //sample.SetFeatures(fileName);

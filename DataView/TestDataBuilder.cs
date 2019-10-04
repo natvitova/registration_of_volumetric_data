@@ -21,7 +21,7 @@ namespace DataView
 
             double[] elementSpacing = new double[3];
             int[] dimSize = new int[3];
-            string elementDataFile = null;
+            //string elementDataFile = null;
             string elementType = null;//Tyhle 4 parametry jeste musim doplnit
 
             elementSpacing[0] = 0.053059;//xspacing

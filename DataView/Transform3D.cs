@@ -10,47 +10,62 @@ namespace DataView
     class Transform3D : ITransformer
     {
 
-        Matrix<double> changeOfBasisMatrixFromA1toA2;
+        Matrix<double> changeOfBasisMatrix;
 
         Matrix<double> A1;
         Matrix<double> A2;
 
         public Transform3D GetTransformation(Match m, VolumetricData d1, VolumetricData d2)
         {
-            int count = 10000000;
 
-            A1 = getSymetricMatrixForEigenVectors(d1, count);
-            var evd1 = A1.Evd();//eigenvalues for d1
-
-            A2 = getSymetricMatrixForEigenVectors(d2, count);
-            var evd2 = A2.Evd();//eigenvalues for d2
-
-            //var svd = A2.Svd();
-            
-            changeOfBasisMatrixFromA1toA2 = ComputeChangeOfBasisMatrix(evd1.EigenVectors, evd2.EigenVectors); //eigenvectors make up an orthogonal basis 
-            //TODO: potrebuju pridat translaci, ale nemam tuseni jak ji zjistit...
-
-           
+            Point3D a = null; //match.point1
+            Point3D b = null; //match.point2
+            changeOfBasisMatrix = CalculateRotation(d1, d2, a, b);
 
             return null;
         }
-        public void CalculateRotation(VolumetricData d1, VolumetricData d2)
-        {
-            int count = 10_000_000;
 
-            A1 = getSymetricMatrixForEigenVectors(d1, count);
+        /// <summary>
+        /// Overload for testing purposes
+        /// </summary>
+        /// <param name="m"></param>
+        /// <param name="d1"></param>
+        /// <param name="d2"></param>
+        /// <returns></returns>
+        public Transform3D GetTransformation(Point3D a, Point3D b, VolumetricData d1, VolumetricData d2)
+        {
+
+           
+            changeOfBasisMatrix = CalculateRotation(d1, d2, a, b);
+
+            return null;
+        }
+        /// <summary>
+        /// Calculates the rotation matrix about a point
+        /// </summary>
+        /// <param name="d1"></param>
+        /// <param name="d2"></param>
+        /// <param name="point"></param>
+        /// <returns></returns>
+        public Matrix<double> CalculateRotation(VolumetricData d1, VolumetricData d2, Point3D point1, Point3D point2)
+        {
+            int count = 1000;
+
+            A1 = getSymetricMatrixForEigenVectors(d1, point1, count);
             var evd1 = A1.Evd();//eigenvalues for d1
 
-            A2 = getSymetricMatrixForEigenVectors(d2, count);
+            A2 = getSymetricMatrixForEigenVectors(d2, point2, count);
             var evd2 = A2.Evd();//eigenvalues for d2
 
             //var svd = A2.Svd();
 
-            changeOfBasisMatrixFromA1toA2 = ComputeChangeOfBasisMatrixUsingTransposition(evd1.EigenVectors, evd2.EigenVectors); //eigenvectors make up an orthonormal basis    
+            Matrix<double> rotationMatrix = ComputeChangeOfBasisMatrixUsingTransposition(evd1.EigenVectors, evd2.EigenVectors); //eigenvectors make up an orthonormal basis    
             Console.WriteLine("Change of basis matrix:");
-            Console.WriteLine(changeOfBasisMatrixFromA1toA2.ToString());
+            Console.WriteLine(rotationMatrix.ToString());
 
-            TestChangeOfBasisMatrixCorrectness(changeOfBasisMatrixFromA1toA2, evd1.EigenVectors, evd2.EigenVectors);
+            TestChangeOfBasisMatrixCorrectness(rotationMatrix, evd1.EigenVectors, evd2.EigenVectors);
+
+            return rotationMatrix;
 
         }
 
@@ -243,10 +258,11 @@ namespace DataView
         /// <param name="d"></param>
         /// <param name="count"></param>
         /// <returns></returns>
-        private Matrix<double> getSymetricMatrixForEigenVectors(VolumetricData d, int count)
+        private Matrix<double> getSymetricMatrixForEigenVectors(VolumetricData d, Point3D point, int count)
         {
-            ISampler sampler = new Sampler();
-            Point3D[] sample1 = sampler.Sample(d, count);
+            Sampler sampler = new Sampler(); //this is where ISampler used to be 
+            Point3D[] sample1 = sampler.SampleSphereAroundPoint(d, point, 50, count);
+
             Matrix<double> sampleMatrix = Point3DArrayToMatrix(sample1); //matrix D
             double[] averageCoordinates = getAverageCoordinate(sampleMatrix); // vector overline{x}
             Matrix<double> sampleMatrix1Subtracted = subtractVectorFromMatrix(sampleMatrix, averageCoordinates); //matrix D*

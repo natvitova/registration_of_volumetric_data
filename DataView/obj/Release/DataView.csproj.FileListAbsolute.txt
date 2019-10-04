@@ -1,0 +1,2 @@
+C:\Users\Ja\Desktop\Játra\registration_of_volumetric_data\DataView\obj\Release\DataView.csprojAssemblyReference.cache
+C:\Users\Ja\Desktop\Játra\registration_of_volumetric_data\DataView\obj\Release\DataView.csproj.CoreCompileInputs.cache

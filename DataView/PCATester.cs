@@ -77,7 +77,7 @@ namespace DataView
 
         private void OrthogonalizeVectors()
         {
-            v1 = v1;
+            //v1 = v1;
 
             v2 = v2.Subtract(Proj(v1, v2));
 
