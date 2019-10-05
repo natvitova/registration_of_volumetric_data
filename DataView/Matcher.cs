@@ -19,13 +19,18 @@ namespace DataView
         /// <returns></returns>
         public Match[] Match(FeatureVector[] f1, FeatureVector[] f2)
         {
-            KDTree tree = new KDTree(f1);
-            Match[] matches = new Match[f2.Length];
+            KDTree tree = new KDTree(f2);
+            Match[] matches = new Match[f1.Length];
             
-            for (int i = 0; i < f2.Length; i++)
+            for (int i = 0; i < f1.Length; i++)
             {
-                int index = tree.FindNearest(f2[i], 5);
-                matches[i] = new Match(f1[i], f2[index], Similarity(f1[i],f2[index]));
+                int index = tree.FindNearest(f1[i], 100);
+                if(index < 0)
+                {
+                    matches[i] = new Match(f1[i]);
+                }
+                else
+                    matches[i] = new Match(f1[i], f2[index], Similarity(f1[i],f2[index]));
             }
             return matches;
         }

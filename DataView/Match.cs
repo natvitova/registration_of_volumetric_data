@@ -15,6 +15,13 @@ namespace DataView
         private FeatureVector f2;
         private double percentage;
 
+        public Match(FeatureVector f1)
+        {
+            this.f1 = f1;
+            this.f2 = new FeatureVector();
+            this.percentage = 0;
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -26,6 +33,11 @@ namespace DataView
             this.f1 = f1;
             this.f2 = f2;
             this.percentage = percentage;
+        }
+
+        public override string ToString()
+        {
+            return "f1: " + f1.ToString() + " f2: " + f2.ToString();
         }
     }
 }

@@ -13,14 +13,16 @@ namespace DataView
     {
         public int r;
         private double[] features;
+        private Point3D point;
 
         /// <summary>
         /// 
         /// </summary>
         public FeatureVector()
         {
-            this.features = new double[5];
+            this.features = new double[] { 0, 0, 0, 0, 0 };
             this.r = 5;
+            this.point = new Point3D(0,0,0);
         }
 
         /// <summary>
@@ -31,8 +33,9 @@ namespace DataView
         /// <param name="x3"></param>
         /// <param name="x4"></param>
         /// <param name="x5"></param>
-        public FeatureVector(double x1, double x2, double x3, double x4, double x5)
+        public FeatureVector(Point3D p, double x1, double x2, double x3, double x4, double x5)
         {
+            this.point = p;
             this.features = new double[] { x1, x2, x3, x4, x5};
             this.r = 5;
         }
@@ -83,6 +86,11 @@ namespace DataView
             if (axis == 3)
                 return this.features[3];
             return this.features[4];
+        }
+
+        public override string ToString()
+        {
+            return point.ToString() + "; " + Math.Round(features[0],2) +", " + Math.Round(features[1], 2) + ", " + Math.Round(features[2], 2) + ", " + Math.Round(features[3], 2) + ", " + Math.Round(features[4], 2);
         }
     }
 }

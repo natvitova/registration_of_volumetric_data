@@ -12,7 +12,7 @@ namespace DataView
     /// </summary>
     class VolumetricData
     {
-        private int[][,] vData;
+        public int[][,] vData;
         private double xSpacing;
         private double ySpacing;
         private double zSpacing;
@@ -96,8 +96,8 @@ namespace DataView
             iSpacing = spacing;
 
             double[] vertical2 = Orthogonalize2D(v1, v2);
-            double lengthV1 = Math.Sqrt(ScalarProduct(v1,v1));
-            double lengthV2 = Math.Sqrt(ScalarProduct(v2,v2));
+            double lengthV1 = Math.Sqrt(ScalarProduct(v1, v1));
+            double lengthV2 = Math.Sqrt(ScalarProduct(v2, v2));
 
             double[] unitVector1 = new double[3];
             double[] unitVector2 = new double[3];
@@ -119,7 +119,7 @@ namespace DataView
                 {
                     cut[i, j] = GetValue(x, y, z);
                     //Console.WriteLine(GetValue(x, y, z));
-                    
+
                     x += unitVector1[0];
                     y += unitVector1[1];
                     z += unitVector1[2];
@@ -145,10 +145,10 @@ namespace DataView
             iSpacing = spacing;
 
             double[] vertical2 = Orthogonalize2D(v1, v2);
-            double[] vertical3 = Orthogonalize3D(v1,vertical2,v3);
-            double lengthV1 = Math.Sqrt(ScalarProduct(v1,v1));
-            double lengthV2 = Math.Sqrt(ScalarProduct(vertical2,vertical2));
-            double lengthV3 = Math.Sqrt(ScalarProduct(vertical3,vertical3));
+            double[] vertical3 = Orthogonalize3D(v1, vertical2, v3);
+            double lengthV1 = Math.Sqrt(ScalarProduct(v1, v1));
+            double lengthV2 = Math.Sqrt(ScalarProduct(vertical2, vertical2));
+            double lengthV3 = Math.Sqrt(ScalarProduct(vertical3, vertical3));
 
             double[] unitVector1 = new double[3];
             double[] unitVector2 = new double[3];
@@ -304,16 +304,26 @@ namespace DataView
         /// <returns></returns>
         public int GetValue(double x, double y, double z) // Interpolation3D 
         {
-
-            int xLDC = (int)(x / xSpacing); // coordinates of left down corner of the rectangle in the array in which the pixel is situated
-            int yLDC = (int)(y / ySpacing);
-            int zLDC = (int)(z / zSpacing);
+            //DEBUG, NOT IN CUTS!!!!!
+            //int xLDC = (int)(x / xSpacing); // coordinates of left down corner of the rectangle in the array in which the pixel is situated
+            //int yLDC = (int)(y / ySpacing);
+            //int zLDC = (int)(z / zSpacing);
             //Console.WriteLine("x: " + xLDC + " y: " + yLDC + " z: " + zLDC);
 
-            if (xLDC < vData[0].GetLength(0) - 1 && yLDC < vData[0].GetLength(1) - 1 && zLDC < vData.Length - 1 && xLDC >= 0 && yLDC >= 0 && zLDC >= 0)
+            int xLDC = (int)(x); // coordinates of left down corner of the rectangle in the array in which the pixel is situated
+            int yLDC = (int)(y);
+            int zLDC = (int)(z);
+
+            if (xLDC < data.DimSize[0] && yLDC < data.DimSize[1] && zLDC < data.DimSize[2] && xLDC >= 0 && yLDC >= 0 && zLDC >= 0)
             {
+                int zRDC = zLDC + 1;
+                if (zLDC == this.data.DimSize[2] - 1)
+                {
+                    zRDC = zLDC;
+                }
+
                 int valueA = Interpolation2D(x, y, zLDC, xLDC, yLDC);
-                int valueB = Interpolation2D(x, y, zLDC + 1, xLDC, yLDC);
+                int valueB = Interpolation2D(x, y, zRDC, xLDC, yLDC);
 
                 return Interpolation(valueA, valueB, z, zLDC, zSpacing);
             }
@@ -336,8 +346,10 @@ namespace DataView
         private int Interpolation(int valueA, int valueB, double coordinateOfPixel, int indexOfA, double spacing)
         {
 
-            double d = coordinateOfPixel - indexOfA * spacing;
-            double r = d / spacing;
+            //double d = coordinateOfPixel - indexOfA * spacing;
+            //double r = d / spacing;
+            double d = coordinateOfPixel - indexOfA;
+            double r = d;
             return (int)(r * valueB + (1 - r) * valueA);
         }
 
@@ -352,14 +364,26 @@ namespace DataView
         /// <returns></returns>
         private int Interpolation2D(double pixelX, double pixelY, int indexLDCZ, int xLDC, int yLDC)
         {
+            int xRDC = xLDC + 1;
+            int yRDC = yLDC + 1;
 
-            int valueA = vData[indexLDCZ][xLDC,yLDC];
-            int valueB = vData[indexLDCZ][xLDC + 1,yLDC];
+            if (xLDC == this.data.DimSize[0] - 1)
+            {
+                xRDC = xLDC;
+            }
+
+            if (yLDC == this.data.DimSize[1] - 1)
+            {
+                yRDC = yLDC;
+            }
+
+            int valueA = vData[indexLDCZ][xLDC, yLDC];
+            int valueB = vData[indexLDCZ][xRDC, yLDC];
 
             int helpValueA = Interpolation(valueA, valueB, pixelX, xLDC, xSpacing);
 
-            int valueC = vData[indexLDCZ][xLDC,yLDC + 1];
-            int valueD = vData[indexLDCZ][xLDC + 1,yLDC + 1];
+            int valueC = vData[indexLDCZ][xLDC, yRDC];
+            int valueD = vData[indexLDCZ][xRDC, yRDC];
 
             int helpValueB = Interpolation(valueC, valueD, pixelX, xLDC, xSpacing);
 
@@ -370,7 +394,7 @@ namespace DataView
         /// 
         /// </summary>
         /// <param name="vData"></param>
-        public void SetVData(int [][,] vData)
+        public void SetVData(int[][,] vData)
         {
             this.vData = vData;
         } //TODO set private?
@@ -406,7 +430,7 @@ namespace DataView
         {
             return this.zSpacing;
         }
- 
+
         public void SetZSpacing(double dz)
         {
             this.zSpacing = dz;
@@ -414,7 +438,7 @@ namespace DataView
 
         public int[] GetMeassures()
         {
-            return new int[] { vData.Length, vData[0].GetLength(0), vData[0].GetLength(1) };
+            return new int[] { data.DimSize[0], data.DimSize[1], data.DimSize[2] };
         }
 
     }

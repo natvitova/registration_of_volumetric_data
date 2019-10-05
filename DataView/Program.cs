@@ -17,6 +17,8 @@ namespace DataView
     {
         private static Data sample;
         private static VolumetricData vData;
+        private static Data sample2;
+        private static VolumetricData vData2;
 
         /// <summary>
         /// 
@@ -27,50 +29,114 @@ namespace DataView
             string fileName = @"P01_a_MikroCT-nejhrubsi_rozliseni_DICOM_liver-1st-important_Macro_pixel-size53.0585um.mhd";
             string fileName2 = @"P01_b_Prase_1_druhe_vys.mhd";
 
-            //sample = new Data();
-            //sample.SetFeatures(fileName2);
-            //vData = new VolumetricData(sample);
-            //vData.Read();
-            //FeatureComputer fc = new FeatureComputer();
-            //Sampler s = new Sampler();
+            //----------------------------------------MICRO CT------------------------------------------------
+            sample = new Data();
+            sample.SetFeatures(fileName);
+            vData = new VolumetricData(sample);
+            Console.WriteLine("Reading first data.");
+            vData.Read();
+            Console.WriteLine("Data read succesfully.");
+            IFeatureComputer fc = new FeatureComputer();
+            ISampler s = new Sampler();
 
-            //Point3D[] points = s.Sample(vData, 15);
-            //double[][] featureVectors = new double[points.Length][];
+            Console.WriteLine("Sampling");
+            Point3D[] points = s.Sample(vData, 10);
 
-            //for (int i = 0; i < points.Length; i++)
+            FeatureVector[] featureVectors = new FeatureVector[points.Length];
+
+            Console.WriteLine("Computing feature vectors.");
+            for (int i = 0; i < points.Length; i++)
+            {
+                featureVectors[i] = fc.ComputeFeatureVector(vData, points[i]);
+                Console.WriteLine("fv1:" + i + " " + featureVectors[i].ToString());
+            }
+
+            //----------------------------------------MACRO CT------------------------------------------------
+            sample2 = new Data();
+            sample2.SetFeatures(fileName2);
+            vData2 = new VolumetricData(sample2);
+            Console.WriteLine("\nReading second data.");
+            vData2.Read();
+            Console.WriteLine("Data read succesfully.");
+            IFeatureComputer fc2 = new FeatureComputer();
+            ISampler s2 = new Sampler();
+
+            Console.WriteLine("Sampling");
+            Point3D[] points2 = s2.Sample(vData2, 500);
+            FeatureVector[] featureVectors2 = new FeatureVector[points2.Length];
+
+            //int[] m = vData.GetMeassures();
+            //Console.WriteLine("x:" + m[0] + " y:" + m[1] + " z:" + m[2]);
+
+            //Console.WriteLine("Going through the data.");
+            //int aaa = 0;
+            //int bbb = 0;
+            //int ccc = 0;
+            //for (int k = 0; k < m[2]; k++)
             //{
-            //    featureVectors[0] = fc.ComputeFeatureVector(vData, points[i]);
-            //    Console.WriteLine(points[i].x + " " + points[i].y + " " + points[i].z);
+            //    for (int i = 0; i < m[0]; i++)
+            //    {
+            //        for (int j = 0; j < m[1]; j++)
+            //        {
+            //            double a = vData.vData[k][i, j];
+            //            // DEBUG 
+            //            //double b = vData2.GetValue(i * vData2.GetXSpacing(), j * vData2.GetYSpacing(), k * vData2.GetZSpacing());
+            //            double b = vData.GetValue(i, j, k);
+            //            if ((a - b) > 1)
+            //            {
+            //                aaa++;
+            //                if ((a - b) > a * 0.5)
+            //                {
+            //                    bbb++;
+            //                }
+
+            //                Console.WriteLine("a:" + a + " b:" + b);
+            //            }
+            //            if (b == 0 && a != 0)
+            //            {
+            //                //Console.WriteLine("x:" + i + " y:" + j + " z:" + k);
+            //                //Console.WriteLine(a);
+            //                ccc++;
+            //            }
+            //        }
+            //    }
             //}
-            //Console.ReadKey();
+            //Console.WriteLine("Count of mistakes ................................." + aaa);
+            //Console.WriteLine("Count of mistakes (abs < 75%) ....................." + bbb);
+            //Console.WriteLine("Count of mistakes (b==0) .........................." + ccc);
 
-            int distance = 250;
-            int direction = 2;
 
-            double[] point = { 150, 500, 150};
-            double[] v1 = { 1, 0, 0};
-            double[] v2 = { 0, 0, 1 };
-            double[] v3 = { 2, 1, 5 };
-            int xRes = 500;
-            int yRes = 500;
-            double spacing = 0.5;
-            string finalFile = GenerateFinalFileName(point, v1, v2, xRes, yRes, spacing);
+            Console.WriteLine("Computing feature vectors.");
+            for (int i = 0; i < points2.Length; i++)
+            {
+                featureVectors2[i] = fc2.ComputeFeatureVector(vData2, points2[i]);
+                Console.WriteLine("fv2:" + i + " " + featureVectors2[i].ToString());
+            }
 
-            //sample = new Data();
-            //sample.SetFeatures(fileName);
-            //vData = new VolumetricData(sample);
-            //double[] vertical2 = vData.Orthogonalize2D(v1, v2);
-            //double[] vertical3 = vData.Orthogonalize3D(v1, vertical2, v3);
 
-            //double scalar12 = vData.ScalarProduct(v1, vertical2);
-            //double scalar13 = vData.ScalarProduct(v1, vertical3);
-            //double scalar23 = vData.ScalarProduct(vertical2, vertical3);
+            IMatcher matcher = new Matcher();
+            Console.WriteLine("Matching.");
+            Match[] matches = matcher.Match(featureVectors, featureVectors2);
+            Console.WriteLine(".......................... MATCHES ..............................");
+            for (int i = 0; i < matches.Length; i++)
+            {
+                Console.WriteLine(matches[i].ToString());
+            }
 
-            //Console.WriteLine(v1[0] + " " + v1[1] + " " + v1[2]);
-            //Console.WriteLine(vertical2[0] + " " + vertical2[1] + " " + vertical2[2]);
-            //Console.WriteLine(vertical3[0] + " " + vertical3[1] + " " + vertical3[2]);
-            //Console.WriteLine(scalar12 + " " + scalar13 + " " + scalar23);
-            //Console.ReadKey();
+            Console.ReadKey();
+
+            // ------------------------------------------Cut-------------------------------------------
+            //int distance = 250;
+            //int direction = 2;
+
+            //double[] point = { 150, 500, 150};
+            //double[] v1 = { 1, 0, 0};
+            //double[] v2 = { 0, 0, 1 };
+            //double[] v3 = { 2, 1, 5 };
+            //int xRes = 500;
+            //int yRes = 500;
+            //double spacing = 0.5;
+            //string finalFile = GenerateFinalFileName(point, v1, v2, xRes, yRes, spacing);
 
             //if (ControlData(fileName2, distance, direction))
             //{
@@ -79,7 +145,7 @@ namespace DataView
             //    //Console.ReadKey();
             //    double[] spacings = { vData.GetXSpacing(), vData.GetYSpacing(), vData.GetZSpacing() };
             //    double[] realPoint = new double[3];
-            //    for(int i = 0; i < realPoint.Length; i++)
+            //    for (int i = 0; i < realPoint.Length; i++)
             //    {
             //        realPoint[i] = point[i] * spacings[i];
             //    }
@@ -106,6 +172,8 @@ namespace DataView
             //    Console.WriteLine("The distance is higher than the dimension.");
             //    Console.ReadKey();
             //}
+            // ------------------------------------------Cut-------------------------------------------
+
         }
 
         /// <summary>
