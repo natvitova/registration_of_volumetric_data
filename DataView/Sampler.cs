@@ -31,28 +31,6 @@ namespace DataView
             }
             return points;
         }
-         public Point3D[] SampleSphereAroundPoint(VolumetricData d, Point3D centerPoint, int radius, int count)
-        {
-            
-            Point3D[] selectedPoints = new Point3D[count];
-
-            Random r = new Random();
-            Point3D tmpPoint;
-            int randomIndex;
-
-            List<Point3D> pointsInSphere = FeatureComputer.GetSphere(centerPoint, d, radius); //gets all points in a given sphere
-
-            for (int i = 0; i < count; i++)
-            {
-                randomIndex = r.Next(0, pointsInSphere.Count);
-
-                tmpPoint = pointsInSphere[randomIndex]; //gets a point
-                pointsInSphere.RemoveAt(randomIndex); //removes the gotten point from the sphere
-
-                selectedPoints[i] = tmpPoint; //randomly selects points from the sphere
-
-            }
-            return selectedPoints;
-        }
+        
     }
 }

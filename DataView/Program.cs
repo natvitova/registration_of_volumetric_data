@@ -18,6 +18,15 @@ namespace DataView
         /// <param name="args"></param>
         static void Main(string[] args)
         {
+            string fileName = "P01_HEAD_5_0_H31S_0004.mhd";
+            //string fileName = "P01_b_Prase_1_druhe_vys.mhd";
+
+            TestRotation(fileName, fileName);
+
+            
+
+
+
             //string fileName = @"P01_a_MikroCT-nejhrubsi_rozliseni_DICOM_liver-1st-important_Macro_pixel-size53.0585um.mhd";
             //string fileName2 = @"P01_b_Prase_1_druhe_vys.mhd";
 
@@ -407,6 +416,34 @@ namespace DataView
                         }
                         */
 
+        }
+
+
+
+        public static void TestRotation(string fileName1, string fileName2)
+        {
+            Console.WriteLine("Loading vData1 ({0})", fileName1);
+            Data data1 = new Data();
+            data1.SetFeatures(fileName1);
+            VolumetricData vData1 = new VolumetricData(data1);
+            vData1.Read();
+            Console.WriteLine("vData1 loaded");
+
+            Console.WriteLine("Loading vData2 ({0})", fileName2);
+            Data data2 = new Data();
+            data2.SetFeatures(fileName2);
+            VolumetricData vData2 = new VolumetricData(data2);
+            vData2.Read();
+            Console.WriteLine("vData2 loaded");
+
+            Console.WriteLine("Calculating transformation");
+            Point3D a = new Point3D(100, 100, 20);
+            Point3D b = new Point3D(100, 100, 20);
+            
+            Console.WriteLine("Transformation calculation finished");
+            Console.WriteLine("Rotation Matrix:");
+            Console.WriteLine(RotationComputer.CalculateRotation(vData1, vData2, a, b, 200).ToString());
+            Console.ReadLine();
         }
 
         /// <summary>

@@ -334,6 +334,12 @@ namespace DataView
             }
         }
 
+        //Overload
+        public int GetValue(Point3D point)
+        {
+            return GetValue(point.x, point.y, point.z);
+        }
+
         /// <summary>
         /// 
         /// </summary>

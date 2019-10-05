@@ -21,3 +21,13 @@ C:\Users\Ja\Desktop\Játra\5.10.2019 merger\registration_of_volumetric_data\Data
 C:\Users\Ja\Desktop\Játra\5.10.2019 merger\registration_of_volumetric_data\DataView\bin\Debug\MathNet.Numerics.dll
 C:\Users\Ja\Desktop\Játra\5.10.2019 merger\registration_of_volumetric_data\DataView\bin\Debug\MathNet.Numerics.xml
 C:\Users\Ja\Desktop\Játra\5.10.2019 merger\registration_of_volumetric_data\DataView\obj\Debug\DataView.csproj.CopyComplete
+C:\Users\Ja\Desktop\Játra\AfterMerger\registration_of_volumetric_data\DataView\bin\Debug\DataView.exe.config
+C:\Users\Ja\Desktop\Játra\AfterMerger\registration_of_volumetric_data\DataView\bin\Debug\DataView.exe
+C:\Users\Ja\Desktop\Játra\AfterMerger\registration_of_volumetric_data\DataView\bin\Debug\DataView.pdb
+C:\Users\Ja\Desktop\Játra\AfterMerger\registration_of_volumetric_data\DataView\bin\Debug\MathNet.Numerics.dll
+C:\Users\Ja\Desktop\Játra\AfterMerger\registration_of_volumetric_data\DataView\bin\Debug\MathNet.Numerics.xml
+C:\Users\Ja\Desktop\Játra\AfterMerger\registration_of_volumetric_data\DataView\obj\Debug\DataView.csprojAssemblyReference.cache
+C:\Users\Ja\Desktop\Játra\AfterMerger\registration_of_volumetric_data\DataView\obj\Debug\DataView.csproj.CoreCompileInputs.cache
+C:\Users\Ja\Desktop\Játra\AfterMerger\registration_of_volumetric_data\DataView\obj\Debug\DataView.csproj.CopyComplete
+C:\Users\Ja\Desktop\Játra\AfterMerger\registration_of_volumetric_data\DataView\obj\Debug\DataView.exe
+C:\Users\Ja\Desktop\Játra\AfterMerger\registration_of_volumetric_data\DataView\obj\Debug\DataView.pdb

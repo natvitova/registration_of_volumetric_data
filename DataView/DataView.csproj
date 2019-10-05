@@ -64,10 +64,12 @@
     <Compile Include="Data.cs" />
     <Compile Include="PointWithFeatures.cs" />
     <Compile Include="RatedPoint.cs" />
+    <Compile Include="RotationComputer.cs" />
     <Compile Include="Sampler.cs" />
     <Compile Include="SamplerFeatureVector.cs" />
     <Compile Include="TestDataBuilder.cs" />
     <Compile Include="Transform3D.cs" />
+    <Compile Include="Transformer3D.cs" />
     <Compile Include="VolumetricData.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
