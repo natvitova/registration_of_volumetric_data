@@ -18,7 +18,7 @@ namespace DataView
         /// <param name="d"></param>
         /// <param name="r"></param>
         /// <returns></returns>
-        private List<Point3D> GetSphere(Point3D x, VolumetricData d, double r)
+        public static List<Point3D> GetSphere(Point3D x, VolumetricData d, double r)
         {
             List<Point3D> points = new List<Point3D>();
             double step = r / 5;

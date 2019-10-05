@@ -1,12 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Drawing;
-using System.Drawing.Imaging;
 
 namespace DataView
 {
@@ -26,44 +18,44 @@ namespace DataView
         /// <param name="args"></param>
         static void Main(string[] args)
         {
-            string fileName = @"P01_a_MikroCT-nejhrubsi_rozliseni_DICOM_liver-1st-important_Macro_pixel-size53.0585um.mhd";
-            string fileName2 = @"P01_b_Prase_1_druhe_vys.mhd";
+            //string fileName = @"P01_a_MikroCT-nejhrubsi_rozliseni_DICOM_liver-1st-important_Macro_pixel-size53.0585um.mhd";
+            //string fileName2 = @"P01_b_Prase_1_druhe_vys.mhd";
 
-            //----------------------------------------MICRO CT------------------------------------------------
-            sample = new Data();
-            sample.SetFeatures(fileName);
-            vData = new VolumetricData(sample);
-            Console.WriteLine("Reading first data.");
-            vData.Read();
-            Console.WriteLine("Data read succesfully.");
-            IFeatureComputer fc = new FeatureComputer();
-            ISampler s = new Sampler();
+            ////----------------------------------------MICRO CT------------------------------------------------
+            //sample = new Data();
+            //sample.SetFeatures(fileName);
+            //vData = new VolumetricData(sample);
+            //Console.WriteLine("Reading first data.");
+            //vData.Read();
+            //Console.WriteLine("Data read succesfully.");
+            //IFeatureComputer fc = new FeatureComputer();
+            //ISampler s = new Sampler();
 
-            Console.WriteLine("Sampling");
-            Point3D[] points = s.Sample(vData, 10);
+            //Console.WriteLine("Sampling");
+            //Point3D[] points = s.Sample(vData, 10);
 
-            FeatureVector[] featureVectors = new FeatureVector[points.Length];
+            //FeatureVector[] featureVectors = new FeatureVector[points.Length];
 
-            Console.WriteLine("Computing feature vectors.");
-            for (int i = 0; i < points.Length; i++)
-            {
-                featureVectors[i] = fc.ComputeFeatureVector(vData, points[i]);
-                Console.WriteLine("fv1:" + i + " " + featureVectors[i].ToString());
-            }
+            //Console.WriteLine("Computing feature vectors.");
+            //for (int i = 0; i < points.Length; i++)
+            //{
+            //    featureVectors[i] = fc.ComputeFeatureVector(vData, points[i]);
+            //    Console.WriteLine("fv1:" + i + " " + featureVectors[i].ToString());
+            //}
 
-            //----------------------------------------MACRO CT------------------------------------------------
-            sample2 = new Data();
-            sample2.SetFeatures(fileName2);
-            vData2 = new VolumetricData(sample2);
-            Console.WriteLine("\nReading second data.");
-            vData2.Read();
-            Console.WriteLine("Data read succesfully.");
-            IFeatureComputer fc2 = new FeatureComputer();
-            ISampler s2 = new Sampler();
+            ////----------------------------------------MACRO CT------------------------------------------------
+            //sample2 = new Data();
+            //sample2.SetFeatures(fileName2);
+            //vData2 = new VolumetricData(sample2);
+            //Console.WriteLine("\nReading second data.");
+            //vData2.Read();
+            //Console.WriteLine("Data read succesfully.");
+            //IFeatureComputer fc2 = new FeatureComputer();
+            //ISampler s2 = new Sampler();
 
-            Console.WriteLine("Sampling");
-            Point3D[] points2 = s2.Sample(vData2, 500);
-            FeatureVector[] featureVectors2 = new FeatureVector[points2.Length];
+            //Console.WriteLine("Sampling");
+            //Point3D[] points2 = s2.Sample(vData2, 500);
+            //FeatureVector[] featureVectors2 = new FeatureVector[points2.Length];
 
             //int[] m = vData.GetMeassures();
             //Console.WriteLine("x:" + m[0] + " y:" + m[1] + " z:" + m[2]);
@@ -106,24 +98,24 @@ namespace DataView
             //Console.WriteLine("Count of mistakes (b==0) .........................." + ccc);
 
 
-            Console.WriteLine("Computing feature vectors.");
-            for (int i = 0; i < points2.Length; i++)
-            {
-                featureVectors2[i] = fc2.ComputeFeatureVector(vData2, points2[i]);
-                Console.WriteLine("fv2:" + i + " " + featureVectors2[i].ToString());
-            }
+            //Console.WriteLine("Computing feature vectors.");
+            //for (int i = 0; i < points2.Length; i++)
+            //{
+            //    featureVectors2[i] = fc2.ComputeFeatureVector(vData2, points2[i]);
+            //    Console.WriteLine("fv2:" + i + " " + featureVectors2[i].ToString());
+            //}
 
 
-            IMatcher matcher = new Matcher();
-            Console.WriteLine("Matching.");
-            Match[] matches = matcher.Match(featureVectors, featureVectors2);
-            Console.WriteLine(".......................... MATCHES ..............................");
-            for (int i = 0; i < matches.Length; i++)
-            {
-                Console.WriteLine(matches[i].ToString());
-            }
+            //IMatcher matcher = new Matcher();
+            //Console.WriteLine("Matching.");
+            //Match[] matches = matcher.Match(featureVectors, featureVectors2);
+            //Console.WriteLine(".......................... MATCHES ..............................");
+            //for (int i = 0; i < matches.Length; i++)
+            //{
+            //    Console.WriteLine(matches[i].ToString());
+            //}
 
-            Console.ReadKey();
+            //Console.ReadKey();
 
             // ------------------------------------------Cut-------------------------------------------
             //int distance = 250;
@@ -173,34 +165,34 @@ namespace DataView
             //    Console.ReadKey();
             //}
             // ------------------------------------------Cut-------------------------------------------
-			/*
-
-            string fileName1 = "x.mhd";
-            string fileName2 = "y.mhd";
 
 
-            Console.WriteLine("Reading vData1");
-            Data data1 = new Data();
-            data1.SetFeatures(fileName1);
-            VolumetricData vData1 = new VolumetricData(data1);
-            vData1.Read();
-            Console.WriteLine("vData1 read");
+            //string filename1 = "x.mhd";
+            //string filename2 = "y.mhd";
 
-            Console.WriteLine("Reading vData2");
-            Data data2 = new Data();
-            data2.SetFeatures(fileName2);
-            VolumetricData vData2 = new VolumetricData(data2);
-            vData2.Read();
-            Console.WriteLine("vData2 read");
 
-            Console.WriteLine("Calculating transformation");
-            Transform3D transform = new Transform3D();
-            Point3D a = new Point3D(100, 100, 100);
-            Point3D b = new Point3D(100, 100, 100);
-            transform.GetTransformation(a, b, vData1, vData2);
-            Console.WriteLine("Transformation calculation finished");
-            Console.ReadLine();
-			*/
+            //Console.WriteLine("Reading vData1");
+            //Data data1 = new Data();
+            //data1.SetFeatures(fileName1);
+            //VolumetricData vData1 = new VolumetricData(data1);
+            //vData1.Read();
+            //Console.WriteLine("vData1 read");
+
+            //Console.WriteLine("Reading vData2");
+            //Data data2 = new Data();
+            //data2.SetFeatures(fileName2);
+            //VolumetricData vData2 = new VolumetricData(data2);
+            //vData2.Read();
+            //Console.WriteLine("vData2 read");
+
+            //Console.WriteLine("Calculating transformation");
+            //Transform3D transform = new Transform3D();
+            //Point3D a = new Point3D(100, 100, 100);
+            //Point3D b = new Point3D(100, 100, 100);
+            //transform.GetTransformation(a, b, vData1, vData2);
+            //Console.WriteLine("Transformation calculation finished");
+            //Console.ReadLine();
+
             /*
             Transform3D transform = new Transform3D();
             transform.testPCA();

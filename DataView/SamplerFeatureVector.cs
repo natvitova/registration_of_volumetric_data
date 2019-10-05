@@ -58,7 +58,7 @@ namespace DataView
             while(ratedPoints.Count() < count)
             {
                 Point3D point = GenerateRandomPoint(border, measures, rnd);
-                PointWithFeatures pointWithFeatures = new PointWithFeatures(point, featureComputer.ComputeFeatureVector(d, point));
+                PointWithFeatures pointWithFeatures = new PointWithFeatures(point, featureComputer.ComputeFeatureVector(d, point).Features);
                 RatedPoint ratedPoint = new RatedPoint(pointWithFeatures, RatePoint(pointWithFeatures));
 
                 ratedPoints.Add(ratedPoint);
@@ -201,7 +201,7 @@ namespace DataView
             for (int i = 0; i < points.Count(); i++)
             {
                 Point3D point = points[i];
-                double[] featureVector = featureComputer.ComputeFeatureVector(d, point);
+                double[] featureVector = featureComputer.ComputeFeatureVector(d, point).Features;
                 pointsWithFeatures[i] = new PointWithFeatures(point, featureVector);
             }
             return pointsWithFeatures;
@@ -222,7 +222,7 @@ namespace DataView
             for (int i = 0; i < points.Count(); i++)
             {
                 Point3D point = points[i];
-                double[] featureVector = featureComputer.ComputeFeatureVector(d, point);
+                double[] featureVector = featureComputer.ComputeFeatureVector(d, point).Features;
                 pointsWithFeatures.Add(new PointWithFeatures(point, featureVector));
             }
             return pointsWithFeatures;
