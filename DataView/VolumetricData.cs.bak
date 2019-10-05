@@ -96,8 +96,8 @@ namespace DataView
             iSpacing = spacing;
 
             double[] vertical2 = Orthogonalize2D(v1, v2);
-            double lengthV1 = Math.Sqrt(ScalarProduct(v1, v1));
-            double lengthV2 = Math.Sqrt(ScalarProduct(v2, v2));
+            double lengthV1 = Math.Sqrt(ScalarProduct(v1,v1));
+            double lengthV2 = Math.Sqrt(ScalarProduct(v2,v2));
 
             double[] unitVector1 = new double[3];
             double[] unitVector2 = new double[3];
