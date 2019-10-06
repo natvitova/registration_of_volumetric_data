@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 
 namespace DataView
 {
@@ -18,12 +19,13 @@ namespace DataView
         /// <param name="args"></param>
         static void Main(string[] args)
         {
-            string fileName = "P01_HEAD_5_0_H31S_0004.mhd";
-            //string fileName = "P01_b_Prase_1_druhe_vys.mhd";
+
+            //string fileName = "P01_HEAD_5_0_H31S_0004.mhd";
+            string fileName = "P01_b_Prase_1_druhe_vys.mhd";
 
             TestRotation(fileName, fileName);
 
-            
+
 
 
 
@@ -127,12 +129,14 @@ namespace DataView
             //Console.ReadKey();
 
             // ------------------------------------------Cut-------------------------------------------
-            //int distance = 250;
+
+            //string fileName2 = "P01_HEAD_5_0_H31S_0004.mhd";
+            //int distance = 20;
             //int direction = 2;
 
-            //double[] point = { 150, 500, 150};
-            //double[] v1 = { 1, 0, 0};
-            //double[] v2 = { 0, 0, 1 };
+            //double[] point = { 100, 100, 20 };
+            //double[] v1 = { 1, 0, 0 };
+            //double[] v2 = { 0, 1, 0 };
             //double[] v3 = { 2, 1, 5 };
             //int xRes = 500;
             //int yRes = 500;
@@ -156,17 +160,20 @@ namespace DataView
             //    PictureMaker pm = new PictureMaker(cut);
             //    Bitmap bitmap = pm.MakeBitmap();
             //    Console.WriteLine("Bitmap finished");
-            //    Console.ReadKey();
+
 
             //    try
             //    {
             //        bitmap.Save(finalFile, System.Drawing.Imaging.ImageFormat.Bmp);
+            //        Console.WriteLine("Save finished");
             //    }
             //    catch (Exception e)
             //    {
 
             //        Console.Write(e.Message);
             //    }
+
+            //    Console.ReadKey();
             //}
             //else
             //{
@@ -436,13 +443,34 @@ namespace DataView
             vData2.Read();
             Console.WriteLine("vData2 loaded");
 
-            Console.WriteLine("Calculating transformation");
-            Point3D a = new Point3D(100, 100, 20);
-            Point3D b = new Point3D(100, 100, 20);
+
+
+
+            //Point3D a = new Point3D(100, 250, 250);
+            //Point3D b = new Point3D(100, 250, 250);
+            //Console.WriteLine("Value at point {0} is {1}", nameof(a), vData1.GetValue(a));
+            //Console.WriteLine("Value at point {0} is {1}", nameof(b), vData1.GetValue(b));
+
+
+            //Point3D c = new Point3D(100, 100, 40);
+            //Console.WriteLine("Value at point {0} is {1}", nameof(c), vData1.GetValue(c));
+
+            Point3D a = null;
+            Point3D b = null;
+            for (int i = 100; i <500; i += 100)
+            {
+                for (int j = 100; j < 500; j += 100)
+                {
+                    for (int k = 100; k < 500; k += 100)
+                    {
+                        a = new Point3D(i, j, k);
+                        b = new Point3D(i, j, k);
+                        Console.WriteLine(RotationComputer.CalculateRotation(vData1, vData2, a, b, 10_000).ToString());
+                    }
+                }
+            }
             
-            Console.WriteLine("Transformation calculation finished");
-            Console.WriteLine("Rotation Matrix:");
-            Console.WriteLine(RotationComputer.CalculateRotation(vData1, vData2, a, b, 200).ToString());
+            
             Console.ReadLine();
         }
 

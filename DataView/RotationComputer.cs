@@ -24,10 +24,14 @@ namespace DataView
         public static Matrix<double> CalculateRotation(VolumetricData d1, VolumetricData d2, Point3D point1, Point3D point2, int count)
         {
 
+            Console.WriteLine("Calculating rotation between point {0} : {1} of value {2} in data: {3} and point {4} : {5} of value {6} in data {7} ",
+                nameof(point1), point1.ToString(), d1.GetValue(point1), nameof(d1), nameof(point2), point2.ToString(), d2.GetValue(point2), nameof(d2));
             Matrix<double> A1 = getSymetricMatrixForEigenVectors(d1, point1, count);
+            //Console.WriteLine("Matrix {0} : {1}", nameof(A1), A1.ToString());
             var evd1 = A1.Evd();//eigenvalues for d1
 
             Matrix<double> A2 = getSymetricMatrixForEigenVectors(d2, point2, count);
+            //Console.WriteLine("Matrix {0} : {1}", nameof(A2), A2.ToString());
             var evd2 = A2.Evd();//eigenvalues for d2
 
             //var svd = A2.Svd();
@@ -235,34 +239,34 @@ namespace DataView
         private static Matrix<double> getSymetricMatrixForEigenVectors(VolumetricData d, Point3D point, int count)
         {
             
-            Point3D[] sample1 = SampleSphereAroundPoint(d, point, 10, count);
+            Point3D[] sample1 = SampleSphereAroundPoint(d, point, 20, count);
+
+            //for (int i = 0; i < sample1.Length; i++)
+            //{
+            //    Console.WriteLine("Point : {0} , Value: {1}", sample1[i], d.GetValue(sample1[i]));
+            //}
 
             Matrix<double> sampleMatrix = Point3DArrayToMatrix(sample1); //matrix D
             double[] averageCoordinates = getAverageCoordinate(sampleMatrix); // vector overline{x}
+            //Console.WriteLine("Average coordinates: [{0}, {1}, {2}]", averageCoordinates[0], averageCoordinates[1], averageCoordinates[2]);
             Matrix<double> sampleMatrixSubtracted = subtractVectorFromMatrix(sampleMatrix, averageCoordinates); //matrix D*
             Matrix<double> A = sampleMatrixSubtracted.TransposeAndMultiply(sampleMatrixSubtracted); // D* times transpose(D*)
+
+            
             return A;
         }
 
         private static Point3D[] SampleSphereAroundPoint(VolumetricData d, Point3D centerPoint, int radius, int count)
         {
-
             List<Point3D> survivingPoints = new List<Point3D>();
+            List<Point3D> pointsInSphere = FeatureComputer.GetSphere(centerPoint, d, radius, radius / 15); //gets all points in a given sphere
 
-            Random r = new Random();
-            Point3D tmpPoint;
-            int randomIndex;
-
-            List<Point3D> pointsInSphere = FeatureComputer.GetSphere(centerPoint, d, radius); //gets all points in a given sphere
-
+            Random rnd = new Random();
             int currentValue;
             int maxValue = 0;
             int minValue = int.MaxValue;
-            int sumOfValues = 0;
-            int meanValue;
-            int treshold;
 
-            foreach (Point3D point in pointsInSphere)
+            foreach(Point3D point in pointsInSphere) //finds the minumum and maximum value in the sphere
             {
                 currentValue = d.GetValue(point);
 
@@ -271,34 +275,88 @@ namespace DataView
 
                 if (currentValue < minValue)
                     minValue = currentValue;
-
-                //sumOfValues += currentValue;
             }
 
-            //TODO TOHLE CELY PREDELEJ
-            treshold = (int)(maxValue * 0.999);
-            int i = 0;
-            //meanValue = sumOfValues / pointsInSphere.Count;
-            for (int j = 0; j < count && i < pointsInSphere.Count;){//iterates the final points
-
-                for (i = i; i < pointsInSphere.Count; i++)//iterates the points in sphere
+            while(survivingPoints.Count < count && pointsInSphere.Count > 0)
+            {
+                int rndIndex = rnd.Next(0, pointsInSphere.Count); //random index in pointsInSphere
+                if (DecideFate(rnd, d.GetValue(pointsInSphere[rndIndex]), minValue, maxValue)) //decides whether to keep the point or not
                 {
-                    int randomNumber = r.Next(minValue, maxValue); //random number between min and max
-                    //int randomNumber = minValue;
+                    //the point is kept
+                    survivingPoints.Add(pointsInSphere[rndIndex]); //add to result
                     
-                    if (d.GetValue(pointsInSphere[i]) > treshold) //high values have a high chance of survival
-                    {
-                        survivingPoints.Add(pointsInSphere[i]);
-                        j++;
-                        if (j >= count)
-                            break;
-                    }
-
                 }
+                pointsInSphere.RemoveAt(rndIndex); //removed from pointsInSphere
+
             }
-            
+
             return survivingPoints.ToArray();
         }
+
+        private static bool DecideFate(Random rnd, int pointValue, int min, int max)
+        {
+            int rndValue = rnd.Next(min, max);
+            if (pointValue > rndValue)
+                return true;
+            else
+                return false;
+        }
+        
+        //private static point3d[] samplespherearoundpoint(volumetricdata d, point3d centerpoint, int radius, int count)
+        //{
+
+        //    list<point3d> survivingpoints = new list<point3d>();
+
+        //    random r = new random();
+        //    point3d tmppoint;
+        //    int randomindex;
+
+        //    list<point3d> pointsinsphere = featurecomputer.getsphere(centerpoint, d, radius); //gets all points in a given sphere
+
+        //    int currentvalue;
+        //    int maxvalue = 0;
+        //    int minvalue = int.maxvalue;
+        //    int sumofvalues = 0;
+        //    int meanvalue;
+        //    int treshold;
+
+        //    foreach (point3d point in pointsinsphere)
+        //    {
+        //        currentvalue = d.getvalue(point);
+
+        //        if (currentvalue > maxvalue)
+        //            maxvalue = currentvalue;
+
+        //        if (currentvalue < minvalue)
+        //            minvalue = currentvalue;
+
+        //        //sumofvalues += currentvalue;
+        //    }
+
+        //    //todo tohle cely predelej
+        //    treshold = (int)(maxvalue * 0.999);
+        //    int i = 0;
+        //    //meanvalue = sumofvalues / pointsinsphere.count;
+        //    for (int j = 0; j < count && i < pointsinsphere.count;){//iterates the final points
+
+        //        for (i = i; i < pointsinsphere.count; i++)//iterates the points in sphere
+        //        {
+        //            int randomnumber = r.next(minvalue, maxvalue); //random number between min and max
+        //            //int randomnumber = minvalue;
+                    
+        //            if (d.getvalue(pointsinsphere[i]) > treshold) //high values have a high chance of survival
+        //            {
+        //                survivingpoints.add(pointsinsphere[i]);
+        //                j++;
+        //                if (j >= count)
+        //                    break;
+        //            }
+
+        //        }
+        //    }
+            
+        //    return survivingpoints.toarray();
+        //}
 
         
 
