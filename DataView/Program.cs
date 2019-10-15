@@ -19,8 +19,11 @@ namespace DataView
         /// <param name="args"></param>
         static void Main(string[] args)
         {
-            string fileName = @"P01_a_MikroCT-nejhrubsi_rozliseni_DICOM_liver-1st-important_Macro_pixel-size53.0585um.mhd";
-            string fileName2 = @"P01_b_Prase_1_druhe_vys.mhd";
+            //string fileName = @"P01_a_MikroCT-nejhrubsi_rozliseni_DICOM_liver-1st-important_Macro_pixel-size53.0585um.mhd";
+            //string fileName2 = @"P01_b_Prase_1_druhe_vys.mhd";
+
+            string fileName = @"P01_HEAD_5_0_H31S_0004.mhd";
+            string fileName2 = fileName;
 
             //----------------------------------------MICRO CT------------------------------------------------
             sample = new Data();
@@ -86,7 +89,7 @@ namespace DataView
                 transformations[i] = transformer.GetTransformation(matches[i], vData, vData2);
             }
 
-
+            Console.WriteLine("Mam vsechny transformace");
             Console.ReadKey();
 
 
@@ -237,10 +240,10 @@ namespace DataView
             //double[] v2 = { 0, 1, 0 };
             //double[] v3 = { 2, 1, 5 };
 
-            //int xRes = 500;
-            //int yRes = 500;
-            //double spacing = 0.5;
-            //string finalFile = GenerateFinalFileName(point, v1, v2, xRes, yRes, spacing);
+            int xRes = 500;
+            int yRes = 500;
+            double spacing = 0.5;
+            string finalFile = GenerateFinalFileName(point, v1, v2, xRes, yRes, spacing);
 
             Console.WriteLine("Controlling data...");
             if (ControlData(fileName, distance, direction))
@@ -250,7 +253,7 @@ namespace DataView
                 //Console.ReadKey();
 
                 Console.WriteLine("Data passed");
-                double[] spacings = { vData.GetXSpacing(), vData.GetYSpacing(), vData.GetZSpacing() };
+                double[] spacings = { vData.XSpacing, vData.YSpacing, vData.ZSpacing };
                 double[] realPoint = new double[3];
                 for (int i = 0; i < realPoint.Length; i++)
                 {

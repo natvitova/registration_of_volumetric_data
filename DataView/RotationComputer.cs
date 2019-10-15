@@ -25,7 +25,7 @@ namespace DataView
         {
 
             Console.WriteLine("Calculating rotation between point {0} : {1} of value {2} in data: {3} and point {4} : {5} of value {6} in data {7} ",
-                nameof(point1), point1.ToString(), d1.GetValue(point1), nameof(d1), nameof(point2), point2.ToString(), d2.GetValue(point2), nameof(d2));
+                nameof(point1), point1.ToString(), d1.GetValueRealCoordinates(point1), nameof(d1), nameof(point2), point2.ToString(), d2.GetValueRealCoordinates(point2), nameof(d2));
             Matrix<double> A1 = getSymetricMatrixForEigenVectors(d1, point1, count);
 
             Console.WriteLine("symM A1");
@@ -274,7 +274,7 @@ namespace DataView
 
             foreach(Point3D point in pointsInSphere) //finds the minumum and maximum value in the sphere
             {
-                currentValue = d.GetValue(point);
+                currentValue = d.GetValueMatrixCoordinates(point);
 
                 if (currentValue > maxValue)
                     maxValue = currentValue;
@@ -282,15 +282,27 @@ namespace DataView
                 if (currentValue < minValue)
                     minValue = currentValue;
             }
-
+            bool NonTrivial = true;
+            if (maxValue == minValue)
+                NonTrivial = false;
             while(survivingPoints.Count < count && pointsInSphere.Count > 0)
             {
                 int rndIndex = rnd.Next(0, pointsInSphere.Count); //random index in pointsInSphere
-                if (DecideFate(rnd, d.GetValue(pointsInSphere[rndIndex]), minValue, maxValue)) //decides whether to keep the point or not
+                if (NonTrivial)
                 {
-                    //the point is kept
-                    survivingPoints.Add(pointsInSphere[rndIndex]); //add to result
-                    
+                    if (DecideFate(rnd, d.GetValueMatrixCoordinates(pointsInSphere[rndIndex]), minValue, maxValue)) //decides whether to keep the point or not
+                    {
+                        //the point is kept
+                        survivingPoints.Add(pointsInSphere[rndIndex]); //add to result
+
+                    }
+                }
+                else
+                {
+                    if(rnd.NextDouble() > 0.5)
+                    {
+                        survivingPoints.Add(pointsInSphere[rndIndex]); //add to result
+                    }
                 }
                 pointsInSphere.RemoveAt(rndIndex); //removed from pointsInSphere
 
@@ -366,7 +378,11 @@ namespace DataView
 
         
 
-
+        /// <summary>
+        /// FUJKY METODA NEPOUZIVEJ
+        /// </summary>
+        /// <param name="points"></param>
+        /// <returns></returns>
         private static Matrix<double> getSymetricMatrixForEigenVectors(Point3D[] points)
         {
 

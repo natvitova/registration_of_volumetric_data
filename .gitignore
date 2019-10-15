@@ -1,2 +1,3 @@
 DataView/bin/
 *.raw
+.vs/DataView/v16/Server/sqlite3/storage.ide

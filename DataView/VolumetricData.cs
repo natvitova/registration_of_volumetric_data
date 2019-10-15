@@ -360,6 +360,11 @@ namespace DataView
             }
         }
 
+        public int GetValueRealCoordinates(Point3D point)
+        {
+            return GetValueRealCoordinates(point.x, point.y, point.z);
+        }
+
         //Overload
         public int GetValueMatrixCoordinates(Point3D point)
         {
