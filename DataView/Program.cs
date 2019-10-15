@@ -36,11 +36,12 @@ namespace DataView
             Point3D[] points = s.Sample(vData, 10);
 
             FeatureVector[] featureVectors = new FeatureVector[points.Length];
+
             Console.WriteLine("Computing feature vectors.");
             for (int i = 0; i < points.Length; i++)
             {
                 featureVectors[i] = fc.ComputeFeatureVector(vData, points[i]);
-                //Console.WriteLine("fv1:" + i + " " + featureVectors[i].ToString());
+                Console.WriteLine("fv1:" + i + " " + featureVectors[i].ToString());
             }
 
             //----------------------------------------MACRO CT------------------------------------------------
@@ -57,22 +58,25 @@ namespace DataView
             Point3D[] points2 = s2.Sample(vData2, 500);
 
             FeatureVector[] featureVectors2 = new FeatureVector[points2.Length];
+
             Console.WriteLine("Computing feature vectors.");
             for (int i = 0; i < points2.Length; i++)
             {
                 featureVectors2[i] = fc2.ComputeFeatureVector(vData2, points2[i]);
-                //Console.WriteLine("fv2:" + i + " " + featureVectors2[i].ToString());
+                Console.WriteLine("fv2:" + i + " " + featureVectors2[i].ToString());
             }
 
-            //----------------------------------------MATCH --------------------------------------------------
+            //----------------------------------------MATCHES-------------------------------------------------
             IMatcher matcher = new Matcher();
             Console.WriteLine("Matching.");
             Match[] matches = matcher.Match(featureVectors, featureVectors2);
+
             //Console.WriteLine(".......................... MATCHES ..............................");
             //for (int i = 0; i < matches.Length; i++)
             //{
             //    Console.WriteLine(matches[i].ToString());
             //}
+
 
             //------------------------------------GET TRANSFORMATION -----------------------------------------
             ITransformer transformer = new Transformer3D();
@@ -82,9 +86,8 @@ namespace DataView
                 transformations[i] = transformer.GetTransformation(matches[i], vData, vData2);
             }
 
+
             Console.ReadKey();
-
-
 
 
 
@@ -201,6 +204,7 @@ namespace DataView
                 CreateCutsInDirection(v1, v2, xRes, yRes, spacing, rotation);
                 Console.WriteLine("All cuts created");
             }
+
             Console.WriteLine("\n\n\nHOTOVO");
             Console.ReadLine();          
             */
@@ -210,8 +214,8 @@ namespace DataView
 
         public static double[] GiveMeasures() //TODO micro or macro?
         {
-           
-            return new double[] { vData.GetMeassures()[0] / vData.XSpacing, vData.GetMeassures()[1] / vData.YSpacing, vData.GetMeassures()[2] / vData.ZSpacing};
+
+            return new double[] { vData.GetMeassures()[0] / vData.XSpacing, vData.GetMeassures()[1] / vData.YSpacing, vData.GetMeassures()[2] / vData.ZSpacing };
         }
 
         public static void Cut()
@@ -224,37 +228,63 @@ namespace DataView
             double[] point = { 100, 100, 20 };
             double[] v1 = { 1, 0, 0 };
             double[] v2 = { 0, 1, 0 };
-            int xRes = 500;
-            int yRes = 500;
-            double spacing = 0.5;
-            string finalFile = GenerateFinalFileName(point, v1, v2, xRes, yRes, spacing);
 
+            //int distance = 750;
+            //int direction = 2;
+
+            //double[] point = { 150, 150, 150};
+            //double[] v1 = { 1, 0, 0};
+            //double[] v2 = { 0, 1, 0 };
+            //double[] v3 = { 2, 1, 5 };
+
+            //int xRes = 500;
+            //int yRes = 500;
+            //double spacing = 0.5;
+            //string finalFile = GenerateFinalFileName(point, v1, v2, xRes, yRes, spacing);
+
+            Console.WriteLine("Controlling data...");
             if (ControlData(fileName, distance, direction))
             {
-                int[,] cut = vData.Cut(point, v1, v2, xRes, yRes, spacing);
+                //int[] dimenses = vData.GetMeassures();
+                //Console.WriteLine(dimenses[0] + " " + dimenses[1] + " " + dimenses[2]);
+                //Console.ReadKey();
 
-                Console.WriteLine("Cut finished.");
+                Console.WriteLine("Data passed");
+                double[] spacings = { vData.GetXSpacing(), vData.GetYSpacing(), vData.GetZSpacing() };
+                double[] realPoint = new double[3];
+                for (int i = 0; i < realPoint.Length; i++)
+                {
+                    realPoint[i] = point[i] * spacings[i];
+                }
+                Console.WriteLine("Cutting...");
+                int[,] cut = vData.Cut(realPoint, v1, v2, xRes, yRes, spacing);
+
+                Console.WriteLine("Cut finished");
+                Console.WriteLine("Creating bitmap...");
                 PictureMaker pm = new PictureMaker(cut);
                 Bitmap bitmap = pm.MakeBitmap();
-                Console.WriteLine("Bitmap finished.");
+                Console.WriteLine("Bitmap finished");
 
+                Console.WriteLine("Saving bitmap to file...");
                 try
                 {
                     bitmap.Save(finalFile, System.Drawing.Imaging.ImageFormat.Bmp);
-                    Console.WriteLine("Saving finished.");
+                    Console.WriteLine("Save to bitmap succesful");
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine("Saving file failed.");
+                    Console.WriteLine("Save to bitmap failed");
                     Console.Write(e.Message);
                 }
+
                 Console.ReadKey();
             }
             else
             {
-                Console.WriteLine("The distance is higher than the dimension of data in willing direction.");
+                Console.WriteLine("The distance is higher than the dimension.");
                 Console.ReadKey();
             }
+
         }
 
         public static void TestData()
@@ -316,9 +346,6 @@ namespace DataView
             vData2.Read();
             Console.WriteLine("vData2 loaded");
 
-
-
-
             //Point3D a = new Point3D(100, 250, 250);
             //Point3D b = new Point3D(100, 250, 250);
             //Console.WriteLine("Value at point {0} is {1}", nameof(a), vData1.GetValue(a));
@@ -330,6 +357,7 @@ namespace DataView
 
             Point3D a = null;
             Point3D b = null;
+
             for (int i = 100; i < 500; i += 100)
             {
                 for (int j = 100; j < 500; j += 100)
@@ -342,8 +370,6 @@ namespace DataView
                     }
                 }
             }
-
-
             Console.ReadLine();
         }
 

@@ -27,11 +27,13 @@ namespace DataView
             Console.WriteLine("Calculating rotation between point {0} : {1} of value {2} in data: {3} and point {4} : {5} of value {6} in data {7} ",
                 nameof(point1), point1.ToString(), d1.GetValue(point1), nameof(d1), nameof(point2), point2.ToString(), d2.GetValue(point2), nameof(d2));
             Matrix<double> A1 = getSymetricMatrixForEigenVectors(d1, point1, count);
+
             Console.WriteLine("symM A1");
             //Console.WriteLine("Matrix {0} : {1}", nameof(A1), A1.ToString());
             var evd1 = A1.Evd();//eigenvalues for d1
 
             Matrix<double> A2 = getSymetricMatrixForEigenVectors(d2, point2, count);
+
             Console.WriteLine("symM A2");
             //Console.WriteLine("Matrix {0} : {1}", nameof(A2), A2.ToString());
             var evd2 = A2.Evd();//eigenvalues for d2
@@ -40,6 +42,9 @@ namespace DataView
 
             Matrix<double> rotationMatrix = ComputeChangeOfBasisMatrixUsingTransposition(evd1.EigenVectors, evd2.EigenVectors); //eigenvectors make up an orthonormal basis    
             Console.WriteLine("Change of basis matrix:");
+
+            //Console.WriteLine("Change of basis matrix:");
+
             //Console.WriteLine(rotationMatrix.ToString());
 
             //TestChangeOfBasisMatrixCorrectness(rotationMatrix, evd1.EigenVectors, evd2.EigenVectors);

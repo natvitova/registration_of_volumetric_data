@@ -9,11 +9,10 @@ namespace DataView
 {
     class Transformer3D : ITransformer
     {
-
-
         public Transform3D GetTransformation(Match m, VolumetricData d1, VolumetricData d2)
         {
             int count = 1000;
+
             Point3D a = m.GetF1().GetPoint();
             Point3D b = m.GetF2().GetPoint();
 
@@ -26,7 +25,5 @@ namespace DataView
 
             return new Transform3D(rotationMatrix, translationVector);
         }
-
-
     }
 }
