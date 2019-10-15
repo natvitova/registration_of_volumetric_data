@@ -35,6 +35,16 @@ namespace DataView
             this.percentage = percentage;
         }
 
+        public FeatureVector GetF1()
+        {
+            return this.f1;
+        }
+
+        public FeatureVector GetF2()
+        {
+            return this.f2;
+        }
+
         public override string ToString()
         {
             return "f1: " + f1.ToString() + " f2: " + f2.ToString();

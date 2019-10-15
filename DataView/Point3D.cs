@@ -19,6 +19,16 @@ namespace DataView
             this.z = z;
         }
 
+        public double GetCoordinate(int direction)
+        {
+            switch (direction)
+            {
+                case 0: return this.x;
+                case 1: return this.y;
+                default: return this.z;
+            }
+        }
+
         public override string ToString()
         {
             return "x:" + x + " y:" + y + " z:" + z;

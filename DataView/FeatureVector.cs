@@ -13,6 +13,10 @@ namespace DataView
     {
         public int r;
         private double[] features;
+        public double[] Features
+        {
+            get { return features; }
+        }
         private Point3D point;
 
         /// <summary>
@@ -86,6 +90,11 @@ namespace DataView
             if (axis == 3)
                 return this.features[3];
             return this.features[4];
+        }
+
+        public Point3D GetPoint()
+        {  
+            return this.point;
         }
 
         public override string ToString()
