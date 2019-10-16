@@ -8,21 +8,16 @@ namespace DataView
 {
     class Sampler : ISampler
     {
+        private int rSphere = 5;
         public Point3D[] Sample(VolumetricData d, int count)
         {
             Point3D[] points = new Point3D[count];
 
-            int[] measures = d.GetMeassures();
-            int rSphere = 5;
+            int[] measures = d.Measures;
             Random r = new Random();
 
             for (int i = 0; i < count; i++)
             {
-                //DEBUG
-                //double x = r.Next(rSphere, measures[0] - rSphere)*d.GetXSpacing();
-                //double y = r.Next(rSphere, measures[1] - rSphere)*d.GetYSpacing();
-                //double z = r.Next(rSphere, measures[2] - rSphere)*d.GetZSpacing();
-
                 double x = r.Next(rSphere, measures[0] - rSphere);
                 double y = r.Next(rSphere, measures[1] - rSphere);
                 double z = r.Next(rSphere, measures[2] - rSphere);
@@ -31,6 +26,5 @@ namespace DataView
             }
             return points;
         }
-        
     }
 }

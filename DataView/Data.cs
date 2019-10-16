@@ -101,13 +101,10 @@ namespace DataView
             return result;
         }
 
-
-        public double[] ElementSpacing { get => elementSpacing;}
-        public int[] DimSize { get => dimSize;}
-        public string ElementDataFile { get => elementDataFile;}
-        public string ElementType { get => elementType;}
+        public double[] ElementSpacing { get => elementSpacing; }
+        public int[] DimSize { get => dimSize; }
+        public string ElementDataFile { get => elementDataFile; }
+        public string ElementType { get => elementType; }
 
     }
-
-
 }

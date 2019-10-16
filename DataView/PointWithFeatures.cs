@@ -15,7 +15,7 @@ namespace DataView
             this.featureVector = featureVector;
         }
 
-        public PointWithFeatures(Point3D point, double[] featureVector) : base(point.x, point.y, point.z)
+        public PointWithFeatures(Point3D point, double[] featureVector) : base(point.X, point.Y, point.Z)
         {
             this.featureVector = featureVector;
         }

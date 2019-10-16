@@ -14,10 +14,9 @@ namespace DataView
         public Vector<double> v3;
 
         Point3D p;
-
         public Point3D[] Qs;
-
         Random rnd;
+
 
         public PCATester(int count)
         {
@@ -28,7 +27,6 @@ namespace DataView
             GenerateRandomPoint(500);
             GenerateQPoints(count);
         }
-
 
         private void GenerateQPoints(int count)
         {
@@ -43,9 +41,9 @@ namespace DataView
                 b = rnd.NextDouble() * 100 - 50;
                 c = rnd.NextDouble() * 10 - 5;
 
-                x = p.x + a * v1[0] + b * v2[0] + c * v3[0];
-                y = p.y + a * v1[1] + b * v2[1] + c * v3[1];
-                z = p.z + a * v1[2] + b * v2[2] + c * v3[2];
+                x = p.X + a * v1[0] + b * v2[0] + c * v3[0];
+                y = p.Y + a * v1[1] + b * v2[1] + c * v3[1];
+                z = p.Z + a * v1[2] + b * v2[2] + c * v3[2];
 
                 Qs[i] = new Point3D(x, y, z);
             }
@@ -99,10 +97,6 @@ namespace DataView
         {
             return u.Multiply(ScalarProduct(v, u) / ScalarProduct(u, u));
         }
-
-
-
-
 
     }
 }

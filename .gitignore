@@ -1,3 +1,7 @@
 DataView/bin/
 *.raw
-.vs/DataView/v16/Server/sqlite3/storage.ide
+DataView/obj/
+*.chache
+.vs/DataView/v16/.suo
+.vs/DataView/v16/Server/
+*.ide*

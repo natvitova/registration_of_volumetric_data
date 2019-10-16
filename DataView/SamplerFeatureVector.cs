@@ -11,12 +11,9 @@ namespace DataView
         public Point3D[] Sample(VolumetricData d, int count)
         {
             Random rnd = new Random();
-            int quality = 5;//how many times this method discards undersirable points (higher quality -> more proccesor time)
-           
-            int[] measures = d.GetMeassures();
-
+            int quality = 5; //how many times this method discards undersirable points (higher quality -> more proccesor time)
+            int[] measures = d.Measures;
             int border = 5;
-
             
             List<Point3D> points = GenerateRandomPoints(d, count, border, rnd);
             List<PointWithFeatures> pointsWithFeatures = ComputeFeaturesForPoints(points, d);
@@ -30,17 +27,14 @@ namespace DataView
                 RemovePointsUnderAverage(ratedPoints, averageRating); 
                 AddPointsToList(ratedPoints, d, count, border, measures, rnd); //this should increase the average (statistically)
             }
-
-
             
             Point3D[] resultPoints = new Point3D[count]; 
             for(int i = 0; i < count; i++)//list of RatedPoint into array of Point3D
             {
-                resultPoints[i] = new Point3D(ratedPoints[i].x, ratedPoints[i].y, ratedPoints[i].z);
+                resultPoints[i] = new Point3D(ratedPoints[i].X, ratedPoints[i].Y, ratedPoints[i].Z);
             }
 
             return resultPoints;
-
         }
 
         /// <summary>
@@ -239,7 +233,7 @@ namespace DataView
         private Point3D[] GenerateRandomPoints(VolumetricData d, int count, int border)
         {
             Point3D[] points = new Point3D[count];
-            int[] measures = d.GetMeassures();
+            int[] measures = d.Measures;
             Random r = new Random();
 
             for (int i = 0; i < count; i++)
@@ -252,8 +246,6 @@ namespace DataView
             }
             return points;
         }
-
-
 
         /// <summary>
         /// Generates 1 random point inside border, using Random rnd
@@ -284,7 +276,7 @@ namespace DataView
         private List<Point3D> GenerateRandomPoints(VolumetricData d, int count, int border, Random rnd)
         {
             List<Point3D> points = new List<Point3D>();
-            int[] measures = d.GetMeassures();
+            int[] measures = d.Measures;
 
             for (int i = 0; i < count; i++)
             {

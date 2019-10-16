@@ -17,9 +17,9 @@ namespace DataView
 
         public Match(FeatureVector f1)
         {
-            this.f1 = f1;
-            this.f2 = new FeatureVector();
-            this.percentage = 0;
+            this.F1 = f1;
+            this.F2 = new FeatureVector();
+            this.Percentage = 0;
         }
 
         /// <summary>
@@ -30,24 +30,18 @@ namespace DataView
         /// <param name="percentage"></param>
         public Match(FeatureVector f1, FeatureVector f2, double percentage)
         {
-            this.f1 = f1;
-            this.f2 = f2;
-            this.percentage = percentage;
+            this.F1 = f1;
+            this.F2 = f2;
+            this.Percentage = percentage;
         }
 
-        public FeatureVector GetF1()
-        {
-            return this.f1;
-        }
-
-        public FeatureVector GetF2()
-        {
-            return this.f2;
-        }
+        public double Percentage { get => percentage; set => percentage = value; }
+        internal FeatureVector F1 { get => f1; set => f1 = value; }
+        internal FeatureVector F2 { get => f2; set => f2 = value; }
 
         public override string ToString()
         {
-            return "f1: " + f1.ToString() + " f2: " + f2.ToString();
+            return "f1: " + F1.ToString() + " f2: " + F2.ToString() + " p: " + Percentage;
         }
     }
 }

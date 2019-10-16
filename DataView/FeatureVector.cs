@@ -11,12 +11,8 @@ namespace DataView
     /// </summary>
     class FeatureVector
     {
-        public int r;
+        private int r;
         private double[] features;
-        public double[] Features
-        {
-            get { return features; }
-        }
         private Point3D point;
 
         /// <summary>
@@ -24,9 +20,9 @@ namespace DataView
         /// </summary>
         public FeatureVector()
         {
-            this.features = new double[] { 0, 0, 0, 0, 0 };
-            this.r = 5;
-            this.point = new Point3D(0,0,0);
+            this.Features = new double[] { 0, 0, 0, 0, 0 };
+            this.R = 5;
+            this.Point = new Point3D(0, 0, 0);
         }
 
         /// <summary>
@@ -39,9 +35,9 @@ namespace DataView
         /// <param name="x5"></param>
         public FeatureVector(Point3D p, double x1, double x2, double x3, double x4, double x5)
         {
-            this.point = p;
-            this.features = new double[] { x1, x2, x3, x4, x5};
-            this.r = 5;
+            this.Point = p;
+            this.Features = new double[] { x1, x2, x3, x4, x5 };
+            this.R = 5;
         }
 
         /// <summary>
@@ -51,13 +47,13 @@ namespace DataView
         public double Magnitude()
         {
             double sum = 0;
-            for(int i = 0; i < this.r; i++)
+            for (int i = 0; i < this.R; i++)
             {
                 sum += this.Coordinate(i) * this.Coordinate(i);
             }
             return Math.Sqrt(sum);
         }
-        
+
         /// <summary>
         /// 
         /// </summary>
@@ -66,11 +62,11 @@ namespace DataView
         public double DistTo2(FeatureVector p)
         {
             double sum = 0;
-            for(int i = 0; i < r; i++)
+            for (int i = 0; i < R; i++)
             {
-                double d = this.features[i] - p.features[i];
-                sum += d*d;
-            }            
+                double d = this.Features[i] - p.Features[i];
+                sum += d * d;
+            }
             return sum;
         }
 
@@ -82,24 +78,23 @@ namespace DataView
         public double Coordinate(int axis)
         {
             if (axis == 0)
-                return this.features[0];
+                return this.Features[0];
             if (axis == 1)
-                return this.features[1];
+                return this.Features[1];
             if (axis == 2)
-                return this.features[2];
+                return this.Features[2];
             if (axis == 3)
-                return this.features[3];
-            return this.features[4];
+                return this.Features[3];
+            return this.Features[4];
         }
 
-        public Point3D GetPoint()
-        {  
-            return this.point;
-        }
+        public double[] Features { get => features; set => features = value; }
+        internal Point3D Point { get => point; set => point = value; }
+        public int R { get => r; set => r = value; }
 
         public override string ToString()
         {
-            return point.ToString() + "; " + Math.Round(features[0],2) +", " + Math.Round(features[1], 2) + ", " + Math.Round(features[2], 2) + ", " + Math.Round(features[3], 2) + ", " + Math.Round(features[4], 2);
+            return Point.ToString() + "; " + Math.Round(Features[0], 2) + ", " + Math.Round(Features[1], 2) + ", " + Math.Round(Features[2], 2) + ", " + Math.Round(Features[3], 2) + ", " + Math.Round(Features[4], 2);
         }
     }
 }

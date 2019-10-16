@@ -9,8 +9,6 @@ namespace DataView
 {
     class TestDataBuilder
     {
-        
-
         public TestDataBuilder()
         {
 
@@ -43,8 +41,6 @@ namespace DataView
 
         public void CreateDataFile(string fileName, int[] dimSize, string cylinderRotation)
         {
-            
-
             BinaryWriter bw;
             try {
                  bw = new BinaryWriter(new FileStream(string.Format("{0}{1}{2}.raw", Environment.CurrentDirectory, System.IO.Path.DirectorySeparatorChar, fileName), FileMode.Create));
@@ -61,13 +57,11 @@ namespace DataView
             int[] center = { 50, 50, 50 };
             WriteCylinder(bw, dimSize, center, 50, 0, 127, cylinderRotation);
             bw.Close();
-           
         }
 
         private void WriteCylinder(BinaryWriter bw, int[] dimSize, int[] center, double radius, byte c1, byte c2, string rotation)
         {
             double distance;
-            
 
             int width = dimSize[0];//x
             int depth = dimSize[1];//y
@@ -116,7 +110,6 @@ namespace DataView
                 return;
             }
         }
-
 
         /// <summary>
         /// Writes a circle of colour c1, everything else is c2

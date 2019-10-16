@@ -12,13 +12,12 @@ namespace DataView
     /// </summary>
     class VolumetricData
     {
-        public int[][,] vData;
+        private int[][,] vData; //TODO private
         private double xSpacing;
         private double ySpacing;
         private double zSpacing;
         private double iSpacing;
         private Data data;
-
 
         /// <summary>
         /// 
@@ -45,12 +44,12 @@ namespace DataView
                 int depth = Data.DimSize[1];
                 int height = Data.DimSize[2];
 
-                vData = new int[height][,];
+                VData = new int[height][,];
                 int c = 0;
 
                 for (int k = 0; k < height; k++)
                 {
-                    vData[k] = new int[width, depth];
+                    VData[k] = new int[width, depth];
                     for (int i = 0; i < width; i++)
                     {
                         for (int j = 0; j < depth; j++)
@@ -72,13 +71,13 @@ namespace DataView
                                 Console.WriteLine("Wrong element type.");
                             }
 
-                            vData[k][i, j] = c;
+                            VData[k][i, j] = c;
                             //Console.WriteLine(c);
                         }
                     }
                 }
                 br.Close();
-                return vData;
+                return VData;
             }
         }
 
@@ -185,7 +184,7 @@ namespace DataView
             }
 
             VolumetricData vData = new VolumetricData(Data);
-            vData.SetVData(cut);
+            vData.VData = cut;
             return vData;
         }
 
@@ -305,11 +304,7 @@ namespace DataView
         /// <returns></returns>
         public int GetValueMatrixCoordinates(double x, double y, double z) // Interpolation3D in matrix coordinates
         {
-            //DEBUG, NOT IN CUTS!!!!!
-            //int xLDC = (int)(x / xSpacing); // coordinates of left down corner of the rectangle in the array in which the pixel is situated
-            //int yLDC = (int)(y / ySpacing);
-            //int zLDC = (int)(z / zSpacing);
-            //Console.WriteLine("x: " + xLDC + " y: " + yLDC + " z: " + zLDC);
+            //TODO CUTS - real or matrix coordinates
 
             int xLDC = (int)(x); // coordinates of left down corner of the rectangle in the array in which the pixel is situated
             int yLDC = (int)(y);
@@ -333,6 +328,11 @@ namespace DataView
                 //Console.WriteLine(-1);
                 return 0;
             }
+        }
+
+        public int GetValueMatrixCoordinates(Point3D point)
+        {
+            return GetValueMatrixCoordinates(point.X, point.Y, point.Z);
         }
 
         public int GetValueRealCoordinates(double x, double y, double z) // Interpolation3D in real coordinates 
@@ -362,13 +362,7 @@ namespace DataView
 
         public int GetValueRealCoordinates(Point3D point)
         {
-            return GetValueRealCoordinates(point.x, point.y, point.z);
-        }
-
-        //Overload
-        public int GetValueMatrixCoordinates(Point3D point)
-        {
-            return GetValueMatrixCoordinates(point.x, point.y, point.z);
+            return GetValueRealCoordinates(point.X, point.Y, point.Z);
         }
 
         /// <summary>
@@ -419,13 +413,13 @@ namespace DataView
                 yRDC = yLDC;
             }
 
-            int valueA = vData[indexLDCZ][xLDC, yLDC];
-            int valueB = vData[indexLDCZ][xRDC, yLDC];
+            int valueA = VData[indexLDCZ][xLDC, yLDC];
+            int valueB = VData[indexLDCZ][xRDC, yLDC];
 
             int helpValueA = InterpolationWithinMatrix(valueA, valueB, pixelX, xLDC, XSpacing);
 
-            int valueC = vData[indexLDCZ][xLDC, yRDC];
-            int valueD = vData[indexLDCZ][xRDC, yRDC];
+            int valueC = VData[indexLDCZ][xLDC, yRDC];
+            int valueD = VData[indexLDCZ][xRDC, yRDC];
 
             int helpValueB = InterpolationWithinMatrix(valueC, valueD, pixelX, xLDC, XSpacing);
 
@@ -447,13 +441,13 @@ namespace DataView
                 yRDC = yLDC;
             }
 
-            int valueA = vData[indexLDCZ][xLDC, yLDC];
-            int valueB = vData[indexLDCZ][xRDC, yLDC];
+            int valueA = VData[indexLDCZ][xLDC, yLDC];
+            int valueB = VData[indexLDCZ][xRDC, yLDC];
 
             int helpValueA = InterpolationReal(valueA, valueB, pixelX, xLDC, XSpacing);
 
-            int valueC = vData[indexLDCZ][xLDC, yRDC];
-            int valueD = vData[indexLDCZ][xRDC, yRDC];
+            int valueC = VData[indexLDCZ][xLDC, yRDC];
+            int valueD = VData[indexLDCZ][xRDC, yRDC];
 
             int helpValueB = InterpolationReal(valueC, valueD, pixelX, xLDC, XSpacing);
 
@@ -471,20 +465,8 @@ namespace DataView
         public double ZSpacing { get => zSpacing; set => zSpacing = value; }
         public double ISpacing { get => iSpacing; set => iSpacing = value; }
         internal Data Data { get => data; set => data = value; }
-
-        public int[] GetMeassures()
-        {
-            return new int[] { Data.DimSize[0], Data.DimSize[1], Data.DimSize[2] };
-        } 
-        
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="vData"></param>
-        public void SetVData(int[][,] vData)
-        {
-            this.vData = vData;
-        } //TODO set private?
+        public int[] Measures { get => Data.DimSize; }
+        public int[][,] VData { get => vData; set => vData = value; }
 
     }
 }

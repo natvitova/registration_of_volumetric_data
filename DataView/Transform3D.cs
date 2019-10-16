@@ -10,26 +10,20 @@ namespace DataView
     class Transform3D
     {
         private Matrix<double> rotationMatrix;
-        public Matrix<double> RotationMatrix
-        {
-            get { return rotationMatrix; }
-        }
-
         private Vector<double> translationVector;
-        public Vector<double> TranslationVector
-        {
-            get { return translationVector; }
-        }
 
         public Transform3D(Matrix<double> rotationMatrix, Vector<double> translationVector)
         {
-            this.rotationMatrix = rotationMatrix;
-            this.translationVector = translationVector;
+            RotationMatrix = rotationMatrix;
+            TranslationVector = translationVector;
         }
+
+        public Matrix<double> RotationMatrix { get => rotationMatrix; set => rotationMatrix = value; }
+        public Vector<double> TranslationVector { get => translationVector; set => translationVector = value; }
 
         public override string ToString()
         {
-            return RotationMatrix.ToString();
+            return RotationMatrix.ToString() + TranslationVector.ToString();
         }
     }
 }

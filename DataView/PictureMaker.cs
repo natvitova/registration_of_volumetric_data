@@ -46,9 +46,9 @@ namespace DataView
                         max = c;
                     }
                 }
-               // Console.WriteLine();//
+                // Console.WriteLine();//
             }
-          //  Console.ReadKey();//
+            //  Console.ReadKey();//
             Bitmap bitmap = new Bitmap(width, height);
             if(max == 0)
             {
