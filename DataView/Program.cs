@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+ 
 
 namespace DataView
 {
@@ -218,18 +219,24 @@ namespace DataView
             for (int i = 0; i < transformations.Length; i++)
             {
                 transformations[i] = transformer.GetTransformation(matches[i], vData, vData2);
-                if (matches[i].Percentage > trashHold)
-                {
-                    countT9++;
-                    Console.WriteLine(matches[i].ToString());
-                    Console.WriteLine(transformations[i].ToString());
-                }
+                //if (matches[i].Percentage > trashHold)
+                //{
+                //    countT9++;
+                //    Console.WriteLine(matches[i].ToString());
+                //    Console.WriteLine(transformations[i].ToString());
+                //}
             }
 
-            Console.WriteLine("\nAll transformations obtained.\n");
-            Console.WriteLine("Count of all transformations: ..........          " + transformations.Length);
-            Console.WriteLine("Count of all transformations better than " + trashHold + ": " + countT9);
-            Console.ReadKey();
+            //Console.WriteLine("\nAll transformations obtained.\n");
+            //Console.WriteLine("Count of all transformations: ..........          " + transformations.Length);
+            //Console.WriteLine("Count of all transformations better than " + trashHold + ": " + countT9);
+            //Console.ReadKey();
+
+            //Candidate.initSums(vData.Measures[0], vData.Measures[1], vData.Measures[2]);
+            //Density d = new Density(); // finder, we need an instance for certain complicated reason
+            //Transform3D solution = d.Find(transformations);
+            //Console.WriteLine(solution);
+            //Console.ReadKey();
         }
 
         public static double[] GiveMeasures() //TODO micro or macro?
