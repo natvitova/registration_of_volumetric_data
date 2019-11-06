@@ -21,7 +21,7 @@ namespace DataView
         public static List<Point3D> GetSphere(Point3D x, double r)
         {
             List<Point3D> points = new List<Point3D>();
-            double step = r / 3.0;
+            double step = 0.5;
 
             //Point3D A = new Point3D(Math.Floor((x.x - r) / d.GetXSpacing()), Math.Ceiling((x.y + r) / d.GetYSpacing()), Math.Floor((x.z - r) / d.GetZSpacing()));
             //Point3D B = new Point3D(Math.Ceiling((x.x + r) / d.GetXSpacing()), Math.Ceiling((x.y + r) / d.GetYSpacing()), Math.Floor((x.z - r) / d.GetZSpacing()));
@@ -144,6 +144,26 @@ namespace DataView
             norm = Math.Sqrt(norm);
             return new FeatureVector(p, fv[0] / norm, fv[1] / norm, fv[2] / norm, fv[3] / norm, fv[4] / norm);
             //return new FeatureVector(p, fv[0], fv[1], fv[2], fv[3], fv[4]);
+        }
+
+        public FeatureVector ComputeFeatureVectorA(int[] t, Point3D p)
+        {
+            double[] fv = new double[5];
+            double norm = 0;
+            for (double r = 0.5; r <= 2.5; r += 0.5)
+            {
+                double sum = 0;
+                List<Point3D> points = GetSphere(p, r);
+                foreach (Point3D point in points)
+                {
+                    sum += (point.X + t[0]) + 3 * (point.Y + t[1]) + 8 * (point.Z + t[2]);
+                }
+                int i = (int)(r / 0.5) - 1;
+                norm += sum;
+                fv[i] = sum;
+            }
+            norm = Math.Sqrt(norm);
+            return new FeatureVector(p, fv[0] / norm, fv[1] / norm, fv[2] / norm, fv[3] / norm, fv[4] / norm);
         }
     }
 }

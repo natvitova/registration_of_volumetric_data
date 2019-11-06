@@ -22,7 +22,7 @@ namespace DataView
             //translationVector[1] = p2.GetCoordinate(1) / d2.YSpacing - p1.GetCoordinate(1) / d1.YSpacing;
             //translationVector[2] = p2.GetCoordinate(2) / d2.ZSpacing - p1.GetCoordinate(2) / d1.ZSpacing;
 
-            translationVector[0] = p2.X - p1.X;
+            translationVector[0] = p2.X - p1.X; // real coordinates
             translationVector[1] = p2.Y - p1.Y;
             translationVector[2] = p2.Z - p1.Z;
 

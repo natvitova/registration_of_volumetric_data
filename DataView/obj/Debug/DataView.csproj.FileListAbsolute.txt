@@ -34,3 +34,15 @@ C:\Users\Ja\Desktop\Játra\AfterMerger\registration_of_volumetric_data\DataView\
 C:\Users\vitova\Documents\GitHub\registration_of_volumetric_data\DataView\bin\Debug\MathNet.Numerics.dll
 C:\Users\vitova\Documents\GitHub\registration_of_volumetric_data\DataView\bin\Debug\MathNet.Numerics.xml
 C:\Users\vitova\Documents\GitHub\registration_of_volumetric_data\DataView\obj\Debug\DataView.csproj.CopyComplete
+C:\Users\Milada\Documents\GitHub\registration_of_volumetric_data\DataView\obj\Debug\DataView.csprojAssemblyReference.cache
+C:\Users\Milada\Documents\GitHub\registration_of_volumetric_data\DataView\obj\Debug\DataView.exe
+C:\Users\Milada\Documents\GitHub\registration_of_volumetric_data\DataView\obj\Debug\DataView.pdb
+C:\Users\Milada\Documents\GitHub\registration_of_volumetric_data\DataView\bin\Debug\DataView.exe.config
+C:\Users\Milada\Documents\GitHub\registration_of_volumetric_data\DataView\bin\Debug\DataView.exe
+C:\Users\Milada\Documents\GitHub\registration_of_volumetric_data\DataView\bin\Debug\DataView.pdb
+C:\Users\Milada\Documents\GitHub\registration_of_volumetric_data\DataView\bin\Debug\MathNet.Numerics.dll
+C:\Users\Milada\Documents\GitHub\registration_of_volumetric_data\DataView\bin\Debug\TransformSelect.exe
+C:\Users\Milada\Documents\GitHub\registration_of_volumetric_data\DataView\bin\Debug\TransformSelect.pdb
+C:\Users\Milada\Documents\GitHub\registration_of_volumetric_data\DataView\bin\Debug\TransformSelect.exe.config
+C:\Users\Milada\Documents\GitHub\registration_of_volumetric_data\DataView\bin\Debug\MathNet.Numerics.xml
+C:\Users\Milada\Documents\GitHub\registration_of_volumetric_data\DataView\obj\Debug\DataView.csproj.CopyComplete

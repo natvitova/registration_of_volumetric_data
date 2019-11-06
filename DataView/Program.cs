@@ -1,6 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
- 
+
 
 namespace DataView
 {
@@ -26,7 +27,9 @@ namespace DataView
             string fileName = @"P01_b_Prase_1_druhe_vys.mhd";
             string fileName2 = fileName;
 
-            MainFunction(fileName, fileName2);
+            //MainFunction(fileName, fileName2);
+
+            MainFunctionAD();
 
 
 
@@ -148,7 +151,6 @@ namespace DataView
             Console.ReadLine();          
             */
             //---------------------------------------Matějův divný kód - NESAHAT!!!!!!!!!!!!!!!!!!!!----------
-
         }
 
         public static void MainFunction(string micro, string macro)
@@ -212,36 +214,121 @@ namespace DataView
             //------------------------------------GET TRANSFORMATION -----------------------------------------
             ITransformer transformer = new Transformer3D();
             Console.WriteLine("Computing transformations.\n");
-            Transform3D[] transformations = new Transform3D[matches.Length];
+            //Transform3D[] transformations = new Transform3D[matches.Length];
 
-            double trashHold = 99.9999;
-            int countT9 = 0;
-            for (int i = 0; i < transformations.Length; i++)
+            double threshold = 99.9999;
+            List<Transform3D> transformations = new List<Transform3D>();
+            //int countT9 = 0;
+
+            for (int i = 0; i < matches.Length; i++)
             {
-                transformations[i] = transformer.GetTransformation(matches[i], vData, vData2);
-                //if (matches[i].Percentage > trashHold)
-                //{
-                //    countT9++;
-                //    Console.WriteLine(matches[i].ToString());
-                //    Console.WriteLine(transformations[i].ToString());
-                //}
+                if (matches[i].Similarity > threshold)
+                {
+                    transformations.Add(transformer.GetTransformation(matches[i], vData, vData2));
+                }
             }
+
+            //for (int i = 0; i < transformations.Length; i++)
+            //{
+            //    transformations[i] = transformer.GetTransformation(matches[i], vData, vData2);
+            //    if (matches[i].Percentage > trashHold)
+            //    {
+            //        countT9++;
+            //        Console.WriteLine(matches[i].ToString());
+            //        Console.WriteLine(transformations[i].ToString());
+            //    }
+            //}
 
             //Console.WriteLine("\nAll transformations obtained.\n");
             //Console.WriteLine("Count of all transformations: ..........          " + transformations.Length);
             //Console.WriteLine("Count of all transformations better than " + trashHold + ": " + countT9);
             //Console.ReadKey();
 
-            //Candidate.initSums(vData.Measures[0], vData.Measures[1], vData.Measures[2]);
-            //Density d = new Density(); // finder, we need an instance for certain complicated reason
-            //Transform3D solution = d.Find(transformations);
-            //Console.WriteLine(solution);
-            //Console.ReadKey();
+            Candidate.initSums(vData.Measures[0] / vData.XSpacing, vData.Measures[1] / vData.YSpacing, vData.Measures[2] / vData.ZSpacing);
+            Density d = new Density(); // finder, we need an instance for certain complicated reason
+            Transform3D solution = d.Find(transformations.ToArray());
+            Console.WriteLine(solution);
+            Console.WriteLine("Solution found.");
+            Console.ReadKey();
         }
 
-        public static double[] GiveMeasures() //TODO micro or macro?
+        public static void MainFunctionAD()
         {
-            return new double[] { vData.Measures[0] / vData.XSpacing, vData.Measures[1] / vData.YSpacing, vData.Measures[2] / vData.ZSpacing };
+            //----------------------------------------PARAMS -------------------------------------------------
+            double threshold = 20; // percentage
+            int numberOfPoints = 10_000; // micro
+            int numberOfPoints2 = 10_000;
+            ArtificialData aData = new ArtificialData(1, 3, 8);
+            int [] translation = new int[] { 15, 15, 15 };
+            aData.SetSmallerData(translation);
+            vData = aData.VD2; // micro
+            vData2 = aData.VD;
+            Console.WriteLine("Artificial data created succesfully.");
+
+            //----------------------------------------DATA ---------------------------------------------------
+            FeatureComputer fc = new FeatureComputer();
+            ISampler s = new Sampler();
+            FeatureComputer fc2 = new FeatureComputer();
+            //ISampler s2 = new SamplerFake();
+            SamplerFake s2 = new SamplerFake();
+            s2.getTranslation(translation);
+
+            Console.WriteLine("Sampling.");
+            //Point3D[] points = s.Sample(vData, numberOfPoints);
+            Point3D[] points2 = s2.Sample(vData2, numberOfPoints2); // macro
+            Point3D[] points = new Point3D[points2.Length];
+            int[] cut = aData.Cut;
+            for (int i = 0; i < points.Length; i++)
+            {
+                points[i] = new Point3D(points2[i].X - cut[0], points2[i].Y - cut[1], points2[i].Z - cut[2]);
+            }
+
+            FeatureVector[] featureVectors = new FeatureVector[points.Length];
+            FeatureVector[] featureVectors2 = new FeatureVector[points2.Length];
+
+            Console.WriteLine("Computing feature vectors.");
+            for (int i = 0; i < points.Length; i++)
+            {
+                featureVectors[i] = fc.ComputeFeatureVectorA(translation, points[i]);
+                //Console.WriteLine("fv1:" + i + " " + featureVectors[i].ToString());
+            }
+
+            int[] tr2 = new int[] { 0, 0, 0 };
+            for (int i = 0; i < points2.Length; i++)
+            {
+                featureVectors2[i] = fc2.ComputeFeatureVectorA(tr2, points2[i]);
+                //Console.WriteLine("fv2:" + i + " " + featureVectors2[i].ToString());
+            }
+
+            //----------------------------------------MATCHES-------------------------------------------------
+            IMatcher matcher = new Matcher();
+            Console.WriteLine("\nMatching.");
+            Match[] matches = matcher.Match(featureVectors, featureVectors2, threshold);
+
+            Console.WriteLine(matches.Length + ".......................... MATCHES ..............................");
+
+            //------------------------------------GET TRANSFORMATION -----------------------------------------
+            ITransformer transformer = new Transformer3D();
+            Console.WriteLine("Computing transformations.\n");
+            //Transform3D[] transformations = new Transform3D[matches.Length];
+
+            List<Transform3D> transformations = new List<Transform3D>();
+            //int countT9 = 0;
+
+            for (int i = 0; i < matches.Length; i++)
+            {
+                Transform3D t = transformer.GetTransformation(matches[i], vData, vData2);
+                transformations.Add(t);
+                //Console.WriteLine(t);
+            }
+
+            Console.WriteLine("Looking for optimal transformation.\n");
+            Candidate.initSums(vData.Measures[0] / vData.XSpacing, vData.Measures[1] / vData.YSpacing, vData.Measures[2] / vData.ZSpacing);
+            Density d = new Density(); // finder, we need an instance for certain complicated reason
+            Transform3D solution = d.Find(transformations.ToArray());
+            Console.WriteLine(solution);
+            Console.WriteLine("Solution found.");
+            Console.ReadKey();
         }
 
         public static void Cut()

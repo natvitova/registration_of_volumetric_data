@@ -8,9 +8,10 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>DataView</RootNamespace>
     <AssemblyName>DataView</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>x64</PlatformTarget>
@@ -48,6 +49,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ArtificialData.cs" />
     <Compile Include="Cut.cs" />
     <Compile Include="FeatureComputer.cs" />
     <Compile Include="FeatureVector.cs" />
@@ -67,8 +69,8 @@
     <Compile Include="RotationComputer.cs" />
     <Compile Include="Sampler.cs" />
     <Compile Include="SamplerFeatureVector.cs" />
+    <Compile Include="SamplerFake.cs" />
     <Compile Include="TestDataBuilder.cs" />
-    <Compile Include="Transform3D.cs" />
     <Compile Include="Transformer3D.cs" />
     <Compile Include="VolumetricData.cs" />
     <Compile Include="Program.cs" />
@@ -77,6 +79,12 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\TransformSelect\TransformSelect.csproj">
+      <Project>{6d50024e-1984-4ea2-9455-8684ad1c4690}</Project>
+      <Name>TransformSelect</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

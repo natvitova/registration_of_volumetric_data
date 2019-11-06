@@ -12,7 +12,7 @@ namespace DataView
     /// </summary>
     class VolumetricData
     {
-        private int[][,] vData; //TODO private
+        private int[][,] vData;
         private double xSpacing;
         private double ySpacing;
         private double zSpacing;
@@ -221,20 +221,17 @@ namespace DataView
             }
 
             int[][,] cut = new int[zRes][,];
-            double x, y, z;
-
             for (int k = 0; k < zRes; k++)
             {
                 cut[k] = new int[xRes, yRes];
                 for (int i = 0; i < xRes; i++)
                 {
-                    x = point[0] + i * unitVector2[0] + k * unitVector3[0];
-                    y = point[1] + i * unitVector2[1] + k * unitVector3[1];
-                    z = point[2] + i * unitVector2[2] + k * unitVector3[2];
-
+                    double x = point[0] + i * unitVector2[0] + k * unitVector3[0];
+                    double y = point[1] + i * unitVector2[1] + k * unitVector3[1];
+                    double z = point[2] + i * unitVector2[2] + k * unitVector3[2];
                     for (int j = 0; j < yRes; j++)
                     {
-                        cut[i][j, k] = GetValueMatrixCoordinates(x, y, z);
+                        cut[k][i, j] = GetValueMatrixCoordinates(x, y, z);
 
                         x += unitVector1[0];
                         y += unitVector1[1];
@@ -242,7 +239,6 @@ namespace DataView
                     }
                 }
             }
-
             return cut;
         }
 
@@ -457,7 +453,12 @@ namespace DataView
         // methods for testing
         public VolumetricData()
         {
-
+            //this.vData = vData;
+            this.xSpacing = 1;
+            this.ySpacing = 1;
+            this.zSpacing = 1;
+            this.iSpacing = 1;
+            this.data = new Data();
         }
 
         public double XSpacing { get => xSpacing; set => xSpacing = value; }
@@ -465,7 +466,7 @@ namespace DataView
         public double ZSpacing { get => zSpacing; set => zSpacing = value; }
         public double ISpacing { get => iSpacing; set => iSpacing = value; }
         internal Data Data { get => data; set => data = value; }
-        public int[] Measures { get => Data.DimSize; }
+        public int[] Measures { get => Data.DimSize; set => Data.DimSize = value; }
         public int[][,] VData { get => vData; set => vData = value; }
 
     }

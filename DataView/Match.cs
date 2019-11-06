@@ -13,13 +13,13 @@ namespace DataView
     {
         private FeatureVector f1;
         private FeatureVector f2;
-        private double percentage;
+        private double similarity;
 
         public Match(FeatureVector f1)
         {
             this.F1 = f1;
             this.F2 = new FeatureVector();
-            this.Percentage = 0;
+            this.Similarity = 0;
         }
 
         /// <summary>
@@ -32,16 +32,16 @@ namespace DataView
         {
             this.F1 = f1;
             this.F2 = f2;
-            this.Percentage = percentage;
+            this.Similarity = percentage;
         }
 
-        public double Percentage { get => percentage; set => percentage = value; }
+        public double Similarity { get => similarity; set => similarity = value; }
         internal FeatureVector F1 { get => f1; set => f1 = value; }
         internal FeatureVector F2 { get => f2; set => f2 = value; }
 
         public override string ToString()
         {
-            return "f1: " + F1.ToString() + " f2: " + F2.ToString() + " p: " + Percentage;
+            return "f1: " + F1.ToString() + " f2: " + F2.ToString() + " p: " + Similarity;
         }
     }
 }

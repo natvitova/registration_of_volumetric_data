@@ -14,17 +14,22 @@ namespace DataView
             Point3D[] points = new Point3D[count];
 
             int[] measures = d.Measures;
-            Random r = new Random();
 
             for (int i = 0; i < count; i++)
             {
-                double x = r.Next(rSphere, measures[0] - rSphere);
-                double y = r.Next(rSphere, measures[1] - rSphere);
-                double z = r.Next(rSphere, measures[2] - rSphere);
+                double x = GetRandomDouble(rSphere, measures[0] - rSphere);
+                double y = GetRandomDouble(rSphere, measures[1] - rSphere);
+                double z = GetRandomDouble(rSphere, measures[2] - rSphere);
 
                 points[i] = new Point3D(x, y, z);
             }
             return points;
+        }
+
+        private double GetRandomDouble(double minimum, double maximum)
+        {
+            Random r = new Random();
+            return r.NextDouble() * (maximum - minimum) + minimum;
         }
     }
 }

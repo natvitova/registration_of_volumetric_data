@@ -102,7 +102,7 @@ namespace DataView
         }
 
         public double[] ElementSpacing { get => elementSpacing; }
-        public int[] DimSize { get => dimSize; }
+        public int[] DimSize { get => dimSize; set => dimSize = value; }
         public string ElementDataFile { get => elementDataFile; }
         public string ElementType { get => elementType; }
 

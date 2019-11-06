@@ -23,7 +23,7 @@ namespace DataView
 
         Node root;
         FeatureVector[] fVectors;
-        double smDist, smDistSq, maxDist;
+        double smDist, smDistSq;
         int nearest;
         FeatureVector searchFeatureVector;
         Random rnd = new Random(0);
@@ -48,12 +48,11 @@ namespace DataView
         /// <param name="p"></param>
         /// <param name="maxDist"></param>
         /// <returns></returns>
-        public int FindNearest(FeatureVector p, double maxDist)
+        public int FindNearest(FeatureVector p)
         {
             smDist = double.MaxValue;
             smDistSq = double.MaxValue;
             nearest = -1;
-            this.maxDist = maxDist;
             searchFeatureVector = p;
             SearchSubtree(root);
 
@@ -66,8 +65,6 @@ namespace DataView
                     Console.WriteLine("Error in KDTree");
             }*/
             // end debug
-            if (fVectors[nearest].DistTo2(searchFeatureVector) > (maxDist * maxDist))
-                return -1;
             return nearest;
         }
 
@@ -100,7 +97,6 @@ namespace DataView
                 if (n.right != null)
                 {
                     if (minDist < smDist)
-                        if (minDist < maxDist)
                             SearchSubtree(n.right);
                 }
             }
@@ -124,7 +120,6 @@ namespace DataView
                 if (n.left != null)
                 {
                     if (minDist < smDist)
-                        if (minDist < maxDist)
                             SearchSubtree(n.left);
                 }
             }
