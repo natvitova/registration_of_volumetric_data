@@ -53,7 +53,9 @@
     <Compile Include="Cut.cs" />
     <Compile Include="FeatureComputer.cs" />
     <Compile Include="FeatureVector.cs" />
+    <Compile Include="LinearFunction.cs" />
     <Compile Include="IFeatureComputer.cs" />
+    <Compile Include="IFunction.cs" />
     <Compile Include="IMatcher.cs" />
     <Compile Include="ISampler.cs" />
     <Compile Include="ITransformer.cs" />
@@ -70,6 +72,7 @@
     <Compile Include="Sampler.cs" />
     <Compile Include="SamplerFeatureVector.cs" />
     <Compile Include="SamplerFake.cs" />
+    <Compile Include="SamplerHalfFake.cs" />
     <Compile Include="TestDataBuilder.cs" />
     <Compile Include="Transformer3D.cs" />
     <Compile Include="VolumetricData.cs" />

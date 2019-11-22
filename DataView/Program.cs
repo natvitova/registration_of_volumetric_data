@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-
+using System.IO;
 
 namespace DataView
 {
@@ -28,8 +28,93 @@ namespace DataView
             string fileName2 = fileName;
 
             //MainFunction(fileName, fileName2);
+            Transform3D trnsf;
+            int[] translation = new int[3];
+            Random r = new Random(); // change rnd
 
-            MainFunctionAD();
+            //for (int i = 0; i < 8; i++)
+            //{
+            //    int rnX = r.Next(11, 90);
+            //    int rnY = r.Next(11, 90);
+            //    int rnZ = r.Next(11, 90);
+            //    translation[0] = rnX;
+            //    translation[1] = rnY;
+            //    translation[2] = rnZ;
+
+            //    for (int j = 0; j < 1; j++)
+            //    {
+            //        Console.WriteLine(translation[0] + " " + translation[1] + " " + translation[2]);
+            //        trnsf = MainFunctionAD(translation);
+            //        Console.WriteLine(trnsf);
+            //    }
+            //}
+            //Console.WriteLine("done");
+            //Console.ReadKey();
+
+
+            using (StreamWriter sw = new StreamWriter(@"fakeStestLIN3r2_s05_1-3-8.txt"))
+            {
+                //double q = 0.0001;
+                //for (int i = 0; i < 25; i++)
+                //{
+                //    int rnX = r.Next(11, 90);
+                //    int rnY = r.Next(11, 90);
+                //    int rnZ = r.Next(11, 90);
+                //    translation[0] = rnX;
+                //    translation[1] = rnY;
+                //    translation[2] = rnZ;
+                //    sw.WriteLine(translation[0] + " " + translation[1] + " " + translation[2]);
+                //    //for (int j = 0; j < 5; j++)
+                //    //{
+                //    trnsf = MainFunctionAD(translation);
+
+                //    double a11 = trnsf.RotationMatrix[0, 0];
+                //    double a22 = trnsf.RotationMatrix[1, 1];
+                //    double a33 = trnsf.RotationMatrix[2, 2];
+
+                //    if (1 - a11 > q || 1 - a11 > q || 1 - a11 > q)
+                //    {
+                //        sw.WriteLine(trnsf);
+                //    }
+                //    sw.WriteLine();
+                //    //}
+                //}
+
+                for (int i = 67; i < 88; i += 5)
+                {
+                    for (int j = 67; j < 88; j += 5)
+                    {
+                        for (int k = 67; k < 88; k += 5)
+                        {
+                            translation[0] = i;
+                            translation[1] = j;
+                            translation[2] = k;
+                            sw.WriteLine(translation[0] + " " + translation[1] + " " + translation[2]);
+                            trnsf = MainFunctionAD(translation);
+                            sw.WriteLine(trnsf);
+                            //double a11 = trnsf.RotationMatrix[0, 0];
+                            //double a22 = trnsf.RotationMatrix[1, 1];
+                            //double a33 = trnsf.RotationMatrix[2, 2];
+
+                            //if (1 - a11 > q || 1 - a11 > q || 1 - a11 > q)
+                            //{
+                            //    sw.WriteLine(trnsf);
+                            //}
+                        }
+                    }
+                    Console.WriteLine("checkPoint " + i);
+                }
+                sw.Flush();
+            }
+            Console.WriteLine("done");
+            Console.ReadKey();
+
+            //translation[0] = 73;
+            //translation[1] = 49;
+            //translation[2] = 72;
+            //trnsf = MainFunctionAD(translation);
+            //Console.WriteLine(trnsf);
+
 
 
 
@@ -99,7 +184,7 @@ namespace DataView
             double[] point = { 150, 150, 150 };
             double[] v1 = { 1, 0, 0 };
             double[] v2 = { 0, 1, 0 };
-            
+
             int xRes = 500;
             int yRes = 500;
             double spacing = 0.5;
@@ -252,18 +337,21 @@ namespace DataView
             Console.ReadKey();
         }
 
-        public static void MainFunctionAD()
+        public static Transform3D MainFunctionAD(int[] translation)
         {
             //----------------------------------------PARAMS -------------------------------------------------
             double threshold = 20; // percentage
             int numberOfPoints = 10_000; // micro
-            int numberOfPoints2 = 10_000;
-            ArtificialData aData = new ArtificialData(1, 3, 8);
-            int [] translation = new int[] { 15, 15, 15 };
+            int numberOfPoints2 = numberOfPoints;
+            int radius = 2;
+
+            IFunction fce1 = new LinearFunction(1, 3, 8);
+            ArtificialData aData = new ArtificialData(fce1);
+
             aData.SetSmallerData(translation);
             vData = aData.VD2; // micro
             vData2 = aData.VD;
-            Console.WriteLine("Artificial data created succesfully.");
+            //Console.WriteLine("Artificial data created succesfully.");
 
             //----------------------------------------DATA ---------------------------------------------------
             FeatureComputer fc = new FeatureComputer();
@@ -271,22 +359,20 @@ namespace DataView
             FeatureComputer fc2 = new FeatureComputer();
             //ISampler s2 = new SamplerFake();
             SamplerFake s2 = new SamplerFake();
-            s2.getTranslation(translation);
+            SamplerHalfFake s3 = new SamplerHalfFake();
+            s3.SetTranslation(translation);
 
-            Console.WriteLine("Sampling.");
+            //Console.WriteLine("Sampling.");
             //Point3D[] points = s.Sample(vData, numberOfPoints);
-            Point3D[] points2 = s2.Sample(vData2, numberOfPoints2); // macro
-            Point3D[] points = new Point3D[points2.Length];
-            int[] cut = aData.Cut;
-            for (int i = 0; i < points.Length; i++)
-            {
-                points[i] = new Point3D(points2[i].X - cut[0], points2[i].Y - cut[1], points2[i].Z - cut[2]);
-            }
+            //Point3D[] points2 = s2.Sample(vData2, numberOfPoints2, radius); // macro
+            //Point3D[] points = s2.PointsMin;
+            Point3D[] points2 = s3.Sample(vData2, numberOfPoints2, radius); // macro
+            Point3D[] points = s3.PointsMin;
 
             FeatureVector[] featureVectors = new FeatureVector[points.Length];
             FeatureVector[] featureVectors2 = new FeatureVector[points2.Length];
 
-            Console.WriteLine("Computing feature vectors.");
+            //Console.WriteLine("Computing feature vectors.");
             for (int i = 0; i < points.Length; i++)
             {
                 featureVectors[i] = fc.ComputeFeatureVectorA(translation, points[i]);
@@ -302,14 +388,14 @@ namespace DataView
 
             //----------------------------------------MATCHES-------------------------------------------------
             IMatcher matcher = new Matcher();
-            Console.WriteLine("\nMatching.");
+            //Console.WriteLine("\nMatching.");
             Match[] matches = matcher.Match(featureVectors, featureVectors2, threshold);
 
-            Console.WriteLine(matches.Length + ".......................... MATCHES ..............................");
+            //Console.WriteLine(translation[0] + " " + translation[1] + " " + translation[2] + " .......................... TRANSFORMATION ..............................");
 
             //------------------------------------GET TRANSFORMATION -----------------------------------------
-            ITransformer transformer = new Transformer3D();
-            Console.WriteLine("Computing transformations.\n");
+            Transformer3D transformer = new Transformer3D();
+            //Console.WriteLine("Computing transformations.\n");
             //Transform3D[] transformations = new Transform3D[matches.Length];
 
             List<Transform3D> transformations = new List<Transform3D>();
@@ -317,18 +403,19 @@ namespace DataView
 
             for (int i = 0; i < matches.Length; i++)
             {
-                Transform3D t = transformer.GetTransformation(matches[i], vData, vData2);
+                Transform3D t = transformer.GetTransformationA(matches[i], aData, translation, tr2);
                 transformations.Add(t);
                 //Console.WriteLine(t);
             }
 
-            Console.WriteLine("Looking for optimal transformation.\n");
-            Candidate.initSums(vData.Measures[0] / vData.XSpacing, vData.Measures[1] / vData.YSpacing, vData.Measures[2] / vData.ZSpacing);
+            //Console.WriteLine("Looking for optimal transformation.\n");
+            Candidate.initSums(vData.Measures[0] / vData.XSpacing, vData.Measures[1] / vData.YSpacing, vData.Measures[2] / vData.ZSpacing); // micro
             Density d = new Density(); // finder, we need an instance for certain complicated reason
             Transform3D solution = d.Find(transformations.ToArray());
-            Console.WriteLine(solution);
-            Console.WriteLine("Solution found.");
-            Console.ReadKey();
+            //Console.WriteLine(solution);
+            //Console.WriteLine("Solution found.");
+            //Console.ReadKey();
+            return solution;
         }
 
         public static void Cut()
