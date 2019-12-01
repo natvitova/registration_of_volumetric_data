@@ -32,82 +32,90 @@ namespace DataView
             int[] translation = new int[3];
             Random r = new Random(); // change rnd
 
-            //for (int i = 0; i < 8; i++)
-            //{
-            //    int rnX = r.Next(11, 90);
-            //    int rnY = r.Next(11, 90);
-            //    int rnZ = r.Next(11, 90);
-            //    translation[0] = rnX;
-            //    translation[1] = rnY;
-            //    translation[2] = rnZ;
-
-            //    for (int j = 0; j < 1; j++)
-            //    {
-            //        Console.WriteLine(translation[0] + " " + translation[1] + " " + translation[2]);
-            //        trnsf = MainFunctionAD(translation);
-            //        Console.WriteLine(trnsf);
-            //    }
-            //}
-            //Console.WriteLine("done");
-            //Console.ReadKey();
-
-
-            using (StreamWriter sw = new StreamWriter(@"fakeStestLIN3r2_s05_1-3-8.txt"))
+            for (int i = 0; i < 8; i++)
             {
-                //double q = 0.0001;
-                //for (int i = 0; i < 25; i++)
-                //{
-                //    int rnX = r.Next(11, 90);
-                //    int rnY = r.Next(11, 90);
-                //    int rnZ = r.Next(11, 90);
-                //    translation[0] = rnX;
-                //    translation[1] = rnY;
-                //    translation[2] = rnZ;
-                //    sw.WriteLine(translation[0] + " " + translation[1] + " " + translation[2]);
-                //    //for (int j = 0; j < 5; j++)
-                //    //{
-                //    trnsf = MainFunctionAD(translation);
+                int rnX = r.Next(11, 90);
+                int rnY = r.Next(11, 90);
+                int rnZ = r.Next(11, 90);
+                translation[0] = rnX;
+                translation[1] = rnY;
+                translation[2] = rnZ;
 
-                //    double a11 = trnsf.RotationMatrix[0, 0];
-                //    double a22 = trnsf.RotationMatrix[1, 1];
-                //    double a33 = trnsf.RotationMatrix[2, 2];
-
-                //    if (1 - a11 > q || 1 - a11 > q || 1 - a11 > q)
-                //    {
-                //        sw.WriteLine(trnsf);
-                //    }
-                //    sw.WriteLine();
-                //    //}
-                //}
-
-                for (int i = 67; i < 88; i += 5)
+                for (int j = 0; j < 1; j++)
                 {
-                    for (int j = 67; j < 88; j += 5)
-                    {
-                        for (int k = 67; k < 88; k += 5)
-                        {
-                            translation[0] = i;
-                            translation[1] = j;
-                            translation[2] = k;
-                            sw.WriteLine(translation[0] + " " + translation[1] + " " + translation[2]);
-                            trnsf = MainFunctionAD(translation);
-                            sw.WriteLine(trnsf);
-                            //double a11 = trnsf.RotationMatrix[0, 0];
-                            //double a22 = trnsf.RotationMatrix[1, 1];
-                            //double a33 = trnsf.RotationMatrix[2, 2];
-
-                            //if (1 - a11 > q || 1 - a11 > q || 1 - a11 > q)
-                            //{
-                            //    sw.WriteLine(trnsf);
-                            //}
-                        }
-                    }
-                    Console.WriteLine("checkPoint " + i);
+                    Console.WriteLine(translation[0] + " " + translation[1] + " " + translation[2]);
+                    trnsf = MainFunctionAD(translation);
+                    Console.WriteLine(trnsf);
                 }
-                sw.Flush();
             }
             Console.WriteLine("done");
             Console.ReadKey();
+
+
+            //using (StreamWriter sw = new StreamWriter(@"fakeStestLIN3r2_s05_1-3-8.txt"))
+            //{
+            //    double q = 0.0001;
+            //    //for (int i = 0; i < 25; i++)
+            //    //{
+            //    //    int rnX = r.Next(11, 90);
+            //    //    int rnY = r.Next(11, 90);
+            //    //    int rnZ = r.Next(11, 90);
+            //    //    translation[0] = rnX;
+            //    //    translation[1] = rnY;
+            //    //    translation[2] = rnZ;
+            //    //    sw.WriteLine(translation[0] + " " + translation[1] + " " + translation[2]);
+            //    //    //for (int j = 0; j < 5; j++)
+            //    //    //{
+            //    //    trnsf = MainFunctionAD(translation);
+
+            //    //    double a11 = trnsf.RotationMatrix[0, 0];
+            //    //    double a22 = trnsf.RotationMatrix[1, 1];
+            //    //    double a33 = trnsf.RotationMatrix[2, 2];
+
+            //    //    if (1 - a11 > q || 1 - a11 > q || 1 - a11 > q)
+            //    //    {
+            //    //        sw.WriteLine(trnsf);
+            //    //    }
+            //    //    sw.WriteLine();
+            //    //    //}
+            //    //}
+
+            //    for (int i = 67; i < 88; i += 5)
+            //    {
+            //        for (int j = 67; j < 88; j += 5)
+            //        {
+            //            for (int k = 67; k < 88; k += 5)
+            //            {
+            //                translation[0] = i;
+            //                translation[1] = j;
+            //                translation[2] = k;
+            //                sw.WriteLine(translation[0] + " " + translation[1] + " " + translation[2]);
+            //                trnsf = MainFunctionAD(translation);
+            //                //sw.WriteLine(trnsf);
+            //                double a11 = trnsf.RotationMatrix[0, 0];
+            //                double a22 = trnsf.RotationMatrix[1, 1];
+            //                double a33 = trnsf.RotationMatrix[2, 2];
+            //                double t1 = trnsf.TranslationVector[0];
+            //                double t2 = trnsf.TranslationVector[1];
+            //                double t3 = trnsf.TranslationVector[2];
+
+            //                if (t1 - translation[0] != 0 || t2 - translation[1] != 0 || t3 - translation[2] != 0)
+            //                {
+            //                    sw.WriteLine(trnsf.TranslationVector.ToString());
+            //                }
+
+            //                if (1 - a11 > q || 1 - a11 > q || 1 - a11 > q)
+            //                {
+            //                    sw.WriteLine(trnsf.RotationMatrix.ToString());
+            //                }
+            //            }
+            //        }
+            //        Console.WriteLine("checkPoint " + i);
+            //    }
+            //    sw.Flush();
+            //}
+            //Console.WriteLine("done");
+            //Console.ReadKey();
 
             //translation[0] = 73;
             //translation[1] = 49;
@@ -346,7 +354,8 @@ namespace DataView
             int radius = 2;
 
             IFunction fce1 = new LinearFunction(1, 3, 8);
-            ArtificialData aData = new ArtificialData(fce1);
+            IFunction fce2 = new NonLinearFunction(1, 3, 11);
+            ArtificialData aData = new ArtificialData(fce2);
 
             aData.SetSmallerData(translation);
             vData = aData.VD2; // micro
@@ -360,14 +369,14 @@ namespace DataView
             //ISampler s2 = new SamplerFake();
             SamplerFake s2 = new SamplerFake();
             SamplerHalfFake s3 = new SamplerHalfFake();
-            s3.SetTranslation(translation);
+            s2.SetTranslation(translation);
 
             //Console.WriteLine("Sampling.");
             //Point3D[] points = s.Sample(vData, numberOfPoints);
             //Point3D[] points2 = s2.Sample(vData2, numberOfPoints2, radius); // macro
             //Point3D[] points = s2.PointsMin;
-            Point3D[] points2 = s3.Sample(vData2, numberOfPoints2, radius); // macro
-            Point3D[] points = s3.PointsMin;
+            Point3D[] points2 = s2.Sample(vData2, numberOfPoints2, radius); // macro
+            Point3D[] points = s2.PointsMin;
 
             FeatureVector[] featureVectors = new FeatureVector[points.Length];
             FeatureVector[] featureVectors2 = new FeatureVector[points2.Length];

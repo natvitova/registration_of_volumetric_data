@@ -45,11 +45,11 @@ namespace DataView
             //Console.WriteLine("Calculating rotation between point {0} : {1} of value {2} in data: {3} and point {4} : {5} of value {6} in data {7} ",
             // nameof(point1), point1.ToString(), d1.GetValueRealCoordinates(point1), nameof(d1), nameof(point2), point2.ToString(), d2.GetValueRealCoordinates(point2), nameof(d2));
 
-            Matrix<double> A1 = GetSymetricMatrixForEigenVectorsA(ad, t1, point1, count);
+            Matrix<double> A1 = GetSymetricMatrixForEigenVectorsA(ad, t1, point1, count, 0);
             //Console.WriteLine("Matrix {0} : {1}", nameof(A1), A1.ToString());
             var evd1 = A1.Evd(); //eigenvalues for d1
 
-            Matrix<double> A2 = GetSymetricMatrixForEigenVectorsA(ad, t2, point2, count);
+            Matrix<double> A2 = GetSymetricMatrixForEigenVectorsA(ad, t2, point2, count, 1);
             //Console.WriteLine("Matrix {0} : {1}", nameof(A2), A2.ToString());
             var evd2 = A2.Evd(); //eigenvalues for d2
                                  //var svd = A2.Svd();
@@ -253,9 +253,9 @@ namespace DataView
             return A;
         }
 
-        private static Matrix<double> GetSymetricMatrixForEigenVectorsA(ArtificialData ad, int[] t, Point3D point, int count)
+        private static Matrix<double> GetSymetricMatrixForEigenVectorsA(ArtificialData ad, int[] t, Point3D point, int count, int seed)
         {
-            Point3D[] sample1 = SampleSphereAroundPointA(ad, t, point, 2, count);
+            Point3D[] sample1 = SampleSphereAroundPointA(ad, t, point, 2, count, seed);
 
             //for (int i = 0; i < sample1.Length; i++)
             //{
@@ -317,14 +317,14 @@ namespace DataView
             return survivingPoints.ToArray();
         }
 
-        private static Point3D[] SampleSphereAroundPointA(ArtificialData ad, int[] t, Point3D centerPoint, int radius, int count)
+        private static Point3D[] SampleSphereAroundPointA(ArtificialData ad, int[] t, Point3D centerPoint, int radius, int count, int seed)
         {
             List<Point3D> survivingPoints = new List<Point3D>();
             List<Point3D> pointsInSphere = FeatureComputer.GetSphere(centerPoint, radius, 0.5); //gets all points in a given sphere
             //Console.WriteLine(pointsInSphere.Count);
 
             Random rnd = new Random(0); // change rnd - index in count - BACHA VADA!!!!!
-            Random rn = new Random(0); // change rnd - decide fate
+            Random rn = new Random(seed); // change rnd - decide fate
             Random r = new Random(0); // change rnd - trivial
             int currentValue;
             int maxValue = 0;

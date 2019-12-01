@@ -62,6 +62,7 @@
     <Compile Include="KDTree.cs" />
     <Compile Include="Match.cs" />
     <Compile Include="Matcher.cs" />
+    <Compile Include="NonLinearFunction.cs" />
     <Compile Include="PCATester.cs" />
     <Compile Include="PictureMaker.cs" />
     <Compile Include="Point3D.cs" />

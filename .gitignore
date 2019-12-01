@@ -1,7 +1,4 @@
 DataView/bin/
 *.raw
-DataView/obj/
-*.chache
-.vs/DataView/v16/.suo
-.vs/DataView/v16/Server/
-*.ide*
+DataView/obj/*
+
