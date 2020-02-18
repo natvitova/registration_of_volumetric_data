@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DataView
 {
-    class SamplerHalfFake
+    class SamplerRandomFake
     {
         int translationX = 0;
         int translationY = 0;
@@ -27,9 +27,13 @@ namespace DataView
                 double y = r.Next(translationY + radius, measures[1] - radius);
                 double z = r.Next(translationZ + radius, measures[2] - radius);
 
+                double x2 = r.Next(radius, measures[0] - radius - translationX);
+                double y2 = r.Next(radius, measures[1] - radius - translationY);
+                double z2 = r.Next(radius, measures[2] - radius - translationZ);
+
                 pointsMax[i] = new Point3D(x, y, z);
+                pointsMin[i] = new Point3D(x2, y2, z2);
             }
-            GetSamples2();
             return pointsMax;
         }
 
@@ -40,19 +44,7 @@ namespace DataView
             this.translationZ = translation[2];
         }
 
-        private void GetSamples2()
-        {
-            Random r = new Random();
-            
-            for (int i = 0; i < pointsMax.Length; i++)
-            {
-                double d = r.NextDouble();
-                this.pointsMin[i] = new Point3D(pointsMax[i].X - translationX + d, pointsMax[i].Y - translationY + d, pointsMax[i].Z - translationZ + d);
-            }
-        }
-
         internal Point3D[] PointsMin { get => pointsMin; set => pointsMin = value; }
 
     }
-
 }

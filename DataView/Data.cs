@@ -13,7 +13,7 @@ namespace DataView
     /// </summary>
     class Data
     {
-        public double[] elementSpacing; // three double values indicating distance between two points in concrete direction
+        private double[] elementSpacing; // three double values indicating distance between two points in concrete direction
         private int[] dimSize; // three int values indicating the "length" of the side of the cuboid in concerete direction
         private string elementDataFile; // the name of the file .raw (with data)
         private string elementType; // USHORT(2 bytes)/UCHAR(1 byte)
@@ -29,6 +29,13 @@ namespace DataView
             elementType = null;
         }
 
+        public Data(Data copy)
+        {
+            this.elementSpacing = copy.ElementSpacing;
+            this.dimSize = copy.DimSize;
+            this.elementDataFile = copy.ElementDataFile;
+            this.elementType = copy.ElementType;
+        }
         /// <summary>
         /// 
         /// </summary>

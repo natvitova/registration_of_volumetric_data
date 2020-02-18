@@ -23,11 +23,11 @@ namespace DataView
             //Console.WriteLine("Calculating rotation between point {0} : {1} of value {2} in data: {3} and point {4} : {5} of value {6} in data {7} ",
             // nameof(point1), point1.ToString(), d1.GetValueRealCoordinates(point1), nameof(d1), nameof(point2), point2.ToString(), d2.GetValueRealCoordinates(point2), nameof(d2));
 
-            Matrix<double> A1 = GetSymetricMatrixForEigenVectors(d1, point1, count);
+            Matrix<double> A1 = GetSymetricMatrixForEigenVectors(d1, point1, count); //micro
             //Console.WriteLine("Matrix {0} : {1}", nameof(A1), A1.ToString());
             var evd1 = A1.Evd(); //eigenvalues for d1
 
-            Matrix<double> A2 = GetSymetricMatrixForEigenVectors(d2, point2, count);
+            Matrix<double> A2 = GetSymetricMatrixForEigenVectors(d2, point2, count); //macro
             //Console.WriteLine("Matrix {0} : {1}", nameof(A2), A2.ToString());
             var evd2 = A2.Evd(); //eigenvalues for d2
             //var svd = A2.Svd();
@@ -275,6 +275,7 @@ namespace DataView
         {
             List<Point3D> survivingPoints = new List<Point3D>();
             List<Point3D> pointsInSphere = FeatureComputer.GetSphere(centerPoint, radius, 0.5); //gets all points in a given sphere
+            //Console.WriteLine(pointsInSphere.Count);
 
             Random rnd = new Random();
             int currentValue;
@@ -374,67 +375,6 @@ namespace DataView
                 pointsInSphere.RemoveAt(rndIndex); //removed from pointsInSphere
             }
             //Console.WriteLine(survivingPoints.Count);
-            return survivingPoints.ToArray();
-        }
-
-        private static Matrix<double> GetSymetricMatrixForEigenVectorsN(VolumetricData d, Point3D point, int count) //___________________________________________NATY
-        {
-            Point3D[] sample1 = SampleSphereAroundPointN(d, point, 5, count);
-
-            Matrix<double> sampleMatrix = Point3DArrayToMatrix(sample1); //matrix D
-            double[] averageCoordinates = GetAverageCoordinate(sampleMatrix); // vector overline{x}
-            //Console.WriteLine("Average coordinates: [{0}, {1}, {2}]", averageCoordinates[0], averageCoordinates[1], averageCoordinates[2]);
-            Matrix<double> sampleMatrixSubtracted = SubtractVectorFromMatrix(sampleMatrix, averageCoordinates); //matrix D*
-            Matrix<double> A = sampleMatrixSubtracted.TransposeAndMultiply(sampleMatrixSubtracted); // D* times transpose(D*)
-
-            return A;
-        }
-
-        private static Point3D[] SampleSphereAroundPointN(VolumetricData d, Point3D centerPoint, int radius, int count) //______________________________________NATY
-        {
-            List<Point3D> survivingPoints = new List<Point3D>();
-            List<Point3D> pointsInSphere = FeatureComputer.GetSphereN(centerPoint, d, radius, 0.5); //gets all points in a given sphere
-
-            Random rnd = new Random();
-            int currentValue;
-            int maxValue = 0;
-            int minValue = int.MaxValue;
-
-            foreach (Point3D point in pointsInSphere) //finds the minumum and maximum value in the sphere
-            {
-                Point3D ipoint = new Point3D(point.X / d.XSpacing, point.Y / d.YSpacing, point.Z / d.ZSpacing);
-                currentValue = d.GetValueRealCoordinates(ipoint);
-
-                if (currentValue > maxValue)
-                    maxValue = currentValue;
-
-                if (currentValue < minValue)
-                    minValue = currentValue;
-            }
-            bool NonTrivial = true;
-            if (maxValue == minValue)
-                NonTrivial = false;
-            while (survivingPoints.Count < count && pointsInSphere.Count > 0)
-            {
-                int rndIndex = rnd.Next(0, pointsInSphere.Count); //random index in pointsInSphere
-                if (NonTrivial)
-                {
-                    if (DecideFate(rnd, d.GetValueRealCoordinates(pointsInSphere[rndIndex]), minValue, maxValue)) //decides whether to keep the point or not
-                    {
-                        //the point is kept
-                        survivingPoints.Add(pointsInSphere[rndIndex]); //add to result
-                    }
-                }
-                else
-                {
-                    if (rnd.NextDouble() > 0.5)
-                    {
-                        survivingPoints.Add(pointsInSphere[rndIndex]); //add to result
-                    }
-                }
-                pointsInSphere.RemoveAt(rndIndex); //removed from pointsInSphere
-            }
-
             return survivingPoints.ToArray();
         }
 

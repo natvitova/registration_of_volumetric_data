@@ -46,3 +46,6 @@ C:\Users\Milada\Documents\GitHub\registration_of_volumetric_data\DataView\bin\De
 C:\Users\Milada\Documents\GitHub\registration_of_volumetric_data\DataView\bin\Debug\TransformSelect.exe.config
 C:\Users\Milada\Documents\GitHub\registration_of_volumetric_data\DataView\bin\Debug\MathNet.Numerics.xml
 C:\Users\Milada\Documents\GitHub\registration_of_volumetric_data\DataView\obj\Debug\DataView.csproj.CopyComplete
+C:\Users\vitova\Documents\GitHub\registration_of_volumetric_data\DataView\bin\Debug\TransformSelect.exe
+C:\Users\vitova\Documents\GitHub\registration_of_volumetric_data\DataView\bin\Debug\TransformSelect.pdb
+C:\Users\vitova\Documents\GitHub\registration_of_volumetric_data\DataView\bin\Debug\TransformSelect.exe.config

@@ -53,6 +53,7 @@
     <Compile Include="Cut.cs" />
     <Compile Include="FeatureComputer.cs" />
     <Compile Include="FeatureVector.cs" />
+    <Compile Include="IData.cs" />
     <Compile Include="LinearFunction.cs" />
     <Compile Include="IFeatureComputer.cs" />
     <Compile Include="IFunction.cs" />
@@ -70,10 +71,12 @@
     <Compile Include="PointWithFeatures.cs" />
     <Compile Include="RatedPoint.cs" />
     <Compile Include="RotationComputer.cs" />
+    <Compile Include="RotData.cs" />
     <Compile Include="Sampler.cs" />
     <Compile Include="SamplerFeatureVector.cs" />
     <Compile Include="SamplerFake.cs" />
     <Compile Include="SamplerHalfFake.cs" />
+    <Compile Include="SamplerRandomFake.cs" />
     <Compile Include="TestDataBuilder.cs" />
     <Compile Include="Transformer3D.cs" />
     <Compile Include="VolumetricData.cs" />

@@ -16,7 +16,7 @@ namespace DataView
             Point3D p1 = m.F1.Point; //micro
             Point3D p2 = m.F2.Point; //macro
 
-            Matrix<double> rotationMatrix = RotationComputer.CalculateRotation(d2, d1, p1, p2, count);
+            Matrix<double> rotationMatrix = RotationComputer.CalculateRotation(d1, d2, p1, p2, count);
             Vector<double> translationVector = Vector<double>.Build.Dense(3);
             //translationVector[0] = p2.GetCoordinate(0) / d2.XSpacing - p1.GetCoordinate(0) / d1.XSpacing;
             //translationVector[1] = p2.GetCoordinate(1) / d2.YSpacing - p1.GetCoordinate(1) / d1.YSpacing;

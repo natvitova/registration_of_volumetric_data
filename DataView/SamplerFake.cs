@@ -20,7 +20,7 @@ namespace DataView
             this.pointsMax = new Point3D[count];
             this.pointsMin = new Point3D[count];
             int[] measures = d.Measures;
-            Random r = new Random(0); // change rnd
+            Random r = new Random(); // change rnd
 
             for (int i = 0; i < count; i++)
             {

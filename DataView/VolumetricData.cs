@@ -174,7 +174,7 @@ namespace DataView
 
                     for (int j = 0; j < yRes; j++)
                     {
-                        cut[i][j, k] = GetValueMatrixCoordinates(x, y, z);
+                        cut[k][i, j] = GetValueMatrixCoordinates(x, y, z);
 
                         x += unitVector1[0];
                         y += unitVector1[1];
@@ -183,9 +183,38 @@ namespace DataView
                 }
             }
 
-            VolumetricData vData = new VolumetricData(Data);
-            vData.VData = cut;
-            return vData;
+            VolumetricData vDnew = new VolumetricData(Data);
+            vDnew.VData = cut;
+            
+            return vDnew;
+        }
+
+        public VolumetricData CutVol(int[] translation)
+        {
+            int xRes = Measures[0] - translation[0];
+            int yRes = Measures[1] - translation[1];
+            int zRes = Measures[2] - translation[2];
+
+            int[][,] cut = new int[zRes][,];
+
+            for (int k = 0; k < zRes; k++)
+            {
+                cut[k] = new int[xRes, yRes];
+                for (int i = 0; i < xRes; i++)
+                {
+                    for (int j = 0; j < yRes; j++)
+                    {
+                        cut[k][i, j] = VData[translation[2] + k][translation[0] + i, translation[1] + j];
+                    }
+                }
+            }
+
+            Data copy = new Data(this.Data);
+            VolumetricData vDnew = new VolumetricData(copy);
+            vDnew.VData = cut;
+            vDnew.Measures = new int[] { xRes, yRes, zRes };
+
+            return vDnew;
         }
 
         /// <summary>
@@ -331,7 +360,7 @@ namespace DataView
             return GetValueMatrixCoordinates(point.X, point.Y, point.Z);
         }
 
-        public int GetValueRealCoordinates(double x, double y, double z) // Interpolation3D in real coordinates 
+        public int GetValue(double x, double y, double z) // Interpolation3D in real coordinates 
         {
             int xLDC = (int)(x / xSpacing); // coordinates of left down corner of the rectangle in the array in which the pixel is situated
             int yLDC = (int)(y / ySpacing);
@@ -356,9 +385,9 @@ namespace DataView
             }
         }
 
-        public int GetValueRealCoordinates(Point3D point)
+        public int GetValue(Point3D point)
         {
-            return GetValueRealCoordinates(point.X, point.Y, point.Z);
+            return GetValue(point.X, point.Y, point.Z);
         }
 
         /// <summary>

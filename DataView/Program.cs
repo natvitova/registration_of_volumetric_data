@@ -32,28 +32,30 @@ namespace DataView
             int[] translation = new int[3];
             Random r = new Random(); // change rnd
 
-            for (int i = 0; i < 8; i++)
-            {
-                int rnX = r.Next(11, 90);
-                int rnY = r.Next(11, 90);
-                int rnZ = r.Next(11, 90);
-                translation[0] = rnX;
-                translation[1] = rnY;
-                translation[2] = rnZ;
-
-                for (int j = 0; j < 1; j++)
-                {
-                    Console.WriteLine(translation[0] + " " + translation[1] + " " + translation[2]);
-                    trnsf = MainFunctionAD(translation);
-                    Console.WriteLine(trnsf);
-                }
-            }
-            Console.WriteLine("done");
-            Console.ReadKey();
-
-
-            //using (StreamWriter sw = new StreamWriter(@"fakeStestLIN3r2_s05_1-3-8.txt"))
+            //for (int i = 0; i < 8; i++)
             //{
+            //    int rnX = r.Next(21, 80);
+            //    int rnY = r.Next(21, 80);
+            //    int rnZ = r.Next(21, 80);
+            //    translation[0] = rnX;
+            //    translation[1] = rnY;
+            //    translation[2] = rnZ;
+
+            //    for (int j = 0; j < 1; j++)
+            //    {
+            //        Console.WriteLine(translation[0] + " " + translation[1] + " " + translation[2]);
+            //        trnsf = MainFunctionAD2(translation, fileName);
+            //        Console.WriteLine(trnsf);
+            //    }
+            //}
+
+
+
+
+
+            //using (StreamWriter sw = new StreamWriter(@"fakeStestVOL3.txt"))
+            //{
+            //    Console.WriteLine("start");
             //    double q = 0.0001;
             //    //for (int i = 0; i < 25; i++)
             //    //{
@@ -80,17 +82,17 @@ namespace DataView
             //    //    //}
             //    //}
 
-            //    for (int i = 67; i < 88; i += 5)
+            //    for (int i = 67; i < 78; i += 5)
             //    {
-            //        for (int j = 67; j < 88; j += 5)
+            //        for (int j = 67; j < 78; j += 5)
             //        {
-            //            for (int k = 67; k < 88; k += 5)
+            //            for (int k = 67; k < 78; k += 5)
             //            {
             //                translation[0] = i;
             //                translation[1] = j;
             //                translation[2] = k;
             //                sw.WriteLine(translation[0] + " " + translation[1] + " " + translation[2]);
-            //                trnsf = MainFunctionAD(translation);
+            //                trnsf = MainFunctionAD2(translation, fileName);
             //                //sw.WriteLine(trnsf);
             //                double a11 = trnsf.RotationMatrix[0, 0];
             //                double a22 = trnsf.RotationMatrix[1, 1];
@@ -99,15 +101,18 @@ namespace DataView
             //                double t2 = trnsf.TranslationVector[1];
             //                double t3 = trnsf.TranslationVector[2];
 
-            //                if (t1 - translation[0] != 0 || t2 - translation[1] != 0 || t3 - translation[2] != 0)
-            //                {
-            //                    sw.WriteLine(trnsf.TranslationVector.ToString());
-            //                }
+            //                sw.WriteLine(trnsf.TranslationVector.ToString());
+            //                sw.WriteLine(trnsf.RotationMatrix.ToString());
 
-            //                if (1 - a11 > q || 1 - a11 > q || 1 - a11 > q)
-            //                {
-            //                    sw.WriteLine(trnsf.RotationMatrix.ToString());
-            //                }
+            //                //if (t1 - translation[0] != 0 || t2 - translation[1] != 0 || t3 - translation[2] != 0)
+            //                //{
+            //                //    sw.WriteLine(trnsf.TranslationVector.ToString());
+            //                //}
+
+            //                //if (1 - a11 > q || 1 - a11 > q || 1 - a11 > q)
+            //                //{
+            //                //    sw.WriteLine(trnsf.RotationMatrix.ToString());
+            //                //}
             //            }
             //        }
             //        Console.WriteLine("checkPoint " + i);
@@ -117,133 +122,13 @@ namespace DataView
             //Console.WriteLine("done");
             //Console.ReadKey();
 
-            //translation[0] = 73;
-            //translation[1] = 49;
-            //translation[2] = 72;
-            //trnsf = MainFunctionAD(translation);
-            //Console.WriteLine(trnsf);
+            translation[0] = 73;
+            translation[1] = 49;
+            translation[2] = 72;
+            trnsf = MainFunctionAD2(translation,fileName);
+            Console.WriteLine(trnsf);
+            Console.ReadKey();
 
-
-
-
-            //---------------------------------------Matějův divný kód - NESAHAT!!!!!!!!!!!!!!!!!!!!----------
-            //string filename1 = "x.mhd";
-            //string filename2 = "y.mhd";
-
-            //Console.WriteLine("Reading vData1");
-            //Data data1 = new Data();
-            //data1.SetFeatures(fileName1);
-            //VolumetricData vData1 = new VolumetricData(data1);
-            //vData1.Read();
-            //Console.WriteLine("vData1 read");
-
-            //Console.WriteLine("Reading vData2");
-            //Data data2 = new Data();
-            //data2.SetFeatures(fileName2);
-            //VolumetricData vData2 = new VolumetricData(data2);
-            //vData2.Read();
-            //Console.WriteLine("vData2 read");
-
-            //Console.WriteLine("Calculating transformation");
-            //Transform3D transform = new Transform3D();
-            //Point3D a = new Point3D(100, 100, 100);
-            //Point3D b = new Point3D(100, 100, 100);
-            //transform.GetTransformation(a, b, vData1, vData2);
-            //Console.WriteLine("Transformation calculation finished");
-            //Console.ReadLine();
-
-            /*
-            Transform3D transform = new Transform3D();
-            transform.testPCA();
-            Console.ReadLine();
-            */
-
-            /*
-            Data data1 = new Data();
-            data1.SetFeatures(fileName1);
-            VolumetricData vData1 = new VolumetricData(data1);
-            vData1.Read();
-            Console.WriteLine("vData1 read");
-
-            Data data2 = new Data();
-            data2.SetFeatures(fileName2);
-            VolumetricData vData2 = new VolumetricData(data2);
-            vData2.Read();
-            Console.WriteLine("vData2 read");
-
-            Transform3D transform = new Transform3D();
-            transform.CalculateRotation(vData1, vData2);
-            Console.WriteLine("Transformation calculation finished");
-            Console.ReadLine();
-            */
-
-            /*
-            string rotation = "x";
-            TestDataBuilder builder = new TestDataBuilder();
-            builder.BuildData(rotation);
-            Console.WriteLine("uspech");
-            //Console.ReadLine()
-
-            string fileName = rotation + @".mhd";
-
-            int distance = 750;
-            int direction = 2;
-
-            double[] point = { 150, 150, 150 };
-            double[] v1 = { 1, 0, 0 };
-            double[] v2 = { 0, 1, 0 };
-
-            int xRes = 500;
-            int yRes = 500;
-            double spacing = 0.5;
-
-            Console.WriteLine("Controlling data...");
-            if (ControlData(fileName, distance, direction))
-            {
-                Console.WriteLine("Data passed");
-                Console.WriteLine("Creating cuts...");
-                CreateCutsInDirection(v1, v2, xRes, yRes, spacing, rotation);
-                Console.WriteLine("All cuts created");
-            }
-
-            rotation = "y";
-            builder = new TestDataBuilder();
-            builder.BuildData(rotation);
-            Console.WriteLine("uspech");
-            //Console.ReadLine()
-
-            fileName = rotation + @".mhd";
-
-            Console.WriteLine("Controlling data...");
-            if (ControlData(fileName, distance, direction))
-            {
-                Console.WriteLine("Data passed");
-                Console.WriteLine("Creating cuts...");
-                CreateCutsInDirection(v1, v2, xRes, yRes, spacing, rotation);
-                Console.WriteLine("All cuts created");
-            }
-
-            rotation = "z";
-            builder = new TestDataBuilder();
-            builder.BuildData(rotation);
-            Console.WriteLine("uspech");
-            //Console.ReadLine()
-
-            fileName = rotation + @".mhd";
-
-            Console.WriteLine("Controlling data...");
-            if (ControlData(fileName, distance, direction))
-            {
-                Console.WriteLine("Data passed");
-                Console.WriteLine("Creating cuts...");
-                CreateCutsInDirection(v1, v2, xRes, yRes, spacing, rotation);
-                Console.WriteLine("All cuts created");
-            }
-
-            Console.WriteLine("\n\n\nHOTOVO");
-            Console.ReadLine();          
-            */
-            //---------------------------------------Matějův divný kód - NESAHAT!!!!!!!!!!!!!!!!!!!!----------
         }
 
         public static void MainFunction(string micro, string macro)
@@ -345,13 +230,101 @@ namespace DataView
             Console.ReadKey();
         }
 
+        public static void FunctionAD(string macro)
+        {
+            sample = new Data();
+            sample.SetFeatures(macro);
+            vData2 = new VolumetricData(sample);
+            //Console.WriteLine("Reading first data.");
+            vData2.Read();
+            //Console.WriteLine("Data read succesfully.");
+        }
+
+        public static Transform3D MainFunctionAD2(int[] translation, string macro)
+        {
+            //----------------------------------------PARAMS -------------------------------------------------
+            double threshold = 20; // percentage
+            int numberOfPoints = 100_000; // micro
+            int numberOfPoints2 = 100_000;
+            int radius = 10;
+
+            FunctionAD(macro);
+            vData = vData2.CutVol(translation); //micro
+
+            //Console.WriteLine("Artificial data created succesfully.");
+            //----------------------------------------DATA ---------------------------------------------------
+            FeatureComputer fc = new FeatureComputer();
+            ISampler s = new Sampler();
+            FeatureComputer fc2 = new FeatureComputer();
+
+            SamplerFake s2 = new SamplerFake();
+            SamplerHalfFake s3 = new SamplerHalfFake();
+            SamplerRandomFake s4 = new SamplerRandomFake();
+            s2.SetTranslation(translation);
+            s3.SetTranslation(translation);
+            s4.SetTranslation(translation);
+
+            //Console.WriteLine("Sampling.");
+            //Point3D[] points = s.Sample(vData, numberOfPoints);
+            //Point3D[] points2 = s.Sample(vData2, numberOfPoints2); // macro
+            Point3D[] points2 = s4.Sample(vData2, numberOfPoints2, radius); // macro
+            Point3D[] points = s4.PointsMin;
+
+            FeatureVector[] featureVectors = new FeatureVector[points.Length];
+            FeatureVector[] featureVectors2 = new FeatureVector[points2.Length];
+
+            //Console.WriteLine("Computing feature vectors.");
+            for (int i = 0; i < points.Length; i++)
+            {
+                featureVectors[i] = fc.ComputeFeatureVector(vData, points[i]);
+                //Console.WriteLine("fv1:" + i + " " + featureVectors[i].ToString());
+            }
+
+            for (int i = 0; i < points2.Length; i++)
+            {
+                featureVectors2[i] = fc2.ComputeFeatureVector(vData2, points2[i]);
+                //Console.WriteLine("fv2:" + i + " " + featureVectors2[i].ToString());
+            }
+
+            //----------------------------------------MATCHES-------------------------------------------------
+            IMatcher matcher = new Matcher();
+            //Console.WriteLine("\nMatching.");
+            Match[] matches = matcher.Match(featureVectors, featureVectors2, threshold);
+
+            //Console.WriteLine(translation[0] + " " + translation[1] + " " + translation[2] + " .......................... TRANSFORMATION ..............................");
+
+            //------------------------------------GET TRANSFORMATION -----------------------------------------
+            Transformer3D transformer = new Transformer3D();
+            //Console.WriteLine("Computing transformations.\n");
+            //Transform3D[] transformations = new Transform3D[matches.Length];
+
+            List<Transform3D> transformations = new List<Transform3D>();
+            //int countT9 = 0;
+
+            for (int i = 0; i < matches.Length; i++)
+            {
+                Transform3D t = transformer.GetTransformation(matches[i], vData, vData2);
+                transformations.Add(t);
+                //Console.WriteLine(t);
+            }
+
+            //Console.WriteLine("Looking for optimal transformation.\n");
+            Candidate.initSums(vData.Measures[0] / vData.XSpacing, vData.Measures[1] / vData.YSpacing, vData.Measures[2] / vData.ZSpacing); // micro
+            Density d = new Density(); // finder, we need an instance for certain complicated reason
+            Transform3D solution = d.Find(transformations.ToArray());
+            //Console.WriteLine(solution);
+            //Console.WriteLine("Solution found.");
+            //Console.ReadKey();
+            return solution;
+        }
+
         public static Transform3D MainFunctionAD(int[] translation)
         {
             //----------------------------------------PARAMS -------------------------------------------------
             double threshold = 20; // percentage
             int numberOfPoints = 10_000; // micro
             int numberOfPoints2 = numberOfPoints;
-            int radius = 2;
+            int radius = 10;
 
             IFunction fce1 = new LinearFunction(1, 3, 8);
             IFunction fce2 = new NonLinearFunction(1, 3, 11);
