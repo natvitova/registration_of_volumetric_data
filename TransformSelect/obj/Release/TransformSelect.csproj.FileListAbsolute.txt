@@ -1,0 +1,10 @@
+C:\Users\Ja\Desktop\Játra\registration_of_volumetric_data\TransformSelect\bin\Release\TransformSelect.exe.config
+C:\Users\Ja\Desktop\Játra\registration_of_volumetric_data\TransformSelect\bin\Release\TransformSelect.exe
+C:\Users\Ja\Desktop\Játra\registration_of_volumetric_data\TransformSelect\bin\Release\TransformSelect.pdb
+C:\Users\Ja\Desktop\Játra\registration_of_volumetric_data\TransformSelect\bin\Release\MathNet.Numerics.dll
+C:\Users\Ja\Desktop\Játra\registration_of_volumetric_data\TransformSelect\bin\Release\MathNet.Numerics.xml
+C:\Users\Ja\Desktop\Játra\registration_of_volumetric_data\TransformSelect\obj\Release\TransformSelect.csprojAssemblyReference.cache
+C:\Users\Ja\Desktop\Játra\registration_of_volumetric_data\TransformSelect\obj\Release\TransformSelect.csproj.CoreCompileInputs.cache
+C:\Users\Ja\Desktop\Játra\registration_of_volumetric_data\TransformSelect\obj\Release\TransformSelect.csproj.CopyComplete
+C:\Users\Ja\Desktop\Játra\registration_of_volumetric_data\TransformSelect\obj\Release\TransformSelect.exe
+C:\Users\Ja\Desktop\Játra\registration_of_volumetric_data\TransformSelect\obj\Release\TransformSelect.pdb

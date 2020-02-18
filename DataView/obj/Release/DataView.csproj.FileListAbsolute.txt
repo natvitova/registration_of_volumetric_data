@@ -8,3 +8,16 @@ C:\Users\Ja\Desktop\Játra\5.10.2019 merger\registration_of_volumetric_data\Data
 C:\Users\Ja\Desktop\Játra\5.10.2019 merger\registration_of_volumetric_data\DataView\obj\Release\DataView.csproj.CopyComplete
 C:\Users\Ja\Desktop\Játra\5.10.2019 merger\registration_of_volumetric_data\DataView\obj\Release\DataView.exe
 C:\Users\Ja\Desktop\Játra\5.10.2019 merger\registration_of_volumetric_data\DataView\obj\Release\DataView.pdb
+C:\Users\Ja\Desktop\Játra\registration_of_volumetric_data\DataView\bin\Release\DataView.exe.config
+C:\Users\Ja\Desktop\Játra\registration_of_volumetric_data\DataView\bin\Release\DataView.exe
+C:\Users\Ja\Desktop\Játra\registration_of_volumetric_data\DataView\bin\Release\DataView.pdb
+C:\Users\Ja\Desktop\Játra\registration_of_volumetric_data\DataView\bin\Release\MathNet.Numerics.dll
+C:\Users\Ja\Desktop\Játra\registration_of_volumetric_data\DataView\bin\Release\TransformSelect.exe
+C:\Users\Ja\Desktop\Játra\registration_of_volumetric_data\DataView\bin\Release\TransformSelect.pdb
+C:\Users\Ja\Desktop\Játra\registration_of_volumetric_data\DataView\bin\Release\TransformSelect.exe.config
+C:\Users\Ja\Desktop\Játra\registration_of_volumetric_data\DataView\bin\Release\MathNet.Numerics.xml
+C:\Users\Ja\Desktop\Játra\registration_of_volumetric_data\DataView\obj\Release\DataView.csprojAssemblyReference.cache
+C:\Users\Ja\Desktop\Játra\registration_of_volumetric_data\DataView\obj\Release\DataView.csproj.CoreCompileInputs.cache
+C:\Users\Ja\Desktop\Játra\registration_of_volumetric_data\DataView\obj\Release\DataView.csproj.CopyComplete
+C:\Users\Ja\Desktop\Játra\registration_of_volumetric_data\DataView\obj\Release\DataView.exe
+C:\Users\Ja\Desktop\Játra\registration_of_volumetric_data\DataView\obj\Release\DataView.pdb

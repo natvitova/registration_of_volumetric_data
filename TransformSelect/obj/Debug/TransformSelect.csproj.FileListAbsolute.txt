@@ -26,3 +26,13 @@ C:\Users\vitova\Documents\GitHub\registration_of_volumetric_data\TransformSelect
 C:\Users\vitova\Documents\GitHub\registration_of_volumetric_data\TransformSelect\obj\Debug\TransformSelect.csproj.CopyComplete
 C:\Users\vitova\Documents\GitHub\registration_of_volumetric_data\TransformSelect\obj\Debug\TransformSelect.exe
 C:\Users\vitova\Documents\GitHub\registration_of_volumetric_data\TransformSelect\obj\Debug\TransformSelect.pdb
+C:\Users\Ja\Desktop\Játra\registration_of_volumetric_data\TransformSelect\bin\Debug\TransformSelect.exe.config
+C:\Users\Ja\Desktop\Játra\registration_of_volumetric_data\TransformSelect\bin\Debug\TransformSelect.exe
+C:\Users\Ja\Desktop\Játra\registration_of_volumetric_data\TransformSelect\bin\Debug\TransformSelect.pdb
+C:\Users\Ja\Desktop\Játra\registration_of_volumetric_data\TransformSelect\bin\Debug\MathNet.Numerics.dll
+C:\Users\Ja\Desktop\Játra\registration_of_volumetric_data\TransformSelect\bin\Debug\MathNet.Numerics.xml
+C:\Users\Ja\Desktop\Játra\registration_of_volumetric_data\TransformSelect\obj\Debug\TransformSelect.csprojAssemblyReference.cache
+C:\Users\Ja\Desktop\Játra\registration_of_volumetric_data\TransformSelect\obj\Debug\TransformSelect.csproj.CoreCompileInputs.cache
+C:\Users\Ja\Desktop\Játra\registration_of_volumetric_data\TransformSelect\obj\Debug\TransformSelect.csproj.CopyComplete
+C:\Users\Ja\Desktop\Játra\registration_of_volumetric_data\TransformSelect\obj\Debug\TransformSelect.exe
+C:\Users\Ja\Desktop\Játra\registration_of_volumetric_data\TransformSelect\obj\Debug\TransformSelect.pdb

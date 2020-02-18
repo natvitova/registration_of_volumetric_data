@@ -47,35 +47,51 @@ namespace DataView
                 VData = new int[height][,];
                 int c = 0;
 
-                for (int k = 0; k < height; k++)
+                if (Data.ElementType == "MET_USHORT")
                 {
-                    VData[k] = new int[width, depth];
-                    for (int i = 0; i < width; i++)
+                    for (int k = 0; k < height; k++)
                     {
-                        for (int j = 0; j < depth; j++)
+                        VData[k] = new int[width, depth];
+                        for (int i = 0; i < width; i++)
                         {
-                            if (Data.ElementType == "MET_USHORT")
+                            for (int j = 0; j < depth; j++)
                             {
+
                                 byte a = br.ReadByte();
                                 byte b = br.ReadByte();
                                 c = 256 * b + a;
-                            }
 
-                            else if (Data.ElementType == "MET_UCHAR")
-                            {
-                                c = br.ReadByte();
-                            }
+                                VData[k][i, j] = c;
+                                //Console.WriteLine(c);
 
-                            else
-                            {
-                                Console.WriteLine("Wrong element type.");
                             }
-
-                            VData[k][i, j] = c;
-                            //Console.WriteLine(c);
                         }
                     }
                 }
+
+                else if (Data.ElementType == "MET_UCHAR")
+                {
+                    for (int k = 0; k < height; k++)
+                    {
+                        VData[k] = new int[width, depth];
+                        for (int i = 0; i < width; i++)
+                        {
+                            for (int j = 0; j < depth; j++)
+                            {
+                                c = br.ReadByte();
+
+                                VData[k][i, j] = c;
+                                //Console.WriteLine(c);
+                            }
+                        }
+                    }
+                    
+                }
+                else
+                {
+                    Console.WriteLine("Wrong element type.");
+                }
+
                 br.Close();
                 return VData;
             }
@@ -346,7 +362,7 @@ namespace DataView
                 int valueA = Interpolation2DWithinMatrix(x, y, zLDC, xLDC, yLDC);
                 int valueB = Interpolation2DWithinMatrix(x, y, zRDC, xLDC, yLDC);
 
-                return InterpolationWithinMatrix(valueA, valueB, z, zLDC, ZSpacing);
+                return InterpolationWithinMatrix(valueA, valueB, z, zLDC);
             }
             else
             {
@@ -397,13 +413,11 @@ namespace DataView
         /// <param name="valueB"></param>
         /// <param name="coordinateOfPixel"></param>
         /// <param name="indexOfA"></param>
-        /// <param name="spacing"></param>
         /// <returns></returns>
-        private int InterpolationWithinMatrix(int valueA, int valueB, double coordinateOfPixel, int indexOfA, double spacing)
+        private int InterpolationWithinMatrix(int valueA, int valueB, double coordinateOfPixel, int indexOfA)
         {
             double d = coordinateOfPixel - indexOfA;
-            double r = d;
-            return (int)(r * valueB + (1 - r) * valueA);
+            return (int)(d * valueB + (1 - d) * valueA);
         }
 
         private int InterpolationReal(int valueA, int valueB, double coordinateOfPixel, int indexOfA, double spacing)
@@ -441,14 +455,14 @@ namespace DataView
             int valueA = VData[indexLDCZ][xLDC, yLDC];
             int valueB = VData[indexLDCZ][xRDC, yLDC];
 
-            int helpValueA = InterpolationWithinMatrix(valueA, valueB, pixelX, xLDC, XSpacing);
+            int helpValueA = InterpolationWithinMatrix(valueA, valueB, pixelX, xLDC);
 
             int valueC = VData[indexLDCZ][xLDC, yRDC];
             int valueD = VData[indexLDCZ][xRDC, yRDC];
 
-            int helpValueB = InterpolationWithinMatrix(valueC, valueD, pixelX, xLDC, XSpacing);
+            int helpValueB = InterpolationWithinMatrix(valueC, valueD, pixelX, xLDC);
 
-            return InterpolationWithinMatrix(helpValueA, helpValueB, pixelY, yLDC, YSpacing);
+            return InterpolationWithinMatrix(helpValueA, helpValueB, pixelY, yLDC);
         }
 
         private int Interpolation2DReal(double pixelX, double pixelY, int indexLDCZ, int xLDC, int yLDC)

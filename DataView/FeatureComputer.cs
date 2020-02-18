@@ -35,6 +35,8 @@ namespace DataView
         {
             List<Point3D> points = new List<Point3D>();
 
+            double rSquared = r * r;
+
             Point3D A = new Point3D(x.X - r, x.Y + r, x.Z - r);
             Point3D C = new Point3D(x.X + r, x.Y - r, x.Z - r);
             Point3D D = new Point3D(x.X - r, x.Y - r, x.Z - r);
@@ -47,7 +49,7 @@ namespace DataView
                     for (double k = D.Z; k <= H.Z; k += step)
                     {
                         double d2 = (i - x.X) * (i - x.X) + (j - x.Y) * (j - x.Y) + (k - x.Z) * (k - x.Z);
-                        if (d2 <= r * r)
+                        if (d2 <= rSquared)
                         {
                             points.Add(new Point3D(i, j, k));
                         }
