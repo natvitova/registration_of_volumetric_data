@@ -420,6 +420,17 @@ namespace DataView
             return (int)(d * valueB + (1 - d) * valueA);
         }
 
+        /// <summary>
+        /// Optimalized interpolation
+        /// </summary>
+        /// <returns></returns>
+        private int Interpolation3D(double x, double y, double z)
+        {
+
+
+            return 0;
+        }
+
         private int InterpolationReal(int valueA, int valueB, double coordinateOfPixel, int indexOfA, double spacing)
         {
 

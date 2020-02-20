@@ -3,11 +3,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 
 namespace DataView
 {
     class SamplerFeatureVector : ISampler
     {
+
+        IConfiguration configuration;
+
+        public SamplerFeatureVector(IConfiguration configuration)
+        {
+            this.configuration = configuration;
+        }
         public Point3D[] Sample(VolumetricData d, int count)
         {
             Random rnd = new Random();
@@ -35,6 +43,12 @@ namespace DataView
             }
 
             return resultPoints;
+        }
+
+        //Using config file
+        public Point3D[] Sample(VolumetricData d)
+        {
+            return Sample(d, Convert.ToInt32(configuration["SamplerFeatureVector:count"]));
         }
 
         /// <summary>
