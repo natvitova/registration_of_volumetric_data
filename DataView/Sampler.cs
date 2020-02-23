@@ -16,7 +16,7 @@ namespace DataView
         public Sampler(IConfiguration configuration)
         {
             this.configuration = configuration;
-            rSphere = Convert.ToInt32(configuration["Sampler:rSphere"]);
+            rSphere = Convert.ToInt32(configuration["Sampling:rSphere"]);
         }
 
 
@@ -40,7 +40,7 @@ namespace DataView
         //Uses configuration file
         public Point3D[] Sample(VolumetricData d)
         {
-            return Sample(d, Convert.ToInt32(configuration["Sampler:count"]));
+            return Sample(d, Convert.ToInt32(configuration["Sampling:count"]));
         }
 
         private double GetRandomDouble(double minimum, double maximum, Random r)

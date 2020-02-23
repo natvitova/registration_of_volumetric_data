@@ -43,7 +43,7 @@ namespace DataView
 
         public Point3D[] Sample(VolumetricData d)
         {
-            return Sample(d, Convert.ToInt32(configuration["SamplerHalfFake:count"]), Convert.ToInt32(configuration["SamplerHalfFake:radius"]));
+            return Sample(d, Convert.ToInt32(configuration["Sampling:count"]), Convert.ToInt32(configuration["Sampling:radius"]));
         }
 
         public void SetTranslation(int[] translation)

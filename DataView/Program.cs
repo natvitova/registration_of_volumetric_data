@@ -205,7 +205,7 @@ namespace DataView
             {
                 if (matches[i].Similarity > threshold)
                 {
-                    transformations.Add(transformer.GetTransformation(matches[i], vData, vData2));
+                    transformations.Add(transformer.GetTransformation(matches[i], vData, vData2, configuration));
                 }
             }
 
@@ -313,7 +313,7 @@ namespace DataView
 
             for (int i = 0; i < matches.Length; i++)
             {
-                Transform3D t = transformer.GetTransformation(matches[i], vData, vData2);
+                Transform3D t = transformer.GetTransformation(matches[i], vData, vData2, configuration);
                 transformations.Add(t);
                 //Console.WriteLine(t);
             }
@@ -402,7 +402,7 @@ namespace DataView
 
             for (int i = 0; i < matches.Length; i++)
             {
-                Transform3D t = transformer.GetTransformationA(matches[i], aData, translation, tr2);
+                Transform3D t = transformer.GetTransformationA(matches[i], aData, translation, tr2, configuration);
                 transformations.Add(t);
                 //Console.WriteLine(t);
             }

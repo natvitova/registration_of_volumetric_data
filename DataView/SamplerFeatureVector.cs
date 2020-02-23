@@ -48,7 +48,7 @@ namespace DataView
         //Using config file
         public Point3D[] Sample(VolumetricData d)
         {
-            return Sample(d, Convert.ToInt32(configuration["SamplerFeatureVector:count"]));
+            return Sample(d, Convert.ToInt32(configuration["Sampling:count"]));
         }
 
         /// <summary>

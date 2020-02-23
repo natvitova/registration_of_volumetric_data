@@ -4,14 +4,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using MathNet.Numerics.LinearAlgebra;
+using Microsoft.Extensions.Configuration;
 
 namespace DataView
 {
     class Transformer3D : ITransformer
     {
-        public Transform3D GetTransformation(Match m, VolumetricData d1, VolumetricData d2)
+        public Transform3D GetTransformation(Match m, VolumetricData d1, VolumetricData d2, IConfiguration configuration)
         {
-            int count = 1000;
+            //int count = 1000;
+            int count = Convert.ToInt32(configuration["transform3D:count"]);
 
             Point3D p1 = m.F1.Point; //micro
             Point3D p2 = m.F2.Point; //macro
@@ -29,9 +31,10 @@ namespace DataView
             return new Transform3D(rotationMatrix, translationVector);
         }
 
-        public Transform3D GetTransformationA(Match m, ArtificialData ad, int[] t1, int[] t2)
+        public Transform3D GetTransformationA(Match m, ArtificialData ad, int[] t1, int[] t2, IConfiguration configuration)
         {
-            int count = 1000;
+            //int count = 1000;
+            int count = Convert.ToInt32(configuration["transform3D:count"]); 
 
             Point3D p1 = m.F1.Point; //micro
             Point3D p2 = m.F2.Point; //macro
