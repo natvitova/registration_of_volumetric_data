@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 
 namespace DataView
 {
@@ -14,6 +15,13 @@ namespace DataView
         // for macro data
         Point3D[] pointsMax;
         Point3D[] pointsMin;
+
+        IConfiguration configuration;
+        public SamplerRandomFake(IConfiguration configuration)
+        {
+            this.configuration = configuration;
+        }
+
         public Point3D[] Sample(IData d, int count, int radius)
         {
             this.pointsMax = new Point3D[count];
@@ -35,6 +43,12 @@ namespace DataView
                 pointsMin[i] = new Point3D(x2, y2, z2);
             }
             return pointsMax;
+        }
+
+        //Using config file
+        public Point3D[] Sample(VolumetricData d)
+        {
+            return Sample(d, Convert.ToInt32(configuration["Sampling:count"]), Convert.ToInt32(configuration["Sampling:radius"]));
         }
 
         public void SetTranslation(int[] translation)

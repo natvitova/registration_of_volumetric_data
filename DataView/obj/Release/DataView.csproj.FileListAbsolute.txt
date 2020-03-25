@@ -8,6 +8,7 @@ C:\Users\Ja\Desktop\Játra\5.10.2019 merger\registration_of_volumetric_data\Data
 C:\Users\Ja\Desktop\Játra\5.10.2019 merger\registration_of_volumetric_data\DataView\obj\Release\DataView.csproj.CopyComplete
 C:\Users\Ja\Desktop\Játra\5.10.2019 merger\registration_of_volumetric_data\DataView\obj\Release\DataView.exe
 C:\Users\Ja\Desktop\Játra\5.10.2019 merger\registration_of_volumetric_data\DataView\obj\Release\DataView.pdb
+
 C:\Users\vitova\Documents\GitHub\registration_of_volumetric_data\DataView\bin\Release\DataView.exe.config
 C:\Users\vitova\Documents\GitHub\registration_of_volumetric_data\DataView\bin\Release\DataView.exe
 C:\Users\vitova\Documents\GitHub\registration_of_volumetric_data\DataView\bin\Release\DataView.pdb
@@ -21,3 +22,6 @@ C:\Users\vitova\Documents\GitHub\registration_of_volumetric_data\DataView\obj\Re
 C:\Users\vitova\Documents\GitHub\registration_of_volumetric_data\DataView\obj\Release\DataView.csproj.CopyComplete
 C:\Users\vitova\Documents\GitHub\registration_of_volumetric_data\DataView\obj\Release\DataView.exe
 C:\Users\vitova\Documents\GitHub\registration_of_volumetric_data\DataView\obj\Release\DataView.pdb
+
+
+

@@ -3,9 +3,13 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+
 using System.Diagnostics;
 using System.Threading;
 using System.Windows.Forms.DataVisualization.Charting;
+
+using Microsoft.Extensions.Configuration;
+
 
 namespace DataView
 {
@@ -19,12 +23,19 @@ namespace DataView
         private static Data sample2;
         private static IData iData2; //macro
 
+        private static IConfiguration configuration;
+
+
         /// <summary>
         /// 
         /// </summary>
         /// <param name="args"></param>
         static void Main(string[] args)
         {
+            //string fileName = @"P01_a_MikroCT-nejhrubsi_rozliseni_DICOM_liver-1st-important_Macro_pixel-size53.0585um.mhd";
+            //string fileName2 = @"P01_b_Prase_1_druhe_vys.mhd";
+            configuration = new ConfigurationBuilder().AddJsonFile("config.json", optional: true).Build();
+
             string fileName = @"P01_b_Prase_1_druhe_vys.mhd";
             string fileName2 = fileName;
             int[] translation = new int[3];
@@ -124,10 +135,6 @@ namespace DataView
             Console.WriteLine("Elapsed Time is {0} s", stopwatch.ElapsedMilliseconds / 1000.0);
             Console.ReadKey();
 
-            //string fileName = @"P01_a_MikroCT-nejhrubsi_rozliseni_DICOM_liver-1st-important_Macro_pixel-size53.0585um.mhd";
-            //string fileName2 = @"P01_b_Prase_1_druhe_vys.mhd";
-        }
-
         public static void MainFunction(string micro, string macro)
         {
             //----------------------------------------PARAMETERS----------------------------------------------
@@ -135,6 +142,8 @@ namespace DataView
             int numberOfPointsMacro = 1_000;
             IFeatureComputer fc = new FeatureComputer();
             ISampler s = new Sampler();
+            //ISampler s = new Sampler(configuration);
+
             //----------------------------------------MICRO CT------------------------------------------------
             sampleMicro = new Data();
             sampleMicro.SetFeatures(micro);
@@ -164,7 +173,7 @@ namespace DataView
             iData2 = vData2;
             Console.WriteLine("Data read succesfully.");
             IFeatureComputer fc2 = new FeatureComputer();
-            ISampler s2 = new Sampler();
+            ISampler s2 = new Sampler(configuration);
 
             Console.WriteLine("Sampling.");
             Point3D[] points2 = s2.Sample(iData2, 10000);
@@ -195,7 +204,8 @@ namespace DataView
             Console.WriteLine("Computing transformations.\n");
             //Transform3D[] transformations = new Transform3D[matches.Length];
 
-            double threshold = 99.9999;
+            //double threshold = 99.9999;
+            double threshold = Convert.ToDouble(configuration["Program:treshold"]);
             List<Transform3D> transformations = new List<Transform3D>();
             //int countT9 = 0;
 
@@ -204,6 +214,7 @@ namespace DataView
                 if (matches[i].Similarity > threshold)
                 {
                     transformations.Add(transformer.GetTransformation(matches[i], iDataMicro, iData2));
+                    //transformations.Add(transformer.GetTransformation(matches[i], vData, vData2, configuration));
                 }
             }
 
@@ -531,10 +542,17 @@ namespace DataView
         public static Transform3D MainFunctionAD2(int[] translation, string macro)
         {
             //----------------------------------------PARAMS -------------------------------------------------
+            /*
             double threshold = 20; // percentage
             int numberOfPoints = 100_000; // micro
             int numberOfPoints2 = 100_000;
             int radius = 10;
+            */
+
+            double threshold = Convert.ToDouble(configuration["Program:treshold"]); // percentage
+            int numberOfPoints = Convert.ToInt32(configuration["Program:NumberOfPointsMicro"]); // micro
+            int numberOfPoints2 = Convert.ToInt32(configuration["Program:NumberOfPointsMacro"]);
+            int radius = Convert.ToInt32(configuration["Program:radius"]);
 
             //FunctionAD(macro);
             //iData = iData2.CutVol(translation); //micro
@@ -542,12 +560,12 @@ namespace DataView
             //Console.WriteLine("Artificial data created succesfully.");
             //----------------------------------------DATA ---------------------------------------------------
             FeatureComputer fc = new FeatureComputer();
-            ISampler s = new Sampler();
+            ISampler s = new Sampler(configuration);
             FeatureComputer fc2 = new FeatureComputer();
 
-            SamplerFake s2 = new SamplerFake();
-            SamplerHalfFake s3 = new SamplerHalfFake();
-            SamplerRandomFake s4 = new SamplerRandomFake();
+            SamplerFake s2 = new SamplerFake(configuration);
+            SamplerHalfFake s3 = new SamplerHalfFake(configuration);
+            SamplerRandomFake s4 = new SamplerRandomFake(configuration);
             s2.SetTranslation(translation);
             s3.SetTranslation(translation);
             s4.SetTranslation(translation);
@@ -592,6 +610,7 @@ namespace DataView
             for (int i = 0; i < matches.Length; i++)
             {
                 Transform3D t = transformer.GetTransformation(matches[i], iDataMicro, iData2);
+                //Transform3D t = transformer.GetTransformation(matches[i], vData, vData2, configuration);
                 transformations.Add(t);
                 //Console.WriteLine(t);
             }
@@ -609,10 +628,17 @@ namespace DataView
         public static Transform3D MainFunctionAD(int[] translation)
         {
             //----------------------------------------PARAMS -------------------------------------------------
-            double threshold = 20; // percentage
-            int numberOfPoints = 10_000; // micro
-            int numberOfPoints2 = numberOfPoints;
-            int radius = 10;
+            /*
+           double threshold = 20; // percentage
+           int numberOfPoints = 100_000; // micro
+           int numberOfPoints2 = 100_000;
+           int radius = 10;
+           */
+
+            double threshold = Convert.ToDouble(configuration["Program:threshold"]); // percentage
+            int numberOfPoints = Convert.ToInt32(configuration["Program:NumberOfPointsMicro"]); // micro
+            int numberOfPoints2 = Convert.ToInt32(configuration["Program:NumberOfPointsMacro"]);
+            int radius = Convert.ToInt32(configuration["Program:radius"]);
 
             IFunction fce1 = new LinearFunction(1, 3, 8);
             IFunction fce2 = new NonLinearFunction(1, 3, 11);
@@ -625,11 +651,11 @@ namespace DataView
 
             //----------------------------------------DATA ---------------------------------------------------
             FeatureComputer fc = new FeatureComputer();
-            ISampler s = new Sampler();
+            ISampler s = new Sampler(configuration);
             FeatureComputer fc2 = new FeatureComputer();
             //ISampler s2 = new SamplerFake();
-            SamplerFake s2 = new SamplerFake();
-            SamplerHalfFake s3 = new SamplerHalfFake();
+            SamplerFake s2 = new SamplerFake(configuration);
+            SamplerHalfFake s3 = new SamplerHalfFake(configuration);
             s2.SetTranslation(translation);
 
             //Console.WriteLine("Sampling.");
@@ -673,7 +699,7 @@ namespace DataView
 
             for (int i = 0; i < matches.Length; i++)
             {
-                Transform3D t = transformer.GetTransformationA(matches[i], aData, translation, tr2);
+                Transform3D t = transformer.GetTransformationA(matches[i], aData, translation, tr2, configuration);
                 transformations.Add(t);
                 //Console.WriteLine(t);
             }
@@ -692,8 +718,20 @@ namespace DataView
         {
             //TODO change for 3D/2D, make nonspecific
             string fileName = "P01_HEAD_5_0_H31S_0004.mhd";
+
+            /*
             int distance = 20;
             int direction = 2;
+            int xRes = 500;
+            int yRes = 500;
+            double spacing = 0.5;
+            */
+
+            int distance = Convert.ToInt32(configuration["Program:CutDistance"]); ;
+            int direction = Convert.ToInt32(configuration["Program:CutDirection"]); ;
+            int xRes = Convert.ToInt32(configuration["Program:CutXRes"]); ;
+            int yRes = Convert.ToInt32(configuration["Program:CutYRes"]); ;
+            double spacing = Convert.ToDouble(configuration["Program:CutSpacing"]); ;
 
             double[] point = { 100, 100, 20 };
             double[] v1 = { 1, 0, 0 };
@@ -707,9 +745,7 @@ namespace DataView
             //double[] v2 = { 0, 1, 0 };
             //double[] v3 = { 2, 1, 5 };
 
-            int xRes = 500;
-            int yRes = 500;
-            double spacing = 0.5;
+            
             string finalFile = GenerateFinalFileName(point, v1, v2, xRes, yRes, spacing);
 
             Console.WriteLine("Controlling data...");
@@ -754,7 +790,6 @@ namespace DataView
                 Console.WriteLine("The distance is higher than the dimension.");
                 Console.ReadKey();
             }
-
         }
 
         public static void TestData()
