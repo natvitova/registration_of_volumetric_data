@@ -8,6 +8,6 @@ namespace DataView
 {
     interface ITransformer
     {
-        Transform3D GetTransformation(Match m, VolumetricData d1, VolumetricData d2);
+        Transform3D GetTransformation(Match m, IData d1, IData d2);
     }
 }

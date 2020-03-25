@@ -9,7 +9,7 @@ namespace DataView
     class Sampler : ISampler
     {
         private int rSphere = 5;
-        public Point3D[] Sample(VolumetricData d, int count)
+        public Point3D[] Sample(IData d, int count)
         {
             Point3D[] points = new Point3D[count];
 
@@ -17,10 +17,13 @@ namespace DataView
             Random r = new Random();
             for (int i = 0; i < count; i++)
             {
-                double x = GetRandomDouble(rSphere, measures[0] - rSphere, r);
-                double y = GetRandomDouble(rSphere, measures[1] - rSphere, r);
-                double z = GetRandomDouble(rSphere, measures[2] - rSphere, r);
-
+                double x = GetRandomDouble(rSphere, measures[0]* d.XSpacing - rSphere, r) ;
+                double y = GetRandomDouble(rSphere, measures[1]* d.YSpacing - rSphere, r) ;
+                double z = GetRandomDouble(rSphere, measures[2]* d.ZSpacing - rSphere, r) ;
+                if(x<0 || y<0 || z < 0)
+                {
+                    int a = 0;
+                }
                 points[i] = new Point3D(x, y, z);
             }
             return points;

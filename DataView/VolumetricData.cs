@@ -10,7 +10,7 @@ namespace DataView
     /// <summary>
     /// 
     /// </summary>
-    class VolumetricData
+    class VolumetricData : IData
     {
         private int[][,] vData;
         private double xSpacing;
@@ -408,8 +408,7 @@ namespace DataView
 
         private int InterpolationReal(int valueA, int valueB, double coordinateOfPixel, int indexOfA, double spacing)
         {
-
-            double d = coordinateOfPixel - indexOfA * spacing;
+            double d = coordinateOfPixel - indexOfA * spacing; //TODO positive/zero?
             double r = d / spacing;
             return (int)(r * valueB + (1 - r) * valueA);
         }

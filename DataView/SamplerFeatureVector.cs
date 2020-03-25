@@ -8,7 +8,7 @@ namespace DataView
 {
     class SamplerFeatureVector : ISampler
     {
-        public Point3D[] Sample(VolumetricData d, int count)
+        public Point3D[] Sample(IData d, int count)
         {
             Random rnd = new Random();
             int quality = 5; //how many times this method discards undersirable points (higher quality -> more proccesor time)
@@ -46,7 +46,7 @@ namespace DataView
         /// <param name="border"></param>
         /// <param name="measures"></param>
         /// <param name="rnd"></param>
-        private void AddPointsToList(List<RatedPoint> ratedPoints, VolumetricData d, int count, int border, int[] measures, Random rnd)
+        private void AddPointsToList(List<RatedPoint> ratedPoints, IData d, int count, int border, int[] measures, Random rnd)
         {
             FeatureComputer featureComputer = new FeatureComputer();
             while(ratedPoints.Count() < count)
@@ -188,7 +188,7 @@ namespace DataView
         /// 
         /// Array version
         /// </summary>
-        private PointWithFeatures[] ComputeFeaturesForPoints(Point3D[] points, VolumetricData d)
+        private PointWithFeatures[] ComputeFeaturesForPoints(Point3D[] points, IData d)
         {
             PointWithFeatures[] pointsWithFeatures = new PointWithFeatures[points.Count()];
             FeatureComputer featureComputer = new FeatureComputer();
@@ -209,7 +209,7 @@ namespace DataView
         /// <param name="points"></param>
         /// <param name="d"></param>
         /// <returns></returns>
-        private List<PointWithFeatures> ComputeFeaturesForPoints(List<Point3D> points, VolumetricData d)
+        private List<PointWithFeatures> ComputeFeaturesForPoints(List<Point3D> points, IData d)
         {
             List<PointWithFeatures> pointsWithFeatures = new List<PointWithFeatures>();
             FeatureComputer featureComputer = new FeatureComputer();
@@ -230,7 +230,7 @@ namespace DataView
         /// <param name="count"></param>
         /// <param name="border"></param>
         /// <returns></returns>
-        private Point3D[] GenerateRandomPoints(VolumetricData d, int count, int border)
+        private Point3D[] GenerateRandomPoints(IData d, int count, int border)
         {
             Point3D[] points = new Point3D[count];
             int[] measures = d.Measures;
@@ -273,7 +273,7 @@ namespace DataView
         /// <param name="count"></param>
         /// <param name="border"></param>
         /// <returns></returns>
-        private List<Point3D> GenerateRandomPoints(VolumetricData d, int count, int border, Random rnd)
+        private List<Point3D> GenerateRandomPoints(IData d, int count, int border, Random rnd)
         {
             List<Point3D> points = new List<Point3D>();
             int[] measures = d.Measures;

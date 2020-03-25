@@ -14,7 +14,7 @@ namespace DataView
         // for macro data
         Point3D[] pointsMax;
         Point3D[] pointsMin;
-        public Point3D[] Sample(VolumetricData d, int count, int radius)
+        public Point3D[] Sample(IData d, int count, int radius)
         {
             this.pointsMax = new Point3D[count];
             this.pointsMin = new Point3D[count];
@@ -23,13 +23,13 @@ namespace DataView
 
             for (int i = 0; i < count; i++)
             {
-                double x = r.Next(translationX + radius, measures[0] - radius);
-                double y = r.Next(translationY + radius, measures[1] - radius);
-                double z = r.Next(translationZ + radius, measures[2] - radius);
+                double x = r.Next(translationX + radius, measures[0] - radius) * d.XSpacing; // real coordinates
+                double y = r.Next(translationY + radius, measures[1] - radius) * d.YSpacing;
+                double z = r.Next(translationZ + radius, measures[2] - radius) * d.ZSpacing;
 
-                double x2 = r.Next(radius, measures[0] - radius - translationX);
-                double y2 = r.Next(radius, measures[1] - radius - translationY);
-                double z2 = r.Next(radius, measures[2] - radius - translationZ);
+                double x2 = r.Next(radius, measures[0] - radius - translationX) * d.XSpacing;
+                double y2 = r.Next(radius, measures[1] - radius - translationY) * d.YSpacing;
+                double z2 = r.Next(radius, measures[2] - radius - translationZ) * d.ZSpacing;
 
                 pointsMax[i] = new Point3D(x, y, z);
                 pointsMin[i] = new Point3D(x2, y2, z2);

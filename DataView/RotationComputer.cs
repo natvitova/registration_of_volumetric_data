@@ -18,7 +18,7 @@ namespace DataView
         /// <param name="point2">Point in data2 to take samples around</param>
         /// <param name="count">Number of samples taken</param>
         /// <returns></returns>
-        public static Matrix<double> CalculateRotation(VolumetricData d1, VolumetricData d2, Point3D point1, Point3D point2, int count)
+        public static Matrix<double> CalculateRotation(IData d1, IData d2, Point3D point1, Point3D point2, int count)
         {
             //Console.WriteLine("Calculating rotation between point {0} : {1} of value {2} in data: {3} and point {4} : {5} of value {6} in data {7} ",
             // nameof(point1), point1.ToString(), d1.GetValueRealCoordinates(point1), nameof(d1), nameof(point2), point2.ToString(), d2.GetValueRealCoordinates(point2), nameof(d2));
@@ -235,9 +235,9 @@ namespace DataView
         /// <param name="d"></param>
         /// <param name="count"></param>
         /// <returns></returns>
-        private static Matrix<double> GetSymetricMatrixForEigenVectors(VolumetricData d, Point3D point, int count)
+        private static Matrix<double> GetSymetricMatrixForEigenVectors(IData d, Point3D point, int count)
         {
-            Point3D[] sample1 = SampleSphereAroundPoint(d, point, 5, count);
+            Point3D[] sample1 = SampleSphereAroundPoint(d, point, 3, count);
 
             //for (int i = 0; i < sample1.Length; i++)
             //{
@@ -271,10 +271,12 @@ namespace DataView
             return A;
         }
 
-        private static Point3D[] SampleSphereAroundPoint(VolumetricData d, Point3D centerPoint, int radius, int count)
+        private static Point3D[] SampleSphereAroundPoint(IData d, Point3D centerPoint, int radius, int count)
         {
             List<Point3D> survivingPoints = new List<Point3D>();
-            List<Point3D> pointsInSphere = FeatureComputer.GetSphere(centerPoint, radius, 0.5); //gets all points in a given sphere
+            double nConst = (d.XSpacing + d.YSpacing + d.ZSpacing) / 3;
+            double s = nConst; //TODO odstranit /2, zvetsit r
+            List<Point3D> pointsInSphere = FeatureComputer.GetSphere(centerPoint, radius, s); //gets all points in a given sphere
             //Console.WriteLine(pointsInSphere.Count);
 
             Random rnd = new Random();
@@ -284,7 +286,7 @@ namespace DataView
 
             foreach (Point3D point in pointsInSphere) //finds the minumum and maximum value in the sphere
             {
-                currentValue = d.GetValueMatrixCoordinates(point);
+                currentValue = d.GetValue(point);
 
                 if (currentValue > maxValue)
                     maxValue = currentValue;
@@ -300,7 +302,7 @@ namespace DataView
                 int rndIndex = rnd.Next(0, pointsInSphere.Count); //random index in pointsInSphere
                 if (NonTrivial)
                 {
-                    if (DecideFate(rnd, d.GetValueMatrixCoordinates(pointsInSphere[rndIndex]), minValue, maxValue)) //decides whether to keep the point or not
+                    if (DecideFate(rnd, d.GetValue(pointsInSphere[rndIndex]), minValue, maxValue)) //decides whether to keep the point or not
                     {
                         //the point is kept
                         survivingPoints.Add(pointsInSphere[rndIndex]); //add to result

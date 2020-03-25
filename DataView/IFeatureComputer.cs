@@ -8,6 +8,6 @@ namespace DataView
 {
     interface IFeatureComputer
     {
-        FeatureVector ComputeFeatureVector(VolumetricData d, Point3D p);
+        FeatureVector ComputeFeatureVector(IData d, Point3D p);
     }
 }
