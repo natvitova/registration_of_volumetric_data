@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace DataView
 {
-    class RatedPoint : PointWithFeatures
+    class PointRated : PointWithFeatures
     {
         public double rating;
-        public RatedPoint(PointWithFeatures point, double rating) : base(point.X, point.Y, point.Z, point.featureVector)
+        public PointRated(PointWithFeatures point, double rating) : base(point.X, point.Y, point.Z, point.featureVector)
         {
             this.rating = rating;
         }

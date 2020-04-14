@@ -13,6 +13,13 @@ namespace DataView
         private double y;
         private double z;
 
+        public Point3D()
+        {
+            this.X = 0;
+            this.Y = 0;
+            this.Z = 0;
+        }
+
         public Point3D(double x, double y, double z)
         {
             this.X = x;
@@ -20,15 +27,15 @@ namespace DataView
             this.Z = z;
         }
 
-        public Point3D Rotate(Matrix<double> m) //TODO BACHA
+        public Point3D Rotate(Matrix<double> m)
         {
             Vector<double> p = Vector<double>.Build.Dense(3);
             p[0] = this.x;
             p[1] = this.y;
             p[2] = this.z;
             Vector<double> newp = m.Multiply(p);
-            Point3D newpoint = new Point3D(newp[0], newp[1], newp[2]);
-            return newpoint;
+
+            return new Point3D(newp[0], newp[1], newp[2]);
         }
 
         public Point3D Move(double[] t)
@@ -37,10 +44,13 @@ namespace DataView
             p[0] = this.x + t[0];
             p[1] = this.y + t[1];
             p[2] = this.z + t[2];
-            
-            Point3D newpoint = new Point3D(p[0], p[1], p[2]);
-            return newpoint;
 
+            return new Point3D(p[0], p[1], p[2]);
+        }
+
+        public Point3D Copy()
+        {
+            return new Point3D(this.X, this.Y, this.Z);
         }
 
         public double X { get => x; set => x = value; }
@@ -49,7 +59,7 @@ namespace DataView
 
         public override string ToString()
         {
-            return "x:" + Math.Round(X,2) + " y:" + Math.Round(Y, 2) + " z:" + Math.Round(Z, 2);
+            return "x:" + Math.Round(X, 2) + " y:" + Math.Round(Y, 2) + " z:" + Math.Round(Z, 2);
         }
     }
 }

@@ -21,12 +21,14 @@ namespace DataView
         /// <summary>
         /// 
         /// </summary>
-        public Data() // nonparametrical constructor 
+        public Data(string fileName) // nonparametrical constructor 
         {
             elementSpacing = null;
             dimSize = null;
             elementDataFile = null;
             elementType = null;
+
+            this.SetFeatures(fileName);
         }
 
         public Data(Data copy)
@@ -36,11 +38,12 @@ namespace DataView
             this.elementDataFile = copy.ElementDataFile;
             this.elementType = copy.ElementType;
         }
+
         /// <summary>
         /// 
         /// </summary>
         /// <param name="fileName"></param>
-        public void SetFeatures(string fileName) // method setting instance atributes
+        private void SetFeatures(string fileName) // method setting instance atributes
         {
             using (StreamReader sr = new StreamReader(fileName))
             {
@@ -94,10 +97,8 @@ namespace DataView
         /// <returns></returns>
         private static double GetDouble(string value, double defaultValue)
         {
-            double result;
-
             // Try parsing in the current culture
-            if (!double.TryParse(value, System.Globalization.NumberStyles.Any, CultureInfo.CurrentCulture, out result) &&
+            if (!double.TryParse(value, System.Globalization.NumberStyles.Any, CultureInfo.CurrentCulture, out double result) &&
                 // Then try in US english
                 !double.TryParse(value, System.Globalization.NumberStyles.Any, CultureInfo.GetCultureInfo("en-US"), out result) &&
                 // Then in neutral language

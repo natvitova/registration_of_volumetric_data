@@ -13,7 +13,7 @@ namespace DataView
     class PictureMaker
     {
         private int[,] array;
-        
+
         /// <summary>
         /// 
         /// </summary>
@@ -35,22 +35,20 @@ namespace DataView
             double max = 0;
             double c;
 
-            for (int i = 0; i < width; i++)
+            for (int i = 0; i < width; i++) //TODO .Max() ?
             {
                 for (int j = 0; j < height; j++)
                 {
                     c = array[i, j];
-                   // Console.Write(ccc + " ");//
                     if (c > max)
                     {
                         max = c;
                     }
                 }
-                // Console.WriteLine();//
             }
-            //  Console.ReadKey();//
+
             Bitmap bitmap = new Bitmap(width, height);
-            if(max == 0)
+            if (max == 0)
             {
                 max = 1;
             }
@@ -59,12 +57,11 @@ namespace DataView
                 for (int y = 0; y < height; y++)
                 {
                     int h = array[x, y];
-                    h = (int)((h * 255) / max);
+                    h = (int)(h * 255 / max);
                     Color color = Color.FromArgb(h, h, h);
                     bitmap.SetPixel(x, y, color);
                 }
             }
-
             return bitmap;
         }
 

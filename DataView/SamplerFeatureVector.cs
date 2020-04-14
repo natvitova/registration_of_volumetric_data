@@ -25,7 +25,7 @@ namespace DataView
             
             List<Point3D> points = GenerateRandomPoints(d, count, border, rnd);
             List<PointWithFeatures> pointsWithFeatures = ComputeFeaturesForPoints(points, d);
-            List<RatedPoint> ratedPoints = RatePoints(pointsWithFeatures);
+            List<PointRated> ratedPoints = RatePoints(pointsWithFeatures);
 
             double averageRating;
 
@@ -60,14 +60,14 @@ namespace DataView
         /// <param name="border"></param>
         /// <param name="measures"></param>
         /// <param name="rnd"></param>
-        private void AddPointsToList(List<RatedPoint> ratedPoints, IData d, int count, int border, int[] measures, Random rnd)
+        private void AddPointsToList(List<PointRated> ratedPoints, IData d, int count, int border, int[] measures, Random rnd)
         {
             FeatureComputer featureComputer = new FeatureComputer();
             while(ratedPoints.Count() < count)
             {
                 Point3D point = GenerateRandomPoint(border, measures, rnd);
                 PointWithFeatures pointWithFeatures = new PointWithFeatures(point, featureComputer.ComputeFeatureVector(d, point).Features);
-                RatedPoint ratedPoint = new RatedPoint(pointWithFeatures, RatePoint(pointWithFeatures));
+                PointRated ratedPoint = new PointRated(pointWithFeatures, RatePoint(pointWithFeatures));
 
                 ratedPoints.Add(ratedPoint);
             }
@@ -78,7 +78,7 @@ namespace DataView
         /// </summary>
         /// <param name="ratedPoints"></param>
         /// <param name="averageRating"></param>
-        private void RemovePointsUnderAverage(List<RatedPoint> ratedPoints, double averageRating)
+        private void RemovePointsUnderAverage(List<PointRated> ratedPoints, double averageRating)
         {
             for(int i = 0; i < ratedPoints.Count(); i++) 
             {
@@ -95,10 +95,10 @@ namespace DataView
         /// </summary>
         /// <param name="ratedPoints"></param>
         /// <returns></returns>
-        private double ComputeAverageRating(RatedPoint[] ratedPoints)
+        private double ComputeAverageRating(PointRated[] ratedPoints)
         {
             double ratingSum = 0;
-            foreach(RatedPoint point in ratedPoints)
+            foreach(PointRated point in ratedPoints)
             {
                 ratingSum += point.rating;
             }
@@ -111,10 +111,10 @@ namespace DataView
         /// </summary>
         /// <param name="ratedPoints"></param>
         /// <returns></returns>
-        private double ComputeAverageRating(List<RatedPoint> ratedPoints)
+        private double ComputeAverageRating(List<PointRated> ratedPoints)
         {
             double ratingSum = 0;
-            foreach (RatedPoint point in ratedPoints)
+            foreach (PointRated point in ratedPoints)
             {
                 ratingSum += point.rating;
             }
@@ -129,14 +129,14 @@ namespace DataView
         /// </summary>
         /// <param name="pointsWithFeatures"></param>
         /// <returns></returns>
-        private RatedPoint[] RatePoints(PointWithFeatures[] pointsWithFeatures)
+        private PointRated[] RatePoints(PointWithFeatures[] pointsWithFeatures)
         {
-            RatedPoint[] ratedPoints = new RatedPoint[pointsWithFeatures.Count()];
+            PointRated[] ratedPoints = new PointRated[pointsWithFeatures.Count()];
             double rating;
             for (int i = 0; i < ratedPoints.Count(); i++) 
             {
                 rating = RateVector(pointsWithFeatures[i].featureVector);
-                ratedPoints[i] = new RatedPoint(pointsWithFeatures[i], rating);
+                ratedPoints[i] = new PointRated(pointsWithFeatures[i], rating);
             }
             return ratedPoints;
         }
@@ -148,15 +148,15 @@ namespace DataView
         /// </summary>
         /// <param name="pointsWithFeatures"></param>
         /// <returns></returns>
-        private List<RatedPoint> RatePoints(List<PointWithFeatures> pointsWithFeatures)
+        private List<PointRated> RatePoints(List<PointWithFeatures> pointsWithFeatures)
         {
 
-            List<RatedPoint> ratedPoints = new List<RatedPoint>();
+            List<PointRated> ratedPoints = new List<PointRated>();
             double rating;
             for (int i = 0; i < ratedPoints.Count(); i++)
             {
                 rating = RateVector(pointsWithFeatures[i].featureVector);
-                ratedPoints.Add(new RatedPoint(pointsWithFeatures[i], rating));
+                ratedPoints.Add(new PointRated(pointsWithFeatures[i], rating));
             }
             return ratedPoints;
         }

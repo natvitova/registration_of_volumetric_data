@@ -20,9 +20,7 @@ namespace DataView
         /// </summary>
         public FeatureVector()
         {
-            this.Features = new double[] { 0, 0, 0, 0, 0 };
-            this.R = 5;
-            this.Point = new Point3D(0, 0, 0);
+            new FeatureVector(new Point3D(0, 0, 0), 0, 0, 0, 0, 0);
         }
 
         /// <summary>
@@ -49,43 +47,27 @@ namespace DataView
             double sum = 0;
             for (int i = 0; i < this.R; i++)
             {
-                sum += this.Coordinate(i) * this.Coordinate(i);
+                sum += this.Features[i] * this.Features[i];
             }
+
             return Math.Sqrt(sum);
         }
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="p"></param>
+        /// <param name="fv"></param>
         /// <returns></returns>
-        public double DistTo2(FeatureVector p)
+        public double DistTo2(FeatureVector fv)
         {
             double sum = 0;
             for (int i = 0; i < R; i++)
             {
-                double d = this.Features[i] - p.Features[i];
+                double d = this.Features[i] - fv.Features[i];
                 sum += d * d;
             }
-            return sum;
-        }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="axis"></param>
-        /// <returns></returns>
-        public double Coordinate(int axis)
-        {
-            if (axis == 0)
-                return this.Features[0];
-            if (axis == 1)
-                return this.Features[1];
-            if (axis == 2)
-                return this.Features[2];
-            if (axis == 3)
-                return this.Features[3];
-            return this.Features[4];
+            return sum;
         }
 
         public double[] Features { get => features; set => features = value; }
@@ -94,7 +76,14 @@ namespace DataView
 
         public override string ToString()
         {
-            return Point.ToString() + "; " + Math.Round(Features[0], 2) + ", " + Math.Round(Features[1], 2) + ", " + Math.Round(Features[2], 2) + ", " + Math.Round(Features[3], 2) + ", " + Math.Round(Features[4], 2);
+            string returnS = "";
+            for (int i = 0; i < R; i++)
+            {
+                returnS += Math.Round(Features[i], 2);
+                if (i != R - 1) { returnS += ", "; }
+            }
+
+            return returnS;
         }
     }
 }

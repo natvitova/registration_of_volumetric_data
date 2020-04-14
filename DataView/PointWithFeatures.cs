@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DataView
 {
-    class PointWithFeatures : Point3D
+    class PointWithFeatures : Point3D //TODO - Matěj - zeptat se
     {
         public double[] featureVector;
 

@@ -30,10 +30,7 @@ namespace DataView
                 double x = GetRandomDouble(rSphere, measures[0]* d.XSpacing - rSphere, r) ;
                 double y = GetRandomDouble(rSphere, measures[1]* d.YSpacing - rSphere, r) ;
                 double z = GetRandomDouble(rSphere, measures[2]* d.ZSpacing - rSphere, r) ;
-                if(x<0 || y<0 || z < 0)
-                {
-                    int a = 0;
-                }
+
                 points[i] = new Point3D(x, y, z);
             }
             return points;

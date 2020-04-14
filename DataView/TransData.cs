@@ -13,40 +13,8 @@ namespace DataView
         private double zSpacing;
         private VolumetricData vData;
         private Matrix<double> rotationM;
+        private Vector<double> translation;
         private int[] measures;
-
-        public TransData(VolumetricData vData)
-        {
-            this.vData = vData;
-            this.Measures = new int[3];
-            this.Measures[0] = vData.Measures[0];
-            this.Measures[1] = vData.Measures[1];
-            this.Measures[2] = vData.Measures[2];
-
-            this.xSpacing = vData.XSpacing;
-            this.ySpacing = vData.YSpacing;
-            this.zSpacing = vData.ZSpacing;
-
-            this.RotationM = Matrix<double>.Build.Dense(3, 4);
-            this.RotationM[0, 3] += 0;
-            this.RotationM[1, 3] += 0;
-            this.RotationM[2, 3] += 0;
-            //this.RotationM[3, 3] = 1;
-
-            this.RotationM[0, 0] = 1;
-            this.RotationM[0, 1] = 0;
-            this.RotationM[0, 2] = 0;
-            this.RotationM[1, 0] = 0;
-            this.RotationM[1, 1] = 1;
-            this.RotationM[1, 2] = 0;
-            this.RotationM[2, 0] = 0;
-            this.RotationM[2, 1] = 0;
-            this.RotationM[2, 2] = 1;
-
-            //this.RotationM[3, 0] = 0;
-            //this.RotationM[3, 1] = 0;
-            //this.RotationM[3, 2] = 0;
-        }
 
         public TransData(VolumetricData vData, int[] t, double fi, double[] ax)
         {
@@ -61,11 +29,11 @@ namespace DataView
             this.ySpacing = vData.YSpacing;
             this.zSpacing = vData.ZSpacing;
 
-            this.RotationM = Matrix<double>.Build.Dense(3, 4);
-            this.RotationM[0, 3] = (t[0] * XSpacing);
-            this.RotationM[1, 3] = (t[1] * YSpacing);
-            this.RotationM[2, 3] = (t[2] * ZSpacing);
-            //this.RotationM[3, 3] = 1;
+            this.RotationM = Matrix<double>.Build.Dense(3, 3);
+            this.Translation = Vector<double>.Build.Dense(3);
+            this.Translation[0] = t[0] * XSpacing;
+            this.Translation[1] = t[1] * YSpacing;
+            this.Translation[2] = t[2] * ZSpacing;
 
             this.RotationM[0, 0] = Math.Cos(fi) + ax[0] * ax[0] * (1 - Math.Cos(fi));
             this.RotationM[0, 1] = ax[0] * ax[1] * (1 - Math.Cos(fi)) - ax[2] * Math.Sin(fi);
@@ -76,28 +44,22 @@ namespace DataView
             this.RotationM[2, 0] = ax[0] * ax[2] * (1 - Math.Cos(fi)) - ax[1] * Math.Sin(fi);
             this.RotationM[2, 1] = ax[1] * ax[2] * (1 - Math.Cos(fi)) + ax[0] * Math.Sin(fi);
             this.RotationM[2, 2] = Math.Cos(fi) + ax[2] * ax[2] * (1 - Math.Cos(fi));
-
-            //this.RotationM[3, 0] = 0;
-            //this.RotationM[3, 1] = 0;
-            //this.RotationM[3, 2] = 0;
         }
 
         public int GetValue(double x, double y, double z)
         {
-            Vector<double> v = Vector<double>.Build.Dense(4);
+            Vector<double> v = Vector<double>.Build.Dense(3);
             v[0] = x;
             v[1] = y;
             v[2] = z;
-            v[3] = 1;
 
             Vector<double> u = RotationM.Multiply(v);
+            u += Translation;
             Point3D Q = new Point3D(u[0], u[1], u[2]);
             if (u[0] > Measures[0] && u[1] > Measures[1] && u[2] > Measures[2] && u[0] <= 0 && u[1] <= 0 && u[2] <= 0)
             {
                 Console.WriteLine();
             }
-            //Console.WriteLine("Q to micro: " + Q);
-            //Console.WriteLine("matrix to micro: " + rotationM);
             return vData.GetValue(Q);
         }
 
@@ -141,8 +103,7 @@ namespace DataView
 
         public double GetAlpha(Matrix<double> r2)
         {
-            Matrix<double> r1 = RotationM.RemoveColumn(3);
-            Matrix<double> r3 = r1.Multiply(r2.Transpose());
+            Matrix<double> r3 = RotationM.Multiply(r2.Transpose());
             double alpha = GetAngle(r3);
             return alpha;
         }
@@ -154,7 +115,7 @@ namespace DataView
 
         public Point3D[] Sample(Point3D[] points) // from micro to macro
         {
-            Vector<double> v = Vector<double>.Build.Dense(4);
+            Vector<double> v = Vector<double>.Build.Dense(3);
             
             Point3D[] pointsReturn = new Point3D[points.Length];
             for (int i = 0; i<points.Length;i++)
@@ -162,13 +123,18 @@ namespace DataView
                 v[0] = points[i].X;
                 v[1] = points[i].Y;
                 v[2] = points[i].Z;
-                v[3] = 1;
 
                 Vector<double> u = this.RotationM.Multiply(v);
+                u += Translation;
                 Point3D newPoint = new Point3D(u[0], u[1], u[2]);
                 pointsReturn[i] = newPoint;
             }
             return pointsReturn;
+        }
+
+        public int[,] Cut(double[] point, double[] v1, double[] v2, int xRes, int yRes, double spacing)
+        {
+            throw new NotImplementedException();
         }
 
         public Matrix<double> RotationM { get => rotationM; set => rotationM = value; }
@@ -176,5 +142,6 @@ namespace DataView
         public double YSpacing { get => ySpacing; set => ySpacing = value; }
         public double ZSpacing { get => zSpacing; set => zSpacing = value; }
         public int[] Measures { get => measures; set => measures = value; }
+        public Vector<double> Translation { get => translation; set => translation = value; }
     }
 }

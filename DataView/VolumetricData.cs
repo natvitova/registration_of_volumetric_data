@@ -113,7 +113,7 @@ namespace DataView
 
             double[] vertical2 = Orthogonalize2D(v1, v2);
             double lengthV1 = Math.Sqrt(ScalarProduct(v1, v1));
-            double lengthV2 = Math.Sqrt(ScalarProduct(v2, v2));
+            double lengthV2 = Math.Sqrt(ScalarProduct(vertical2, vertical2));
 
             double[] unitVector1 = new double[3];
             double[] unitVector2 = new double[3];
@@ -133,8 +133,7 @@ namespace DataView
 
                 for (int j = 0; j < yRes; j++)
                 {
-                    cut[i, j] = GetValueMatrixCoordinates(x, y, z);
-                    //Console.WriteLine(GetValue(x, y, z));
+                    cut[i, j] = GetValue(x, y, z);
 
                     x += unitVector1[0];
                     y += unitVector1[1];
@@ -501,17 +500,6 @@ namespace DataView
             int helpValueB = InterpolationReal(valueC, valueD, pixelX, xLDC, XSpacing);
 
             return InterpolationReal(helpValueA, helpValueB, pixelY, yLDC, YSpacing);
-        }
-
-        // methods for testing
-        public VolumetricData()
-        {
-            //this.vData = vData;
-            this.xSpacing = 1;
-            this.ySpacing = 1;
-            this.zSpacing = 1;
-            this.iSpacing = 1;
-            this.data = new Data();
         }
 
         public double XSpacing { get => xSpacing; set => xSpacing = value; }

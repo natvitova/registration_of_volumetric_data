@@ -12,54 +12,21 @@ namespace DataView
         /// <summary>
         /// Calculates the rotation matrix from d1 to d2
         /// </summary>
-        /// <param name="d1">Data1</param>
-        /// <param name="d2">Data2</param>
-        /// <param name="point1">Point in data1 to take samples around</param>
-        /// <param name="point2">Point in data2 to take samples around</param>
+        /// <param name="dMicro">Data1</param>
+        /// <param name="dMacro">Data2</param>
+        /// <param name="pointMicro">Point in data1 to take samples around</param>
+        /// <param name="pointMacro">Point in data2 to take samples around</param>
         /// <param name="count">Number of samples taken</param>
         /// <returns></returns>
-        public static Matrix<double> CalculateRotation(IData d1, IData d2, Point3D point1, Point3D point2, int count)
+        public static Matrix<double> CalculateRotation(IData dMicro, IData dMacro, Point3D pointMicro, Point3D pointMacro, int count)
         {
-            //Console.WriteLine("Calculating rotation between point {0} : {1} of value {2} in data: {3} and point {4} : {5} of value {6} in data {7} ",
-            // nameof(point1), point1.ToString(), d1.GetValueRealCoordinates(point1), nameof(d1), nameof(point2), point2.ToString(), d2.GetValueRealCoordinates(point2), nameof(d2));
+            Matrix<double> Amicro = GetSymetricMatrixForEigenVectors(dMicro, pointMicro, count);
+            var evdMicro = Amicro.Evd();
 
-            Matrix<double> A1 = GetSymetricMatrixForEigenVectors(d1, point1, count); //micro
-            //Console.WriteLine("Matrix {0} : {1}", nameof(A1), A1.ToString());
-            var evd1 = A1.Evd(); //eigenvalues for d1
+            Matrix<double> Amacro = GetSymetricMatrixForEigenVectors(dMacro, pointMacro, count);
+            var evdMacro = Amacro.Evd();
 
-            Matrix<double> A2 = GetSymetricMatrixForEigenVectors(d2, point2, count); //macro
-            //Console.WriteLine("Matrix {0} : {1}", nameof(A2), A2.ToString());
-            var evd2 = A2.Evd(); //eigenvalues for d2
-            //var svd = A2.Svd();
-
-            Matrix<double> rotationMatrix = ComputeChangeOfBasisMatrixUsingTransposition(evd1.EigenVectors, evd2.EigenVectors); //eigenvectors make up an orthonormal basis    
-            //Console.WriteLine("Change of basis matrix:");
-            //Console.WriteLine(rotationMatrix.ToString());
-            //TestChangeOfBasisMatrixCorrectness(rotationMatrix, evd1.EigenVectors, evd2.EigenVectors);
-
-            return rotationMatrix;
-        }
-
-        public static Matrix<double> CalculateRotationA(ArtificialData ad, int[] t1, int[] t2, Point3D point1, Point3D point2, int count)
-        {
-            //Console.WriteLine("Calculating rotation between point {0} : {1} of value {2} in data: {3} and point {4} : {5} of value {6} in data {7} ",
-            // nameof(point1), point1.ToString(), d1.GetValueRealCoordinates(point1), nameof(d1), nameof(point2), point2.ToString(), d2.GetValueRealCoordinates(point2), nameof(d2));
-
-            Matrix<double> A1 = GetSymetricMatrixForEigenVectorsA(ad, t1, point1, count, 0);
-            //Console.WriteLine("Matrix {0} : {1}", nameof(A1), A1.ToString());
-            var evd1 = A1.Evd(); //eigenvalues for d1
-
-            Matrix<double> A2 = GetSymetricMatrixForEigenVectorsA(ad, t2, point2, count, 1);
-            //Console.WriteLine("Matrix {0} : {1}", nameof(A2), A2.ToString());
-            var evd2 = A2.Evd(); //eigenvalues for d2
-                                 //var svd = A2.Svd();
-
-
-            Matrix<double> rotationMatrix = ComputeChangeOfBasisMatrixUsingTransposition(evd1.EigenVectors, evd2.EigenVectors); //eigenvectors make up an orthonormal basis    
-            //Console.WriteLine("Change of basis matrix:");
-            //Console.WriteLine(rotationMatrix.ToString());
-            //TestChangeOfBasisMatrixCorrectness(rotationMatrix, evd1.EigenVectors, evd2.EigenVectors);
-
+            Matrix<double> rotationMatrix = ComputeChangeOfBasisMatrixUsingTransposition(evdMicro.EigenVectors, evdMacro.EigenVectors); //eigenvectors make up an orthonormal basis    
             return rotationMatrix;
         }
 
@@ -135,16 +102,9 @@ namespace DataView
         /// <param name="u"></param>
         /// <param name="v"></param>
         /// <returns></returns>
-        public static Vector<double> CrossProduct(Vector<double> u, Vector<double> v)
+        private static Vector<double> CrossProduct(Vector<double> u, Vector<double> v)
         {
             Vector<double> w = Vector<double>.Build.Dense(3);
-            /*
-            uvi = u2 * v3 - v2 * u3;
-
-            uvj = v1 * u3 - u1 * v3;
-
-            uvk = u1 * v2 - v1 * u2;
-            */
             w[0] = u[1] * v[2] - v[1] * u[2];
             w[1] = v[0] * u[2] - u[0] * v[2];
             w[2] = u[0] * v[1] - v[0] * u[1];
@@ -210,9 +170,7 @@ namespace DataView
 
         private static Matrix<double> ComputeChangeOfBasisMatrixUsingTransposition(Matrix<double> base1, Matrix<double> base2)
         {
-            //NormalizeCollumnVectorsInMatrix(base1); //base1 and base2 are already orthonormal
-            //NormalizeCollumnVectorsInMatrix(base2);
-
+            // bases already ortonormal
             MakeBaseRightHanded(base1);
             MakeBaseRightHanded(base2);
 
@@ -237,34 +195,11 @@ namespace DataView
         /// <returns></returns>
         private static Matrix<double> GetSymetricMatrixForEigenVectors(IData d, Point3D point, int count)
         {
-            Point3D[] sample1 = SampleSphereAroundPoint(d, point, 3, count);
+            Point3D[] sample = SampleSphereAroundPoint(d, point, 3, count);
 
-            //for (int i = 0; i < sample1.Length; i++)
-            //{
-            //    Console.WriteLine("Point : {0} , Value: {1}", sample1[i], d.GetValue(sample1[i]));
-            //}
-
-            Matrix<double> sampleMatrix = Point3DArrayToMatrix(sample1); //matrix D
+            Matrix<double> sampleMatrix = Point3DArrayToMatrix(sample); //matrix D
             double[] averageCoordinates = GetAverageCoordinate(sampleMatrix); // vector overline{x}
-            //Console.WriteLine("Average coordinates: [{0}, {1}, {2}]", averageCoordinates[0], averageCoordinates[1], averageCoordinates[2]);
-            Matrix<double> sampleMatrixSubtracted = SubtractVectorFromMatrix(sampleMatrix, averageCoordinates); //matrix D*
-            Matrix<double> A = sampleMatrixSubtracted.TransposeAndMultiply(sampleMatrixSubtracted); // D* times transpose(D*)
-
-            return A;
-        }
-
-        private static Matrix<double> GetSymetricMatrixForEigenVectorsA(ArtificialData ad, int[] t, Point3D point, int count, int seed)
-        {
-            Point3D[] sample1 = SampleSphereAroundPointA(ad, t, point, 2, count, seed);
-
-            //for (int i = 0; i < sample1.Length; i++)
-            //{
-            //    Console.WriteLine("Point : {0} , Value: {1}", sample1[i], d.GetValue(sample1[i]));
-            //}
-
-            Matrix<double> sampleMatrix = Point3DArrayToMatrix(sample1); //matrix D
-            double[] averageCoordinates = GetAverageCoordinate(sampleMatrix); // vector overline{x}
-            //Console.WriteLine("Average coordinates: [{0}, {1}, {2}]", averageCoordinates[0], averageCoordinates[1], averageCoordinates[2]);
+           
             Matrix<double> sampleMatrixSubtracted = SubtractVectorFromMatrix(sampleMatrix, averageCoordinates); //matrix D*
             Matrix<double> A = sampleMatrixSubtracted.TransposeAndMultiply(sampleMatrixSubtracted); // D* times transpose(D*)
 
@@ -273,11 +208,8 @@ namespace DataView
 
         private static Point3D[] SampleSphereAroundPoint(IData d, Point3D centerPoint, int radius, int count)
         {
-            List<Point3D> survivingPoints = new List<Point3D>();
-            double nConst = (d.XSpacing + d.YSpacing + d.ZSpacing) / 3;
-            double s = nConst; //TODO odstranit /2, zvetsit r
-            List<Point3D> pointsInSphere = FeatureComputer.GetSphere(centerPoint, radius, s); //gets all points in a given sphere
-            //Console.WriteLine(pointsInSphere.Count);
+            List<Point3D> survivingPoints = new List<Point3D>(); //TODO change the set value for count
+            List<Point3D> pointsInSphere = GetSphere(centerPoint, radius,2000); //gets all points in a given sphere
 
             Random rnd = new Random();
             int currentValue;
@@ -320,66 +252,6 @@ namespace DataView
             return survivingPoints.ToArray();
         }
 
-        private static Point3D[] SampleSphereAroundPointA(ArtificialData ad, int[] t, Point3D centerPoint, int radius, int count, int seed)
-        {
-            List<Point3D> survivingPoints = new List<Point3D>();
-            List<Point3D> pointsInSphere = FeatureComputer.GetSphere(centerPoint, radius, 0.5); //gets all points in a given sphere
-            //Console.WriteLine(pointsInSphere.Count);
-
-            Random rnd = new Random(0); // change rnd - index in count - BACHA VADA!!!!!
-            Random rn = new Random(seed); // change rnd - decide fate
-            Random r = new Random(0); // change rnd - trivial
-            int currentValue;
-            int maxValue = 0;
-            int minValue = int.MaxValue;
-
-            foreach (Point3D point in pointsInSphere) //finds the minumum and maximum value in the sphere
-            {
-                currentValue = (int)ad.Fce.GetValue(point.X + t[0], point.Y + t[1], point.Z + t[2]); //Avalue
-
-                if (currentValue > maxValue)
-                    maxValue = currentValue;
-
-                if (currentValue < minValue)
-                    minValue = currentValue;
-            }
-            bool NonTrivial = true;
-            if (maxValue == minValue)
-                NonTrivial = false;
-
-            int iii = 0;
-            while (survivingPoints.Count < count && pointsInSphere.Count > 0)
-            {
-                int rndIndex = rnd.Next(0, pointsInSphere.Count); //random index in pointsInSphere
-                if (iii < 20)
-                {
-                    //Console.Write(rndIndex + " ");
-                    iii++;
-                }
-
-
-                if (NonTrivial)
-                {
-                    int v = (int)ad.Fce.GetValue(pointsInSphere[rndIndex].X + t[0], pointsInSphere[rndIndex].Y + t[1], pointsInSphere[rndIndex].Z + t[2]); //Avalue
-                    if (DecideFate(rn, v, minValue, maxValue)) //decides whether to keep the point or not
-                    {
-                        //the point is kept
-                        survivingPoints.Add(pointsInSphere[rndIndex]); //add to result
-                    }
-                }
-                else
-                {
-                    if (r.NextDouble() > 0.5)
-                    {
-                        survivingPoints.Add(pointsInSphere[rndIndex]); //add to result
-                    }
-                }
-                pointsInSphere.RemoveAt(rndIndex); //removed from pointsInSphere
-            }
-            //Console.WriteLine(survivingPoints.Count);
-            return survivingPoints.ToArray();
-        }
-
         private static bool DecideFate(Random rnd, int pointValue, int min, int max)
         {
             int rndValue = rnd.Next(min, max);
@@ -388,62 +260,6 @@ namespace DataView
             else
                 return false;
         }
-
-        //private static point3d[] samplespherearoundpoint(volumetricdata d, point3d centerpoint, int radius, int count)
-        //{
-
-        //    list<point3d> survivingpoints = new list<point3d>();
-
-        //    random r = new random();
-        //    point3d tmppoint;
-        //    int randomindex;
-
-        //    list<point3d> pointsinsphere = featurecomputer.getsphere(centerpoint, d, radius); //gets all points in a given sphere
-
-        //    int currentvalue;
-        //    int maxvalue = 0;
-        //    int minvalue = int.maxvalue;
-        //    int sumofvalues = 0;
-        //    int meanvalue;
-        //    int treshold;
-
-        //    foreach (point3d point in pointsinsphere)
-        //    {
-        //        currentvalue = d.getvalue(point);
-
-        //        if (currentvalue > maxvalue)
-        //            maxvalue = currentvalue;
-
-        //        if (currentvalue < minvalue)
-        //            minvalue = currentvalue;
-
-        //        //sumofvalues += currentvalue;
-        //    }
-
-        //    //todo tohle cely predelej
-        //    treshold = (int)(maxvalue * 0.999);
-        //    int i = 0;
-        //    //meanvalue = sumofvalues / pointsinsphere.count;
-        //    for (int j = 0; j < count && i < pointsinsphere.count;){//iterates the final points
-
-        //        for (i = i; i < pointsinsphere.count; i++)//iterates the points in sphere
-        //        {
-        //            int randomnumber = r.next(minvalue, maxvalue); //random number between min and max
-        //            //int randomnumber = minvalue;
-
-        //            if (d.getvalue(pointsinsphere[i]) > treshold) //high values have a high chance of survival
-        //            {
-        //                survivingpoints.add(pointsinsphere[i]);
-        //                j++;
-        //                if (j >= count)
-        //                    break;
-        //            }
-
-        //        }
-        //    }
-
-        //    return survivingpoints.toarray();
-        //}
 
         /// <summary>
         /// FUJKY METODA NEPOUZIVEJ
@@ -516,5 +332,33 @@ namespace DataView
             return averages;
         }
 
+        private static List<Point3D> GetSphere(Point3D x, double r, int count)
+        {
+            List<Point3D> points = new List<Point3D>();
+
+            Random rnd = new Random();
+            double rSquared = r * r;
+            do
+            {
+                double xCoordinate = GetRandomDouble(x.X - r, x.X + r, rnd);
+                double yCoordinate = GetRandomDouble(x.Y - r, x.Y + r, rnd);
+                double zCoordinate = GetRandomDouble(x.Z - r, x.Z + r, rnd);
+
+                double distance = (xCoordinate - x.X) * (xCoordinate - x.X) + (yCoordinate - x.Y) * (yCoordinate - x.Y) + (zCoordinate - x.Z) * (zCoordinate - x.Z);
+                if (distance <= rSquared)
+                {
+                    points.Add(new Point3D(xCoordinate, yCoordinate, zCoordinate));
+                }
+            } while (
+                points.Count < count
+            );
+
+            return points;
+        }
+
+        private static double GetRandomDouble(double minimum, double maximum, Random r)
+        {
+            return r.NextDouble() * (maximum - minimum) + minimum;
+        }
     }
 }

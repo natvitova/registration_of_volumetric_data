@@ -27,12 +27,12 @@ namespace DataView
         /// </summary>
         /// <param name="f1"></param>
         /// <param name="f2"></param>
-        /// <param name="percentage"></param>
-        public Match(FeatureVector f1, FeatureVector f2, double percentage)
+        /// <param name="similarity"></param>
+        public Match(FeatureVector f1, FeatureVector f2, double similarity)
         {
             this.F1 = f1;
             this.F2 = f2;
-            this.Similarity = percentage;
+            this.Similarity = similarity;
         }
 
         public double Similarity { get => similarity; set => similarity = value; }
@@ -41,7 +41,7 @@ namespace DataView
 
         public override string ToString()
         {
-            return "f1: " + F1.ToString() + " f2: " + F2.ToString() + " p: " + Similarity;
+            return "f1: " + F1.ToString() + " f2: " + F2.ToString() + " s: " + Similarity;
         }
     }
 }

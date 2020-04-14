@@ -77,9 +77,9 @@ namespace DataView
             // node point
             FeatureVector np = fVectors[n.point];
 
-            if (searchFeatureVector.Coordinate(n.axis) < np.Coordinate(n.axis))
+            if (searchFeatureVector.Features[n.axis] < np.Features[n.axis])
             {
-                double minDist = np.Coordinate(n.axis) - searchFeatureVector.Coordinate(n.axis);
+                double minDist = np.Features[n.axis] - searchFeatureVector.Features[n.axis];
                 if (minDist < smDist)
                 {
                     double dist = searchFeatureVector.DistTo2(np);
@@ -102,7 +102,7 @@ namespace DataView
             }
             else
             {
-                double minDist = searchFeatureVector.Coordinate(n.axis) - np.Coordinate(n.axis);
+                double minDist = searchFeatureVector.Features[n.axis] - np.Features[n.axis];
                 if (minDist < smDist)
                 {
                     double dist = searchFeatureVector.DistTo2(np);
@@ -151,7 +151,7 @@ namespace DataView
             {
                 if (i == med)
                     continue;
-                if (fVectors[list[i]].Coordinate(axis) < fVectors[list[med]].Coordinate(axis))
+                if (fVectors[list[i]].Features[axis] < fVectors[list[med]].Features[axis])
                     left.Add(list[i]);
                 else
                     right.Add(list[i]);
@@ -194,7 +194,7 @@ namespace DataView
                 return (min);
             if (min == (max - 1))
             {
-                if (fVectors[points[min]].Coordinate(axis) > fVectors[points[max]].Coordinate(axis))
+                if (fVectors[points[min]].Features[axis] > fVectors[points[max]].Features[axis])
                 {
                     int tmp = points[min];
                     points[min] = points[max];
@@ -207,9 +207,9 @@ namespace DataView
             int r = max - 1;
             while (l < r)
             {
-                while (fVectors[points[l]].Coordinate(axis) < fVectors[points[pivot]].Coordinate(axis))
+                while (fVectors[points[l]].Features[axis] < fVectors[points[pivot]].Features[axis])
                     l++;
-                while (fVectors[points[r]].Coordinate(axis) > fVectors[points[pivot]].Coordinate(axis))
+                while (fVectors[points[r]].Features[axis] > fVectors[points[pivot]].Features[axis])
                     r--;
                 if (l < r)
                 {
