@@ -26,7 +26,7 @@ namespace DataView
         double smDist, smDistSq;
         int nearest;
         FeatureVector searchFeatureVector;
-        Random rnd = new Random(0); // seed
+        Random rnd = new Random(); // seed
 
         /// <summary>
         /// 

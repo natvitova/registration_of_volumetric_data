@@ -13,6 +13,7 @@ namespace DataView
     class VolumetricData : IData
     {
         private int[][,] vData;
+        private int[] values;
         private double xSpacing;
         private double ySpacing;
         private double zSpacing;
@@ -22,13 +23,23 @@ namespace DataView
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="data"></param>
+        /// <param name="dataFileName"></param>
+        public VolumetricData(string dataFileName)
+        {
+            this.Data = new Data(dataFileName);
+
+            XSpacing = this.Data.ElementSpacing[0];
+            YSpacing = this.Data.ElementSpacing[1];
+            ZSpacing = this.Data.ElementSpacing[2];
+
+            this.Read();
+        }
+
         public VolumetricData(Data data)
         {
             XSpacing = data.ElementSpacing[0];
             YSpacing = data.ElementSpacing[1];
             ZSpacing = data.ElementSpacing[2];
-
             this.Data = data;
         }
 
@@ -46,7 +57,6 @@ namespace DataView
 
                 VData = new int[height][,];
                 int c = 0;
-
                 if (Data.ElementType == "MET_USHORT")
                 {
                     for (int k = 0; k < height; k++)
@@ -62,8 +72,6 @@ namespace DataView
                                 c = 256 * b + a;
 
                                 VData[k][i, j] = c;
-                                //Console.WriteLine(c);
-
                             }
                         }
                     }
@@ -85,7 +93,7 @@ namespace DataView
                             }
                         }
                     }
-                    
+
                 }
                 else
                 {
@@ -117,6 +125,7 @@ namespace DataView
 
             double[] unitVector1 = new double[3];
             double[] unitVector2 = new double[3];
+            double[] spacings = new double[] { XSpacing, YSpacing, ZSpacing };
             for (int i = 0; i < v1.Length; i++)
             {
                 unitVector1[i] = v1[i] * ISpacing / lengthV1;
@@ -200,7 +209,7 @@ namespace DataView
 
             VolumetricData vDnew = new VolumetricData(Data);
             vDnew.VData = cut;
-            
+
             return vDnew;
         }
 
@@ -419,17 +428,6 @@ namespace DataView
             return (int)(d * valueB + (1 - d) * valueA);
         }
 
-        /// <summary>
-        /// Optimalized interpolation
-        /// </summary>
-        /// <returns></returns>
-        private int Interpolation3D(double x, double y, double z)
-        {
-
-
-            return 0;
-        }
-
         private int InterpolationReal(int valueA, int valueB, double coordinateOfPixel, int indexOfA, double spacing)
         {
             double d = coordinateOfPixel - indexOfA * spacing; //TODO positive/zero?
@@ -502,6 +500,77 @@ namespace DataView
             return InterpolationReal(helpValueA, helpValueB, pixelY, yLDC, YSpacing);
         }
 
+        public int GetMax()
+        {
+            int max = Int16.MinValue;
+            int width = Data.DimSize[0];
+            int depth = Data.DimSize[1];
+            int height = Data.DimSize[2];
+
+            for (int k = 0; k < height; k++)
+            {
+                for (int i = 0; i < width; i++)
+                {
+                    for (int j = 0; j < depth; j++)
+                    {
+                        int c = VData[k][i, j];
+                        if (c > max)
+                        {
+                            max = c;
+                        }
+                    }
+                }
+            }
+            return max;
+        }
+
+        public int GetMin()
+        {
+            int min = Int16.MaxValue;
+            int width = Data.DimSize[0];
+            int depth = Data.DimSize[1];
+            int height = Data.DimSize[2];
+
+            for (int k = 0; k < height; k++)
+            {
+                for (int i = 0; i < width; i++)
+                {
+                    for (int j = 0; j < depth; j++)
+                    {
+                        int c = VData[k][i, j];
+                        if (c < min)
+                        {
+                            min = c;
+                        }
+                    }
+                }
+            }
+            return min;
+        }
+
+        public int[] GetHistogram()
+        {
+            int max = this.GetMax();
+            int[] histo = new int[max + 1];
+
+            int width = Data.DimSize[0];
+            int depth = Data.DimSize[1];
+            int height = Data.DimSize[2];
+
+            for (int k = 0; k < height; k++)
+            {
+                for (int i = 0; i < width; i++)
+                {
+                    for (int j = 0; j < depth; j++)
+                    {
+                        int c = VData[k][i, j];
+                        histo[c]++;
+                    }
+                }
+            }
+            return histo;
+        }
+
         public double XSpacing { get => xSpacing; set => xSpacing = value; }
         public double YSpacing { get => ySpacing; set => ySpacing = value; }
         public double ZSpacing { get => zSpacing; set => zSpacing = value; }
@@ -509,6 +578,6 @@ namespace DataView
         internal Data Data { get => data; set => data = value; }
         public int[] Measures { get => Data.DimSize; set => Data.DimSize = value; }
         public int[][,] VData { get => vData; set => vData = value; }
-
+        public int[] Values { get => values; set => values = value; }
     }
 }

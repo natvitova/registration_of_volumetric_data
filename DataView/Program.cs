@@ -9,7 +9,9 @@ using System.Threading;
 using System.Windows.Forms.DataVisualization.Charting;
 
 using Microsoft.Extensions.Configuration;
-
+using CsvHelper;
+using System.Text;
+using System.Globalization;
 
 namespace DataView
 {
@@ -18,9 +20,7 @@ namespace DataView
     /// </summary>
     class Program
     {
-        private static Data sampleMicro;
         private static IData iDataMicro;
-        private static Data sampleMacro;
         private static IData iDataMacro;
         private static IConfiguration configuration;
 
@@ -30,8 +30,8 @@ namespace DataView
         /// <param name="args"></param>
         static void Main(string[] args)
         {
-            //string fileNameMicro = @"P01_a_MikroCT-nejhrubsi_rozliseni_DICOM_liver-1st-important_Macro_pixel-size53.0585um.mhd";
-            //string fileNameMacro = @"P01_b_Prase_1_druhe_vys.mhd";
+            string fileNameMicro = @"P01_a_MikroCT-nejhrubsi_rozliseni_DICOM_liver-1st-important_Macro_pixel-size53.0585um.mhd";
+            string fileNameMacro = @"P01_MakroCT_HEAD_5_0_H31S_0004.mhd";
             configuration = new ConfigurationBuilder().AddJsonFile("config.json", optional: true).Build();
 
             string fileName = @"P01_b_Prase_1_druhe_vys.mhd";
@@ -45,15 +45,28 @@ namespace DataView
             ax[1] = 0;
             ax[2] = 1;
 
-            double fi = 0.10; //degrees
+            double fi = 0; //degrees
+
+            VolumetricData vDataMicro = new VolumetricData(fileNameMicro);
+            VolumetricData vDataMacro = new VolumetricData(fileNameMacro);
+
+            //int maxMicro = vDataMicro.GetMax();
+            //int minMicro = vDataMicro.GetMin();
+            //int maxMacro = vDataMacro.GetMax();
+            //int minMacro = vDataMacro.GetMin();
+            //int[] histoMacro = vDataMacro.GetHistogram();
+            //WriteCSV(histoMacro, "d:\\macro.csv");
+            //int[] histoMicro = vDataMicro.GetHistogram();
+            //WriteCSV(histoMicro, "d:\\micro.csv");
 
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
             double alpha = MainFunctionFakeData(translation, fi, ax, fileName);
             stopwatch.Stop();
-            Console.WriteLine("Alpha: " + alpha);
+            //Console.WriteLine("Alpha: " + alpha);
             Console.WriteLine("Elapsed Time is {0} s", stopwatch.ElapsedMilliseconds / 1000.0);
             //Cut();
+            Console.WriteLine("done");
             Console.ReadKey();
         }
 
@@ -69,10 +82,8 @@ namespace DataView
             ITransformer transformer = new Transformer3D();
 
             //----------------------------------------MICRO CT------------------------------------------------
-            sampleMicro = new Data(micro);
-            VolumetricData vDataMicro = new VolumetricData(sampleMicro);
             Console.WriteLine("Reading micro data.");
-            vDataMicro.Read();
+            VolumetricData vDataMicro = new VolumetricData(micro);
             iDataMicro = vDataMicro;
             Console.WriteLine("Data read succesfully.");
             Console.WriteLine("Sampling.");
@@ -87,10 +98,8 @@ namespace DataView
             }
 
             //----------------------------------------MACRO CT------------------------------------------------
-            sampleMacro = new Data(macro);
-            VolumetricData vDataMacro = new VolumetricData(sampleMacro);
             Console.WriteLine("\nReading macro data.");
-            vDataMacro.Read();
+            VolumetricData vDataMacro = new VolumetricData(macro);
             iDataMacro = vDataMacro;
             Console.WriteLine("Data read succesfully.");
             Console.WriteLine("Sampling.");
@@ -128,9 +137,7 @@ namespace DataView
 
         public static TransData SettingFakeData(string macro, int[] translation, double phi, double[] axis)
         {
-            sampleMacro = new Data(macro);
-            VolumetricData vDataMacro = new VolumetricData(sampleMacro);
-            vDataMacro.Read();
+            VolumetricData vDataMacro = new VolumetricData(macro);
             TransData td = new TransData(vDataMacro, translation, phi, axis);
             iDataMicro = td;
             iDataMacro = vDataMacro;
@@ -216,6 +223,13 @@ namespace DataView
             Console.WriteLine("Expected rotation and translation.");
             Console.WriteLine(td.RotationM);
             Console.WriteLine(translation[0] * iDataMicro.XSpacing + " " + translation[1] * iDataMicro.YSpacing + " " + translation[2] * iDataMicro.ZSpacing);
+            Console.WriteLine();
+            Console.WriteLine("Fake alpha: " + alphaFake);
+            Console.WriteLine("Alpha: " + alpha);
+
+            double[] computedAxis = td.GetAxis(solution.RotationMatrix);
+            double computedPhi = td.GetAngle(solution.RotationMatrix);
+            Console.WriteLine(Math.Round(computedAxis[0], 2) + " " + Math.Round(computedAxis[1], 2) + " " + Math.Round(computedAxis[2], 2) + "; " + Math.Round(computedPhi, 2) + " .......................... AXIS & PHI  ..............................");
 
             streamWriter.WriteLine("Fake matcher:");
             streamWriter.WriteLine(solutionFake);
@@ -229,26 +243,26 @@ namespace DataView
             streamWriter.Close();
             fileStream.Close();
 
-            //List<double> a1 = new List<double>();
-            //List<double> a2 = new List<double>();
-            //List<Test1> testik = new List<Test1>();
-            //for (int i = 0; i < numberOfPointsMicro; i++)
-            //{
-            //    a1.Add(td.GetAlpha(transformations[i].RotationMatrix));
-            //    a2.Add(td.GetAlpha(transformationsFake[i].RotationMatrix));
-            //    //testik.Add(new Test1(transformationsFake[i], td.GetAlpha(transformationsFake[i].RotationMatrix)));
-            //}
-            //a1.Sort();
-            //a2.Sort();
-            //double[] alphas = a1.ToArray();
-            //double[] alphasFake = a2.ToArray();
+            List<double> a1 = new List<double>();
+            List<double> a2 = new List<double>();
+            List<Test1> testik = new List<Test1>();
+            for (int i = 0; i < numberOfPointsMicro; i++)
+            {
+                a1.Add(td.GetAlpha(transformations[i].RotationMatrix));
+                a2.Add(td.GetAlpha(transformationsFake[i].RotationMatrix));
+                //testik.Add(new Test1(transformationsFake[i], td.GetAlpha(transformationsFake[i].RotationMatrix)));
+            }
+            a1.Sort();
+            a2.Sort();
+            double[] alphas = a1.ToArray();
+            double[] alphasFake = a2.ToArray();
             //testik.Sort((x, y) => x.alpha.CompareTo(y.alpha));
 
             //__________________________________________________________________________TEST_____________________________________________________________
-            //Chart ch = MakeChart(alphas, alphasFake);
-            //Form1 formik = new Form1();
-            //formik.AddChart(ch);
-            //formik.ShowDialog();
+            Chart ch = MakeChart(alphas, alphasFake);
+            Form1 formik = new Form1();
+            formik.AddChart(ch);
+            formik.ShowDialog();
 
             //FileStream f2 = new FileStream("d:\\testAlpha.txt", FileMode.OpenOrCreate);
             //StreamWriter sw2 = new StreamWriter(f2);
@@ -452,17 +466,17 @@ namespace DataView
             double[] point = { 0, 0, 300 };
             double[] v1 = { 1, 0, 0 };
             double[] v2 = { 0, 1, 0 };
-            double spacing = 0.4;
+            double spacing = 0.5;
 
-           // string finalFile = GenerateFinalFileName(point, v1, v2, xRes, yRes, spacing);
-
-            int[] dimenses = iDataMacro.Measures;
-            int xRes = dimenses[0];
-            int yRes = dimenses[1];
-            int zRes = dimenses[2];
-            string finalFile = "cutTestZ3.bmp";
+            // string finalFile = GenerateFinalFileName(point, v1, v2, xRes, yRes, spacing);
 
             double[] spacings = { iDataMacro.XSpacing, iDataMacro.YSpacing, iDataMacro.ZSpacing };
+            int[] dimenses = iDataMacro.Measures;
+            int xRes = (int)(dimenses[0] * spacings[0] / spacing);
+            int yRes = (int)(dimenses[1] * spacings[1] / spacing);
+            int zRes = (int)(dimenses[2] * spacings[2] / spacing);
+            string finalFile = "cutTestZspacing05point300.bmp";
+
             double[] realPoint = new double[3];
             for (int i = 0; i < realPoint.Length; i++)
             {
@@ -470,7 +484,7 @@ namespace DataView
             }
             Console.WriteLine("Cutting...");
             //int[,] cutMicro = iDataMicro.Cut(realPoint, v1, v2, xRes, yRes, spacing);
-            int[,] cutMacro = iDataMacro.Cut(realPoint, v1, v2, xRes, yRes, spacing);
+            int[,] cutMacro = iDataMacro.Cut(realPoint, v1, v2, yRes, xRes, spacing);
 
 
             Console.WriteLine("Cut finished");
@@ -490,12 +504,16 @@ namespace DataView
                 Console.WriteLine("Save to bitmap failed");
                 Console.Write(e.Message);
             }
-
-            Console.ReadKey();
-
-
         }
 
+        public static void WriteCSV(int[] data, string fileName)
+        {
+            using (var writer = new StreamWriter(fileName))
+            using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
+            {
+                csv.WriteRecords(data);
+            }
+        }
         /// <summary>
         /// 
         /// </summary>

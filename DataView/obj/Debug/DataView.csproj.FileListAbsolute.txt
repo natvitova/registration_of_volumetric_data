@@ -130,3 +130,5 @@ C:\Users\vitova\Documents\GitHub\registration_of_volumetric_data\DataView\bin\De
 C:\Users\vitova\Documents\GitHub\registration_of_volumetric_data\DataView\bin\Debug\System.Text.Json.xml
 C:\Users\vitova\Documents\GitHub\registration_of_volumetric_data\DataView\bin\Debug\System.Threading.Tasks.Extensions.xml
 C:\Users\vitova\Documents\GitHub\registration_of_volumetric_data\DataView\bin\Debug\System.ValueTuple.xml
+C:\Users\vitova\Documents\GitHub\registration_of_volumetric_data\DataView\bin\Debug\CsvHelper.dll
+C:\Users\vitova\Documents\GitHub\registration_of_volumetric_data\DataView\bin\Debug\CsvHelper.xml

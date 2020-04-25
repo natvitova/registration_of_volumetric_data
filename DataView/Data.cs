@@ -21,7 +21,7 @@ namespace DataView
         /// <summary>
         /// 
         /// </summary>
-        public Data(string fileName) // nonparametrical constructor 
+        public Data(string fileName)  
         {
             elementSpacing = null;
             dimSize = null;

@@ -75,14 +75,19 @@ namespace DataView
             this.RotationM[2, 3] += translation[2];
         }
 
-        public double[] GetAxis()
+        public double[] GetAxis(Matrix<double> r)
         {
             double[] u = new double[3];
-            u[0] = RotationM[2, 1] - RotationM[1, 2];
-            u[1] = RotationM[0, 2] - RotationM[2, 0];
-            u[2] = RotationM[1, 0] - RotationM[0, 1];
+            u[0] = r[2, 1] - r[1, 2];
+            u[1] = r[0, 2] - r[2, 0];
+            u[2] = r[1, 0] - r[0, 1];
 
             return u;
+        }
+
+        public double[] GetAxis()
+        {
+            return GetAxis(RotationM);
         }
 
         public double GetAngle(Matrix<double> r)
@@ -103,7 +108,8 @@ namespace DataView
 
         public double GetAlpha(Matrix<double> r2)
         {
-            Matrix<double> r3 = RotationM.Multiply(r2.Transpose());
+            Matrix<double> r = r2.Transpose();
+            Matrix<double> r3 = RotationM.Multiply(r);
             double alpha = GetAngle(r3);
             return alpha;
         }
@@ -124,7 +130,7 @@ namespace DataView
                 v[1] = points[i].Y;
                 v[2] = points[i].Z;
 
-                Vector<double> u = this.RotationM.Multiply(v);
+                Vector<double> u = RotationM.Multiply(v);
                 u += Translation;
                 Point3D newPoint = new Point3D(u[0], u[1], u[2]);
                 pointsReturn[i] = newPoint;

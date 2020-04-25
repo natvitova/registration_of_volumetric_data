@@ -168,18 +168,20 @@ namespace DataView
             return changeOfBasisMatrix;
         }
 
-        private static Matrix<double> ComputeChangeOfBasisMatrixUsingTransposition(Matrix<double> base1, Matrix<double> base2)
+        private static Matrix<double> ComputeChangeOfBasisMatrixUsingTransposition(Matrix<double> baseMicro, Matrix<double> baseMacro)
         {
             // bases already ortonormal
-            MakeBaseRightHanded(base1);
-            MakeBaseRightHanded(base2);
+            MakeBaseRightHanded(baseMicro);
+            MakeBaseRightHanded(baseMacro);
 
-            if (!IsBaseRightHanded(base1))
+            if (!IsBaseRightHanded(baseMicro))
                 Console.WriteLine("base1 is not righthanded :( ");
-            if (!IsBaseRightHanded(base2))
+            if (!IsBaseRightHanded(baseMacro))
                 Console.WriteLine("base2 is not righthanded :( ");
 
-            Matrix<double> changeOfBasisMatrix = base1.Multiply(base2.Transpose());
+            //Matrix<double> changeOfBasisMatrix = baseMicro.Multiply(baseMacro.Transpose());
+
+            Matrix<double> changeOfBasisMatrix = baseMacro.Transpose().Multiply(baseMicro);
 
             return changeOfBasisMatrix;
         }
