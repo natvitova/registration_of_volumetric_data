@@ -13,7 +13,7 @@ namespace DataView
 
         public Transform3D GetTransformation(Match m, IData dataMicro, IData dataMacro)
         {
-            int count = 1000;
+            int count = 10_000;
 
             Point3D pMicro = m.F1.Point.Copy();
             Point3D pMacro = m.F2.Point.Copy();

@@ -45,7 +45,7 @@ namespace DataView
             ax[1] = 0;
             ax[2] = 1;
 
-            double fi = 0; //degrees
+            double fi = 30; //degrees
 
             VolumetricData vDataMicro = new VolumetricData(fileNameMicro);
             VolumetricData vDataMacro = new VolumetricData(fileNameMacro);
@@ -59,6 +59,7 @@ namespace DataView
             //int[] histoMicro = vDataMicro.GetHistogram();
             //WriteCSV(histoMicro, "d:\\micro.csv");
 
+
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
             double alpha = MainFunctionFakeData(translation, fi, ax, fileName);
@@ -68,6 +69,37 @@ namespace DataView
             //Cut();
             Console.WriteLine("done");
             Console.ReadKey();
+
+
+
+            //    double[] realPoint = new double[] { 119.94, 130.43, 99.64 };
+            //    double[] v1 = { 1, 0, 0 };
+            //    double[] v2 = { 0, 1, 0 };
+            //    double spacing = 0.04;
+            //    int yRes = 500;
+            //    int xRes = 500;
+
+            //    TransData td = SettingFakeData(fileName, translation, fi, ax);
+
+            //    int[,] cutMacro = iDataMacro.Cut(realPoint, v1, v2, yRes, xRes, spacing);
+            //    Console.WriteLine("Cut finished");
+            //    Console.WriteLine("Creating bitmap...");
+            //    PictureMaker pm = new PictureMaker(cutMacro);
+            //    Bitmap bitmap = pm.MakeBitmap();
+            //    Console.WriteLine("Bitmap finished");
+
+            //    Console.WriteLine("Saving bitmap to file...");
+            //    try
+            //    {
+            //        bitmap.Save("testPicture.bmp", System.Drawing.Imaging.ImageFormat.Bmp);
+            //        Console.WriteLine("Save to bitmap succesful");
+            //    }
+            //    catch (Exception e)
+            //    {
+            //        Console.WriteLine("Save to bitmap failed");
+            //        Console.Write(e.Message);
+            //    }
+            //    Console.ReadLine();
         }
 
         public static void MainFunction(string micro, string macro) // the truly main function
@@ -149,6 +181,8 @@ namespace DataView
         {
             FileStream fileStream = new FileStream("d:\\b2.txt", FileMode.OpenOrCreate);
             StreamWriter streamWriter = new StreamWriter(fileStream);
+            Stopwatch stopwatchL = new Stopwatch();
+            stopwatchL.Start();
 
             //----------------------------------------PARAMETERS ---------------------------------------------
             double threshold = 100; // percentage
@@ -187,7 +221,7 @@ namespace DataView
             IMatcher matcher = new Matcher();
             Matcher matcherFake = new Matcher();
             Console.WriteLine("\nMatching.");
-            Match[] matches = matcher.Match(featureVectorsMicro, featureVectorsMacro, threshold);
+            //Match[] matches = matcher.Match(featureVectorsMicro, featureVectorsMacro, threshold);
             Match[] matchesFake = matcherFake.FakeMatch(featureVectorsMicro, featureVectorsMacro, threshold);
 
             Console.WriteLine(axis[0] + " " + axis[1] + " " + axis[2] + "; " + phi + " .......................... AXIS & PHI  ..............................");
@@ -199,89 +233,107 @@ namespace DataView
             //------------------------------------GET TRANSFORMATION -----------------------------------------
             ITransformer transformer = new Transformer3D();
             Console.WriteLine("Computing transformations.\n");
-            List<Transform3D> transformations = new List<Transform3D>();
+            //List<Transform3D> transformations = new List<Transform3D>();
             List<Transform3D> transformationsFake = new List<Transform3D>();
 
             for (int i = 0; i < matchesFake.Length; i++)
             {
-                transformations.Add(transformer.GetTransformation(matches[i], iDataMicro, iDataMacro));
+                //transformations.Add(transformer.GetTransformation(matches[i], iDataMicro, iDataMacro));
                 transformationsFake.Add(transformer.GetTransformation(matchesFake[i], iDataMicro, iDataMacro));
             }
 
             Console.WriteLine("Looking for optimal transformation.\n");
             Candidate.initSums(iDataMicro.Measures[0] / iDataMicro.XSpacing, iDataMicro.Measures[1] / iDataMicro.YSpacing, iDataMicro.Measures[2] / iDataMicro.ZSpacing); // micro
             Density d = new Density(); // finder, we need an instance for certain complicated reason
-            Transform3D solution = d.Find(transformations.ToArray());
+            //Transform3D solution = d.Find(transformations.ToArray());
             Transform3D solutionFake = d.Find(transformationsFake.ToArray());
-            double alpha = td.GetAlpha(solution.RotationMatrix);
+            //double alpha = td.GetAlpha(solution.RotationMatrix);
             double alphaFake = td.GetAlpha(solutionFake.RotationMatrix);
 
             Console.WriteLine("Fake matcher.");
             Console.WriteLine(solutionFake);
-            Console.WriteLine("Solution found.");
-            Console.WriteLine(solution);
+            //Console.WriteLine("Solution found.");
+            //Console.WriteLine(solution);
             Console.WriteLine("Expected rotation and translation.");
             Console.WriteLine(td.RotationM);
             Console.WriteLine(translation[0] * iDataMicro.XSpacing + " " + translation[1] * iDataMicro.YSpacing + " " + translation[2] * iDataMicro.ZSpacing);
             Console.WriteLine();
             Console.WriteLine("Fake alpha: " + alphaFake);
-            Console.WriteLine("Alpha: " + alpha);
+            //Console.WriteLine("Alpha: " + alpha);
 
-            double[] computedAxis = td.GetAxis(solution.RotationMatrix);
-            double computedPhi = td.GetAngle(solution.RotationMatrix);
+            double[] computedAxis = td.GetAxis(solutionFake.RotationMatrix);
+            double computedPhi = td.GetAngle(solutionFake.RotationMatrix);
             Console.WriteLine(Math.Round(computedAxis[0], 2) + " " + Math.Round(computedAxis[1], 2) + " " + Math.Round(computedAxis[2], 2) + "; " + Math.Round(computedPhi, 2) + " .......................... AXIS & PHI  ..............................");
 
             streamWriter.WriteLine("Fake matcher:");
             streamWriter.WriteLine(solutionFake);
-            streamWriter.WriteLine("Solution:");
-            streamWriter.WriteLine(solution);
+            //streamWriter.WriteLine("Solution:");
+            //streamWriter.WriteLine(solution);
             streamWriter.WriteLine("Expected rotation and translation:");
             streamWriter.WriteLine(td.RotationM);
             streamWriter.WriteLine(translation[0] * iDataMicro.XSpacing + " " + translation[1] * iDataMicro.YSpacing + " " + translation[2] * iDataMicro.ZSpacing);
             streamWriter.WriteLine("Fake alpha: " + alphaFake);
-            streamWriter.WriteLine("Alpha: " + alpha);
+            //streamWriter.WriteLine("Alpha: " + alpha);
+            streamWriter.WriteLine("Elapsed Time is {0} s", stopwatchL.ElapsedMilliseconds / 1000.0);
             streamWriter.Close();
             fileStream.Close();
 
-            List<double> a1 = new List<double>();
+            //List<double> a1 = new List<double>();
             List<double> a2 = new List<double>();
             List<Test1> testik = new List<Test1>();
+            List<Test1> testik2 = new List<Test1>();
             for (int i = 0; i < numberOfPointsMicro; i++)
             {
-                a1.Add(td.GetAlpha(transformations[i].RotationMatrix));
+                //a1.Add(td.GetAlpha(transformations[i].RotationMatrix));
                 a2.Add(td.GetAlpha(transformationsFake[i].RotationMatrix));
-                //testik.Add(new Test1(transformationsFake[i], td.GetAlpha(transformationsFake[i].RotationMatrix)));
+                testik.Add(new Test1(transformationsFake[i], td.GetAlpha(transformationsFake[i].RotationMatrix)));
+                testik2.Add(new Test1(transformationsFake[i], td.GetAlpha(transformationsFake[i].RotationMatrix), pointsMacro[i]));
             }
-            a1.Sort();
+            //a1.Sort();
             a2.Sort();
-            double[] alphas = a1.ToArray();
+            //double[] alphas = a1.ToArray();
             double[] alphasFake = a2.ToArray();
-            //testik.Sort((x, y) => x.alpha.CompareTo(y.alpha));
+            testik.Sort((x, y) => x.alpha.CompareTo(y.alpha));
+            testik2.Sort((x, y) => x.alpha.CompareTo(y.alpha));
 
             //__________________________________________________________________________TEST_____________________________________________________________
-            Chart ch = MakeChart(alphas, alphasFake);
+            Chart ch = MakeChart(alphasFake);
             Form1 formik = new Form1();
             formik.AddChart(ch);
             formik.ShowDialog();
 
-            //FileStream f2 = new FileStream("d:\\testAlpha.txt", FileMode.OpenOrCreate);
-            //StreamWriter sw2 = new StreamWriter(f2);
+            FileStream fs2 = new FileStream("d:\\testAlpha.txt", FileMode.OpenOrCreate);
+            StreamWriter sw2 = new StreamWriter(fs2);
 
-            //sw2.WriteLine("Expected rotation: ");
-            //sw2.WriteLine(td.RotationM);
-            //sw2.WriteLine();
-            //foreach (Test1 t in testik)
-            //{
-            //    sw2.WriteLine("Alpha: " + t.alpha);
-            //    sw2.WriteLine("Rotation: ");
-            //    sw2.WriteLine(t.t.RotationMatrix);
-            //    sw2.WriteLine();
-            //}
+            sw2.WriteLine("Expected rotation: ");
+            sw2.WriteLine(td.RotationM);
+            sw2.WriteLine();
+            foreach (Test1 t in testik)
+            {
+                sw2.WriteLine("Alpha: " + t.alpha);
+                sw2.WriteLine("Rotation: ");
+                sw2.WriteLine(t.t.RotationMatrix);
+                sw2.WriteLine();
+            }
 
-            //streamWriter.Close();
-            //fileStream.Close();
+            sw2.Close();
+            fs2.Close();
 
-            return alpha;
+            FileStream fs3 = new FileStream("d:\\points.txt", FileMode.OpenOrCreate);
+            StreamWriter sw3 = new StreamWriter(fs3);
+
+            foreach (Test1 t in testik2)
+            {
+                sw3.WriteLine("Alpha: " + t.alpha);
+                sw3.WriteLine("Point: ");
+                sw3.WriteLine(t.point.ToString());
+                sw3.WriteLine();
+            }
+
+            sw3.Close();
+            fs3.Close();
+
+            return alphaFake;
         }
 
         public static Chart MakeChart(double[] alphas, double[] alphas2)
@@ -442,6 +494,122 @@ namespace DataView
                 double a = count / 10.0;
                 series2.Points.AddXY(i, a);
             }
+            return chart1;
+        }
+
+        public static Chart MakeChart(double[] alphas)
+        {
+            Chart chart1 = new Chart();
+            chart1.Location = new Point(10, 10);
+            chart1.Width = 1200;
+            chart1.Height = 600;
+
+            // chartArea
+            ChartArea chartArea = new ChartArea();
+            chartArea.Name = "First Area";
+            chart1.ChartAreas.Add(chartArea);
+            chartArea.BackColor = Color.Azure;
+            chartArea.BackGradientStyle = GradientStyle.HorizontalCenter;
+            chartArea.BackHatchStyle = ChartHatchStyle.LargeGrid;
+            chartArea.BorderDashStyle = ChartDashStyle.Solid;
+            chartArea.BorderWidth = 1;
+            chartArea.BorderColor = Color.Red;
+            chartArea.ShadowColor = Color.Purple;
+            chartArea.ShadowOffset = 0;
+            chart1.ChartAreas[0].Axes[0].MajorGrid.Enabled = false;//x axis
+            chart1.ChartAreas[0].Axes[1].MajorGrid.Enabled = false;//y axis
+
+            //Cursor：only apply the top area
+            chartArea.CursorX.IsUserEnabled = true;
+            chartArea.CursorX.AxisType = AxisType.Primary;//act on primary x axis
+            chartArea.CursorX.Interval = 1;
+            chartArea.CursorX.LineWidth = 1;
+            chartArea.CursorX.LineDashStyle = ChartDashStyle.Dash;
+            chartArea.CursorX.IsUserSelectionEnabled = true;
+            chartArea.CursorX.SelectionColor = Color.Yellow;
+            chartArea.CursorX.AutoScroll = true;
+
+            chartArea.CursorY.IsUserEnabled = true;
+            chartArea.CursorY.AxisType = AxisType.Primary;//act on primary y axis
+            chartArea.CursorY.Interval = 1;
+            chartArea.CursorY.LineWidth = 1;
+            chartArea.CursorY.LineDashStyle = ChartDashStyle.Dash;
+            chartArea.CursorY.IsUserSelectionEnabled = true;
+            chartArea.CursorY.SelectionColor = Color.Yellow;
+            chartArea.CursorY.AutoScroll = true;
+
+            // Axis
+            chartArea.AxisY.Minimum = 0d;//Y axis Minimum value
+            chartArea.AxisY.Title = @"Percentage of rotations with lower alpha (from 1000)";
+            //chartArea.AxisY.Maximum = 100d;//Y axis Maximum value
+            chartArea.AxisX.Minimum = 0d; //X axis Minimum value
+            chartArea.AxisX.Maximum = 180d;
+            chartArea.AxisX.IsLabelAutoFit = true;
+            //chartArea.AxisX.LabelAutoFitMaxFontSize = 12;
+            chartArea.AxisX.LabelAutoFitMinFontSize = 5;
+            chartArea.AxisX.LabelStyle.Angle = -20;
+            chartArea.AxisX.LabelStyle.IsEndLabelVisible = true;//show the last label
+            chartArea.AxisX.Interval = 1;
+            chartArea.AxisX.IntervalAutoMode = IntervalAutoMode.FixedCount;
+            chartArea.AxisX.IntervalType = DateTimeIntervalType.NotSet;
+            chartArea.AxisX.Title = @"Alpha";
+            chartArea.AxisX.TextOrientation = TextOrientation.Auto;
+            chartArea.AxisX.LineWidth = 2;
+            chartArea.AxisX.LineColor = Color.DarkOrchid;
+            chartArea.AxisX.Enabled = AxisEnabled.True;
+            chartArea.AxisX.ScaleView.MinSizeType = DateTimeIntervalType.Months;
+            chartArea.AxisX.ScrollBar = new AxisScrollBar();
+
+            //Series
+            Series series1 = new Series();
+            series1.ChartArea = "First Area";
+            chart1.Series.Add(series1);
+            //Series style
+            series1.Name = @"series：Test One";
+            series1.ChartType = SeriesChartType.Line;  // type
+            series1.BorderWidth = 2;
+            series1.Color = Color.Green;
+            series1.XValueType = ChartValueType.Int32;//x axis type
+            series1.YValueType = ChartValueType.Int32;//y axis type
+            // series.YValuesPerPoint = 6;
+
+            //Marker
+            //series1.MarkerStyle = MarkerStyle.Star4;
+            //series1.MarkerSize = 10;
+            //series1.MarkerStep = 1;
+            //series1.MarkerColor = Color.Red;
+            //series1.ToolTip = @"ToolTip";
+
+            //Label
+            series1.IsValueShownAsLabel = true;
+            series1.SmartLabelStyle.Enabled = false;
+            series1.SmartLabelStyle.AllowOutsidePlotArea = LabelOutsidePlotAreaStyle.Yes;
+            series1.LabelForeColor = Color.Gray;
+            series1.LabelToolTip = @"LabelToolTip";
+
+            //Empty Point Style 
+            DataPointCustomProperties p = new DataPointCustomProperties();
+            p.Color = Color.Green;
+            series1.EmptyPointStyle = p;
+
+            //Legend
+            series1.LegendText = "Normal matcher";
+            series1.LegendToolTip = @"LegendToolTip";
+
+            for (int i = 0; i <= 180; i += 1)
+            {
+                int count = 0;
+                for (int j = 0; j < 1000; j++)
+                {
+                    if (alphas[j] <= i)
+                    {
+                        count++;
+                    }
+                }
+                double a = count / 10.0;
+                series1.Points.AddXY(i, a);
+            }
+
             return chart1;
         }
 
