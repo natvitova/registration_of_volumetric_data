@@ -48,23 +48,14 @@ namespace DataView
         /// <param name="p"></param>
         /// <param name="maxDist"></param>
         /// <returns></returns>
-        public int FindNearest(FeatureVector p)
+        public int FindNearest(FeatureVector featureVector)
         {
             smDist = double.MaxValue;
             smDistSq = double.MaxValue;
             nearest = -1;
-            searchFeatureVector = p;
+            searchFeatureVector = featureVector;
             SearchSubtree(root);
 
-            // debug
-            /*int nFull = fullSearch(p);
-            double tmd = pnts[nFull].DistanceTo(p);
-            if (tmd < maxDist)
-            {
-                if (nFull != nearest)
-                    Console.WriteLine("Error in KDTree");
-            }*/
-            // end debug
             return nearest;
         }
 

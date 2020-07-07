@@ -12,18 +12,18 @@ namespace DataView
     /// </summary>
     class Matcher : IMatcher
     {
-        public Match[] Match(FeatureVector[] f1, FeatureVector[] f2, double threshold)
+        public Match[] Match(FeatureVector[] fMicro, FeatureVector[] fMacro, double threshold)
         {
-            KDTree tree = new KDTree(f2);
+            KDTree tree = new KDTree(fMacro);
             List<Match> matches = new List<Match>();
 
-            for (int i = 0; i < f1.Length; i++)
+            for (int i = 0; i < fMicro.Length; i++)
             {
-                int index = tree.FindNearest(f1[i]);
+                int index = tree.FindNearest(fMicro[i]);
                 if (index >= 0)
                 {
-                    double s = Similarity(f1[i], f2[index]);
-                    matches.Add(new Match(f1[i], f2[index], s));
+                    double s = Similarity(fMicro[i], fMacro[index]);
+                    matches.Add(new Match(fMicro[i], fMacro[index], s));
                 }
             }
             matches.Sort((x, y) => x.Similarity.CompareTo(y.Similarity));
@@ -80,6 +80,5 @@ namespace DataView
             if (s < 0) { s = 0; }
             return s;
         }
-
     }
 }

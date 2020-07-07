@@ -12,13 +12,13 @@ namespace DataView
     /// </summary>
     class PictureMaker
     {
-        private int[,] array;
+        private double[,] array;
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="array"></param>
-        public PictureMaker(int[,] array)
+        public PictureMaker(double[,] array)
         {
             this.array = array;
         }
@@ -56,9 +56,9 @@ namespace DataView
             {
                 for (int y = 0; y < height; y++)
                 {
-                    int h = array[x, y];
-                    h = (int)(h * 255 / max);
-                    Color color = Color.FromArgb(h, h, h);
+                    double h = array[x, y];
+                    int a = (int)(h * 255 / max);
+                    Color color = Color.FromArgb(a, a, a);
                     bitmap.SetPixel(x, y, color);
                 }
             }

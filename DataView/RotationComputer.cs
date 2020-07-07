@@ -9,7 +9,6 @@ namespace DataView
 {
     class RotationComputer
     {
-
         /// <summary>
         /// Calculates the rotation matrix from d1 to d2
         /// </summary>
@@ -29,7 +28,7 @@ namespace DataView
             Matrix<double> Amacro = GetSymetricMatrixForEigenVectors(dMacro, pointMacro, count, 3, mainRnd);
             var evdMacro = Amacro.Evd();
 
-            Matrix<double> rotationMatrix = ComputeChangeOfBasisMatrixUsingTransposition(evdMicro.EigenVectors, evdMacro.EigenVectors); //eigenvectors make up an orthonormal basis    
+            Matrix<double> rotationMatrix = ComputeChangeOfBasisMatrixUsingTransposition(evdMicro.EigenVectors, evdMacro.EigenVectors, mainRnd); //eigenvectors make up an orthonormal basis    
             return rotationMatrix;
         }
 
@@ -171,7 +170,7 @@ namespace DataView
             return changeOfBasisMatrix;
         }
 
-        private static Matrix<double> ComputeChangeOfBasisMatrixUsingTransposition(Matrix<double> baseMicro, Matrix<double> baseMacro)
+        private static Matrix<double> ComputeChangeOfBasisMatrixUsingTransposition(Matrix<double> baseMicro, Matrix<double> baseMacro, Random rnd)
         {
             // bases already ortonormal
             MakeBaseRightHanded(baseMicro);
@@ -182,11 +181,39 @@ namespace DataView
             if (!IsBaseRightHanded(baseMacro))
                 Console.WriteLine("base2 is not righthanded :( ");
 
-            //Matrix<double> changeOfBasisMatrix = baseMicro.Multiply(baseMacro.Transpose());
-
-            Matrix<double> changeOfBasisMatrix = baseMacro.Transpose().Multiply(baseMicro);
+            RandomFlipBasis(baseMacro, rnd);
+            Matrix<double> changeOfBasisMatrix = baseMacro.Multiply(baseMicro.Transpose());
 
             return changeOfBasisMatrix;
+        }
+
+        private static void RandomFlipBasis(Matrix<double> basis, Random rnd)
+        {
+            Random lr = new Random(rnd.Next());
+            if (lr.NextDouble() < 0.5)
+            {
+                FlipColumn(basis, 0);
+                FlipColumn(basis, 1);
+            }
+
+            if (lr.NextDouble() < 0.5)
+            {
+                FlipColumn(basis, 1);
+                FlipColumn(basis, 2);
+            }
+
+            if (lr.NextDouble() < 0.5)
+            {
+                FlipColumn(basis, 2);
+                FlipColumn(basis, 0);
+            }
+        }
+
+        private static void FlipColumn(Matrix<double> basis, int v)
+        {
+            basis[0, v] = -basis[0, v];
+            basis[1, v] = -basis[1, v];
+            basis[2, v] = -basis[2, v];
         }
 
         private static Point3D[] SampleSphereAroundPoint(IData d, Point3D centerPoint, int radius, int count, Random rnd)
@@ -195,9 +222,9 @@ namespace DataView
             List<Point3D> pointsInSphere = GetSphere(centerPoint, radius, count, rnd.Next()); //gets all points in a given sphere
 
             Random rndL = new Random();
-            int currentValue;
-            int maxValue = 0;
-            int minValue = int.MaxValue;
+            double currentValue;
+            double maxValue = 0;
+            double minValue = int.MaxValue;
 
             foreach (Point3D point in pointsInSphere) //finds the minumum and maximum value in the sphere
             {
@@ -235,9 +262,9 @@ namespace DataView
             return survivingPoints.ToArray();
         }
 
-        private static bool DecideFate(Random rnd, int pointValue, int min, int max)
+        private static bool DecideFate(Random rnd, double pointValue, double min, double max)
         {
-            int rndValue = rnd.Next(min, max);
+            double rndValue = GetRandomDouble(min, max, rnd);
             if (pointValue > rndValue)
                 return true;
             else
@@ -360,6 +387,7 @@ namespace DataView
 
             return m;
         }
+        
         /// <summary>
         /// Computes a vector v of size 3 where v[0] = average(m[0,0], m[0,1], m[0,2], ..., m[0,m.CollumCount - 1])
         /// </summary>

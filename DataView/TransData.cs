@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using MathNet.Numerics.LinearAlgebra;
+﻿using MathNet.Numerics.LinearAlgebra;
+using System;
 namespace DataView
 {
     class TransData : IData
@@ -15,9 +11,10 @@ namespace DataView
         private Matrix<double> rotationM;
         private Vector<double> translation;
         private int[] measures;
-
+        private Random rnd;
         public TransData(VolumetricData vData, int[] t, double fi, double[] ax)
         {
+            rnd = new Random();
             this.vData = vData;
             this.Measures = new int[3];
             this.Measures[0] = 100; //vData.Measures[0] - t[0] - 400;
@@ -31,6 +28,7 @@ namespace DataView
 
             this.RotationM = Matrix<double>.Build.Dense(3, 3);
             this.Translation = Vector<double>.Build.Dense(3);
+
             this.Translation[0] = t[0] * XSpacing;
             this.Translation[1] = t[1] * YSpacing;
             this.Translation[2] = t[2] * ZSpacing;
@@ -46,7 +44,7 @@ namespace DataView
             this.RotationM[2, 2] = Math.Cos(fi) + ax[2] * ax[2] * (1 - Math.Cos(fi));
         }
 
-        public int GetValue(double x, double y, double z)
+        public double GetValue(double x, double y, double z)
         {
             Vector<double> v = Vector<double>.Build.Dense(3);
             v[0] = x;
@@ -97,7 +95,7 @@ namespace DataView
             tr = Math.Max(tr, -1);
 
             double phi = Math.Acos((tr - 1) / 2);
-            phi = 180*phi/Math.PI;
+            phi = 180 * phi / Math.PI;
             return phi;
         }
 
@@ -114,7 +112,7 @@ namespace DataView
             return alpha;
         }
 
-        public int GetValue(Point3D p)
+        public double GetValue(Point3D p)
         {
             return GetValue(p.X, p.Y, p.Z);
         }
@@ -122,9 +120,9 @@ namespace DataView
         public Point3D[] Sample(Point3D[] points) // from micro to macro
         {
             Vector<double> v = Vector<double>.Build.Dense(3);
-            
+
             Point3D[] pointsReturn = new Point3D[points.Length];
-            for (int i = 0; i<points.Length;i++)
+            for (int i = 0; i < points.Length; i++)
             {
                 v[0] = points[i].X;
                 v[1] = points[i].Y;
@@ -138,7 +136,31 @@ namespace DataView
             return pointsReturn;
         }
 
-        public int[,] Cut(double[] point, double[] v1, double[] v2, int xRes, int yRes, double spacing)
+        public Point3D[] SampleShifted(Point3D[] points) // from micro to macro
+        {
+            Vector<double> v = Vector<double>.Build.Dense(3);
+            Vector<double> hel = Vector<double>.Build.Dense(3);
+
+            Point3D[] pointsReturn = new Point3D[points.Length];
+            for (int i = 0; i < points.Length; i++)
+            {
+                v[0] = points[i].X;
+                v[1] = points[i].Y;
+                v[2] = points[i].Z;
+
+                hel[0] = this.rnd.NextDouble();
+                hel[1] = this.rnd.NextDouble();
+                hel[2] = this.rnd.NextDouble();
+
+                Vector<double> u = RotationM.Multiply(v);
+                u = u + Translation + hel;
+                Point3D newPoint = new Point3D(u[0], u[1], u[2]);
+                pointsReturn[i] = newPoint;
+            }
+            return pointsReturn;
+        }
+
+        public double[,] Cut(double[] point, double[] v1, double[] v2, int xRes, int yRes, double spacing)
         {
             throw new NotImplementedException();
         }

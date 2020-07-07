@@ -36,3 +36,6 @@ C:\Users\Ja\Desktop\Játra\registration_of_volumetric_data\TransformSelect\obj\D
 C:\Users\Ja\Desktop\Játra\registration_of_volumetric_data\TransformSelect\obj\Debug\TransformSelect.csproj.CopyComplete
 C:\Users\Ja\Desktop\Játra\registration_of_volumetric_data\TransformSelect\obj\Debug\TransformSelect.exe
 C:\Users\Ja\Desktop\Játra\registration_of_volumetric_data\TransformSelect\obj\Debug\TransformSelect.pdb
+C:\Users\vitova\Documents\GitHub\registration_of_volumetric_data\TransformSelect\bin\Debug\LumenWorks.Framework.IO.dll
+C:\Users\vitova\Documents\GitHub\registration_of_volumetric_data\TransformSelect\bin\Debug\LumenWorks.Framework.IO.pdb
+C:\Users\vitova\Documents\GitHub\registration_of_volumetric_data\TransformSelect\bin\Debug\LumenWorks.Framework.IO.xml

@@ -132,3 +132,6 @@ C:\Users\vitova\Documents\GitHub\registration_of_volumetric_data\DataView\bin\De
 C:\Users\vitova\Documents\GitHub\registration_of_volumetric_data\DataView\bin\Debug\System.ValueTuple.xml
 C:\Users\vitova\Documents\GitHub\registration_of_volumetric_data\DataView\bin\Debug\CsvHelper.dll
 C:\Users\vitova\Documents\GitHub\registration_of_volumetric_data\DataView\bin\Debug\CsvHelper.xml
+C:\Users\vitova\Documents\GitHub\registration_of_volumetric_data\DataView\bin\Debug\LumenWorks.Framework.IO.dll
+C:\Users\vitova\Documents\GitHub\registration_of_volumetric_data\DataView\bin\Debug\LumenWorks.Framework.IO.pdb
+C:\Users\vitova\Documents\GitHub\registration_of_volumetric_data\DataView\bin\Debug\LumenWorks.Framework.IO.xml

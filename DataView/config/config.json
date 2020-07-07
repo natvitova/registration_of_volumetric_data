@@ -1,0 +1,30 @@
+{
+
+  "Program": {
+    "NumberOfPointsMicro": "100_000",
+    "NumberOfPointsMacro": "100_000",
+    "Threshold": "20",
+    "Radius": "10",
+    "CutDistance": "20",
+    "CutDirection": "2",
+    "CutXRes": "500",
+    "CutYRes": "500",
+    "CutSpacing": "0.5"
+
+  },
+
+  "Sampling": {
+    "count": "10_000",
+    "radius": "10",
+    "rSphere": "5",
+    "quality": "5",
+    "border": "5"
+  },
+
+  "Transformer3D": {
+    "count": "1000"
+  }
+
+
+
+}

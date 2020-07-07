@@ -8,7 +8,7 @@ namespace DataView
 
         public Configuration() 
         {
-            configuration = new ConfigurationBuilder().AddJsonFile("config.json", optional: true).Build();
+            configuration = new ConfigurationBuilder().AddJsonFile("../../config/config.json", optional: true).Build();
         }
     }
 }

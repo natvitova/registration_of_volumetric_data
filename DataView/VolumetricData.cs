@@ -61,12 +61,13 @@ namespace DataView
                 {
                     for (int k = 0; k < height; k++)
                     {
-                        VData[k] = new int[width, depth];
-                        for (int i = 0; i < width; i++)
-                        {
-                            for (int j = 0; j < depth; j++)
-                            {
+                     //   VData[k] = new int[width, depth];
 
+                        VData[k] = new int[width, depth];
+                        for (int j = 0; j < depth; j++)
+                        {
+                            for (int i = 0; i < width; i++)
+                            {
                                 byte a = br.ReadByte();
                                 byte b = br.ReadByte();
                                 c = 256 * b + a;
@@ -89,7 +90,6 @@ namespace DataView
                                 c = br.ReadByte();
 
                                 VData[k][i, j] = c;
-                                //Console.WriteLine(c);
                             }
                         }
                     }
@@ -115,7 +115,7 @@ namespace DataView
         /// <param name="yRes"></param>
         /// <param name="spacing"></param>
         /// <returns></returns>
-        public int[,] Cut(double[] point, double[] v1, double[] v2, int xRes, int yRes, double spacing)
+        public double[,] Cut(double[] point, double[] v1, double[] v2, int xRes, int yRes, double spacing)
         {
             ISpacing = spacing;
 
@@ -132,17 +132,17 @@ namespace DataView
                 unitVector2[i] = vertical2[i] * ISpacing / lengthV2;
             }
 
-            int[,] cut = new int[xRes, yRes];
+            double[,] cut = new double[xRes, yRes];
             double x, y, z;
-            for (int i = 0; i < xRes; i++)
+            for (int i = 0; i < yRes; i++)
             {
                 x = point[0] + i * unitVector2[0];
                 y = point[1] + i * unitVector2[1];
                 z = point[2] + i * unitVector2[2];
 
-                for (int j = 0; j < yRes; j++)
+                for (int j = 0; j < xRes; j++)
                 {
-                    cut[i, j] = GetValue(x, y, z);
+                    cut[j, i] = GetValue(x, y, z);
 
                     x += unitVector1[0];
                     y += unitVector1[1];
@@ -198,7 +198,7 @@ namespace DataView
 
                     for (int j = 0; j < yRes; j++)
                     {
-                        cut[k][i, j] = GetValueMatrixCoordinates(x, y, z);
+                        cut[k][i, j] = (int)GetValueMatrixCoordinates(x, y, z);
 
                         x += unitVector1[0];
                         y += unitVector1[1];
@@ -284,7 +284,7 @@ namespace DataView
                     double z = point[2] + i * unitVector2[2] + k * unitVector3[2];
                     for (int j = 0; j < yRes; j++)
                     {
-                        cut[k][i, j] = GetValueMatrixCoordinates(x, y, z);
+                        cut[k][i, j] = (int)GetValueMatrixCoordinates(x, y, z);
 
                         x += unitVector1[0];
                         y += unitVector1[1];
@@ -351,7 +351,7 @@ namespace DataView
         /// <param name="y"></param>
         /// <param name="z"></param>
         /// <returns></returns>
-        public int GetValueMatrixCoordinates(double x, double y, double z) // Interpolation3D in matrix coordinates
+        public double GetValueMatrixCoordinates(double x, double y, double z) // Interpolation3D in matrix coordinates
         {
             //TODO CUTS - real or matrix coordinates
 
@@ -367,8 +367,8 @@ namespace DataView
                     zRDC = zLDC;
                 }
 
-                int valueA = Interpolation2DWithinMatrix(x, y, zLDC, xLDC, yLDC);
-                int valueB = Interpolation2DWithinMatrix(x, y, zRDC, xLDC, yLDC);
+                double valueA = Interpolation2DWithinMatrix(x, y, zLDC, xLDC, yLDC);
+                double valueB = Interpolation2DWithinMatrix(x, y, zRDC, xLDC, yLDC);
 
                 return InterpolationWithinMatrix(valueA, valueB, z, zLDC);
             }
@@ -379,12 +379,12 @@ namespace DataView
             }
         }
 
-        public int GetValueMatrixCoordinates(Point3D point)
+        public double GetValueMatrixCoordinates(Point3D point)
         {
             return GetValueMatrixCoordinates(point.X, point.Y, point.Z);
         }
 
-        public int GetValue(double x, double y, double z) // Interpolation3D in real coordinates 
+        public double GetValue(double x, double y, double z) // Interpolation3D in real coordinates 
         {
             int xLDC = (int)(x / xSpacing); // coordinates of left down corner of the rectangle in the array in which the pixel is situated
             int yLDC = (int)(y / ySpacing);
@@ -398,8 +398,8 @@ namespace DataView
                     zRDC = zLDC;
                 }
 
-                int valueA = Interpolation2DReal(x, y, zLDC, xLDC, yLDC);
-                int valueB = Interpolation2DReal(x, y, zRDC, xLDC, yLDC);
+                double valueA = Interpolation2DReal(x, y, zLDC, xLDC, yLDC);
+                double valueB = Interpolation2DReal(x, y, zRDC, xLDC, yLDC);
 
                 return InterpolationReal(valueA, valueB, z, zLDC, ZSpacing);
             }
@@ -409,7 +409,7 @@ namespace DataView
             }
         }
 
-        public int GetValue(Point3D point)
+        public double GetValue(Point3D point)
         {
             return GetValue(point.X, point.Y, point.Z);
         }
@@ -422,17 +422,17 @@ namespace DataView
         /// <param name="coordinateOfPixel"></param>
         /// <param name="indexOfA"></param>
         /// <returns></returns>
-        private int InterpolationWithinMatrix(int valueA, int valueB, double coordinateOfPixel, int indexOfA)
+        private double InterpolationWithinMatrix(double valueA, double valueB, double coordinateOfPixel, int indexOfA)
         {
             double d = coordinateOfPixel - indexOfA;
-            return (int)(d * valueB + (1 - d) * valueA);
+            return d * valueB + (1 - d) * valueA;
         }
 
-        private int InterpolationReal(int valueA, int valueB, double coordinateOfPixel, int indexOfA, double spacing)
+        private double InterpolationReal(double valueA, double valueB, double coordinateOfPixel, int indexOfA, double spacing)
         {
             double d = coordinateOfPixel - indexOfA * spacing; //TODO positive/zero?
             double r = d / spacing;
-            return (int)(r * valueB + (1 - r) * valueA);
+            return r * valueB + (1 - r) * valueA;
         }
 
         /// <summary>
@@ -444,7 +444,7 @@ namespace DataView
         /// <param name="xLDC"></param>
         /// <param name="yLDC"></param>
         /// <returns></returns>
-        private int Interpolation2DWithinMatrix(double pixelX, double pixelY, int indexLDCZ, int xLDC, int yLDC)
+        private double Interpolation2DWithinMatrix(double pixelX, double pixelY, int indexLDCZ, int xLDC, int yLDC)
         {
             int xRDC = xLDC + 1;
             int yRDC = yLDC + 1;
@@ -462,17 +462,17 @@ namespace DataView
             int valueA = VData[indexLDCZ][xLDC, yLDC];
             int valueB = VData[indexLDCZ][xRDC, yLDC];
 
-            int helpValueA = InterpolationWithinMatrix(valueA, valueB, pixelX, xLDC);
+            double helpValueA = InterpolationWithinMatrix(valueA, valueB, pixelX, xLDC);
 
             int valueC = VData[indexLDCZ][xLDC, yRDC];
             int valueD = VData[indexLDCZ][xRDC, yRDC];
 
-            int helpValueB = InterpolationWithinMatrix(valueC, valueD, pixelX, xLDC);
+            double helpValueB = InterpolationWithinMatrix(valueC, valueD, pixelX, xLDC);
 
             return InterpolationWithinMatrix(helpValueA, helpValueB, pixelY, yLDC);
         }
 
-        private int Interpolation2DReal(double pixelX, double pixelY, int indexLDCZ, int xLDC, int yLDC)
+        private double Interpolation2DReal(double pixelX, double pixelY, int indexLDCZ, int xLDC, int yLDC)
         {
             int xRDC = xLDC + 1;
             int yRDC = yLDC + 1;
@@ -490,12 +490,13 @@ namespace DataView
             int valueA = VData[indexLDCZ][xLDC, yLDC];
             int valueB = VData[indexLDCZ][xRDC, yLDC];
 
-            int helpValueA = InterpolationReal(valueA, valueB, pixelX, xLDC, XSpacing);
+
+            double helpValueA = InterpolationReal(valueA, valueB, pixelX, xLDC, XSpacing);
 
             int valueC = VData[indexLDCZ][xLDC, yRDC];
             int valueD = VData[indexLDCZ][xRDC, yRDC];
 
-            int helpValueB = InterpolationReal(valueC, valueD, pixelX, xLDC, XSpacing);
+            double helpValueB = InterpolationReal(valueC, valueD, pixelX, xLDC, XSpacing);
 
             return InterpolationReal(helpValueA, helpValueB, pixelY, yLDC, YSpacing);
         }

@@ -57,3 +57,6 @@ C:\Users\vitova\Documents\GitHub\registration_of_volumetric_data\DataView\bin\Re
 C:\Users\vitova\Documents\GitHub\registration_of_volumetric_data\DataView\bin\Release\System.Text.Json.xml
 C:\Users\vitova\Documents\GitHub\registration_of_volumetric_data\DataView\bin\Release\System.Threading.Tasks.Extensions.xml
 C:\Users\vitova\Documents\GitHub\registration_of_volumetric_data\DataView\bin\Release\System.ValueTuple.xml
+C:\Users\vitova\Documents\GitHub\registration_of_volumetric_data\DataView\bin\Release\LumenWorks.Framework.IO.dll
+C:\Users\vitova\Documents\GitHub\registration_of_volumetric_data\DataView\bin\Release\LumenWorks.Framework.IO.pdb
+C:\Users\vitova\Documents\GitHub\registration_of_volumetric_data\DataView\bin\Release\LumenWorks.Framework.IO.xml

@@ -1,4 +1,3 @@
-
 C:\Users\vitova\Documents\GitHub\registration_of_volumetric_data\TransformSelect\bin\Release\TransformSelect.exe.config
 C:\Users\vitova\Documents\GitHub\registration_of_volumetric_data\TransformSelect\bin\Release\TransformSelect.exe
 C:\Users\vitova\Documents\GitHub\registration_of_volumetric_data\TransformSelect\bin\Release\TransformSelect.pdb
@@ -9,4 +8,6 @@ C:\Users\vitova\Documents\GitHub\registration_of_volumetric_data\TransformSelect
 C:\Users\vitova\Documents\GitHub\registration_of_volumetric_data\TransformSelect\obj\Release\TransformSelect.csproj.CopyComplete
 C:\Users\vitova\Documents\GitHub\registration_of_volumetric_data\TransformSelect\obj\Release\TransformSelect.exe
 C:\Users\vitova\Documents\GitHub\registration_of_volumetric_data\TransformSelect\obj\Release\TransformSelect.pdb
-
+C:\Users\vitova\Documents\GitHub\registration_of_volumetric_data\TransformSelect\bin\Release\LumenWorks.Framework.IO.dll
+C:\Users\vitova\Documents\GitHub\registration_of_volumetric_data\TransformSelect\bin\Release\LumenWorks.Framework.IO.pdb
+C:\Users\vitova\Documents\GitHub\registration_of_volumetric_data\TransformSelect\bin\Release\LumenWorks.Framework.IO.xml

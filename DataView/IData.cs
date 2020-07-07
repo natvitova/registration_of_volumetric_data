@@ -12,8 +12,8 @@ namespace DataView
         double YSpacing { get; set; }
         double ZSpacing { get; set; }
         int[] Measures { get; set; }
-        int GetValue(double x, double y, double z);
-        int[,] Cut(double[] point, double[] v1, double[] v2, int xRes, int yRes, double spacing);
-        int GetValue(Point3D p);
+        double GetValue(double x, double y, double z);
+        double[,] Cut(double[] point, double[] v1, double[] v2, int xRes, int yRes, double spacing);
+        double GetValue(Point3D p);
     }
 }
