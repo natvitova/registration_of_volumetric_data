@@ -47,7 +47,6 @@ namespace DataView
 
                 Qs[i] = new Point3D(x, y, z);
             }
-
         }
 
         /// <summary>

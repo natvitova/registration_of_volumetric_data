@@ -9,5 +9,5 @@ CenterOfRotation = 0 0 0
 AnatomicalOrientation = RAI
 ElementSpacing = 1 1 1
 DimSize = 12 10 8
-ElementType = MET_UCHAR
-ElementDataFile = ellipsoidMicro.raw
+ElementType = MET_USHORT
+ElementDataFile = ellipsoidMicroBiggerRange.raw

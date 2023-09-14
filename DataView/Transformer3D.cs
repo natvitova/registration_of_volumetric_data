@@ -17,8 +17,11 @@ namespace DataView
 
             Point3D pMicro = m.F1.Point.Copy();
             Point3D pMacro = m.F2.Point.Copy();
+
             Vector<double> translationVector = Vector<double>.Build.Dense(3);
-            Matrix<double> rotationMatrix = RotationComputer.CalculateRotation(dataMicro, dataMacro, pMicro, pMacro, count);
+            //Matrix<double> rotationMatrix = RotationComputer.CalculateRotation(dataMicro, dataMacro, pMicro, pMacro, count); original method
+            //Matrix<double> rotationMatrix = TestRotationComputer.CalculateRotation(dataMicro, dataMacro, pMicro, pMacro, count);
+            Matrix<double> rotationMatrix = TestRotationComputerPCA.CalculateRotation(dataMicro, dataMacro, pMicro, pMacro, count);
 
             pMicro = pMicro.Rotate(rotationMatrix);
 

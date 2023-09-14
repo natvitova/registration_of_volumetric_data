@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DataView
 {
@@ -54,10 +50,10 @@ namespace DataView
         }
 
         /// <summary>
-        /// 
+        /// Calculates the difference
         /// </summary>
         /// <param name="fv"></param>
-        /// <returns></returns>
+        /// <returns>Distance between the two vectors</returns>
         public double DistTo2(FeatureVector fv)
         {
             double sum = 0;

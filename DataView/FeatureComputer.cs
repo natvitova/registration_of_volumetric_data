@@ -75,11 +75,8 @@ namespace DataView
                 i++;
             }
 
-            norm = Math.Sqrt(norm);
-            if (norm == 0)
-            {
-                norm = 1;
-            }
+            norm = (norm == 0) ? 1 : Math.Sqrt(norm);
+
             return new FeatureVector(p, fv[0] / norm, fv[1] / norm, fv[2] / norm, fv[3] / norm, fv[4] / norm);
         }
 

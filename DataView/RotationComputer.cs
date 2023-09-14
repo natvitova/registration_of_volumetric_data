@@ -170,7 +170,7 @@ namespace DataView
             return changeOfBasisMatrix;
         }
 
-        private static Matrix<double> ComputeChangeOfBasisMatrixUsingTransposition(Matrix<double> baseMicro, Matrix<double> baseMacro, Random rnd)
+        private static Matrix<double>   ComputeChangeOfBasisMatrixUsingTransposition(Matrix<double> baseMicro, Matrix<double> baseMacro, Random rnd)
         {
             // bases already ortonormal
             MakeBaseRightHanded(baseMicro);
@@ -278,7 +278,6 @@ namespace DataView
         /// <returns></returns>
         private static Matrix<double> GetSymetricMatrixForEigenVectors(Point3D[] points)
         {
-
             Matrix<double> sampleMatrix = Point3DArrayToMatrix(points); //matrix D
             double[] averageCoordinates = GetAverageCoordinate(sampleMatrix); // vector overline{x}
             Matrix<double> sampleMatrix1Subtracted = SubtractVectorFromMatrix(sampleMatrix, averageCoordinates); //matrix D*
@@ -308,33 +307,43 @@ namespace DataView
             return A;
         }
 
-        // od pana Váši
+        // od pana Vï¿½i
         private static Matrix<double> GetSymetricMatrixForEigenVectors(IData d, Point3D point, int count, double radius, Random rnd)
         {
+
+
             List<Point3D> pointsInSphere = GetSphere(point, radius, count, rnd.Next());
+
             Matrix<double> result = Matrix<double>.Build.Dense(3, 3);
+
             double[] values = new double[count];
             double min = double.MaxValue;
             double max = double.MinValue;
+
             Point3D wAvg = new Point3D(0, 0, 0);
             double ws = 0;
 
             for (int i = 0; i < count; i++)
             {
                 values[i] = d.GetValue(pointsInSphere[i]);
+                
                 min = Math.Min(min, values[i]);
                 max = Math.Max(max, values[i]);
             }
 
+
+
             for (int i = 0; i < count; i++)
             {
-                double w = (values[i] - min) / (max - min);
+                
+                double w = (values[i] - min) / (max - min); //percentage from the overall range
                 ws += w;
 
                 wAvg.X += pointsInSphere[i].X * w;
                 wAvg.Y += pointsInSphere[i].Y * w;
                 wAvg.Z += pointsInSphere[i].Z * w;
             }
+
 
             wAvg.X /= ws;
             wAvg.Y /= ws;

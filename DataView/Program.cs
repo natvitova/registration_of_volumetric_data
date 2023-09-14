@@ -3,17 +3,11 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
-
 using System.Diagnostics;
-using System.Threading;
 using System.Windows.Forms.DataVisualization.Charting;
-
 using Microsoft.Extensions.Configuration;
 using CsvHelper;
-using System.Text;
 using System.Globalization;
-using System.Data;
-using LumenWorks.Framework.IO.Csv;
 
 namespace DataView
 {
@@ -22,6 +16,15 @@ namespace DataView
     /// </summary>
     class Program
     {
+
+        
+
+        public static string directoryBigger = @"/Users/pepazetek/Desktop/registration_of_volumetric_data/TestData/BiggerRange/";
+        public static string directorySmaller = @"/Users/pepazetek/Desktop/registration_of_volumetric_data/TestData/SmallerRange/";
+
+        //Choose one from the above options
+        public static string directory = directoryBigger;
+
         private static IData iDataMicro;
         private static IData iDataMacro;
         private static IConfiguration configuration;
@@ -32,11 +35,27 @@ namespace DataView
         /// <param name="args"></param>
         static void Main(string[] args)
         {
-            string fileNameMicro = @"P01_a_MikroCT-nejhrubsi_rozliseni_DICOM_liver-1st-important_Macro_pixel-size53.0585um.mhd";//1012,1024,1014
-            string fileNameMicro2 = @"P01_c_DICOM-8bit_130926_liver-29-8-12-C_1x.mhd"; //1244,1267,1246
-            string fileNameMacro = @"P01_MakroCT_HEAD_5_0_H31S_0004.mhd";
+            //string fileNameMicro = directory + @"P01_a_MikroCT-nejhrubsi_rozliseni_DICOM_liver-1st-important_Macro_pixel-size53.0585um.mhd";//1012,1024,1014
+            //string fileNameMicro2 = @"P01_c_DICOM-8bit_130926_liver-29-8-12-C_1x.mhd"; //1244,1267,1246
+            //string fileNameMacro =  directory + @"P01_MakroCT_HEAD_5_0_H31S_0004.mhd";
+
+            //string fileNameMacro = directory + @"fileMacro.mhd";
+            //string fileNameMicro = directory + @"fileMicro.mhd";
+
+            //Paths where the files are located
+            string fileNameMacroBiggerRange = directoryBigger + @"ellipsoidMacroBiggerRange.mhd";
+            string fileNameMicroBiggerRange = directoryBigger + @"ellipsoidMicroBiggerRange.mhd";
+
+            string fileNameMacroSmallerRange = directorySmaller + @"ellipsoidMacroSmallerRange.mhd";
+            string fileNameMicroSmallerRange = directorySmaller + @"ellipsoidMicroSmallerRange.mhd";
+
+
+
             configuration = new ConfigurationBuilder().AddJsonFile("config.json", optional: true).Build();
 
+            MainFunction(fileNameMicroBiggerRange, fileNameMacroBiggerRange, new Point3D[0], new Point3D[0]);
+
+            /*
             string fileName = @"P01_b_Prase_1_druhe_vys.mhd"; //512,512,636
             int[] translation = new int[3];
             translation[0] = 181; //512
@@ -56,6 +75,7 @@ namespace DataView
             double fi = 32; //degrees
 
             TestFeatureVector(fileName, 100000, 1000_000, 92);
+            */
             //Console.WriteLine("done");
             //Console.ReadKey();
 
@@ -141,23 +161,27 @@ namespace DataView
             //----------------------------------------PARAMETERS----------------------------------------------
             int numberOfPointsMicro = 1_000;
             int numberOfPointsMacro = 1_000;
-            double threshold = 10; //percentage
+            double threshold = 10; //percentage - top 10% best matches should be kept
             ISampler s = new Sampler(configuration);
             IFeatureComputer fc = new FeatureComputer();
             IMatcher matcher = new Matcher();
+
             ITransformer transformer = new Transformer3D();
 
             //----------------------------------------MICRO CT------------------------------------------------
             Console.WriteLine("Reading micro data.");
             VolumetricData vDataMicro = new VolumetricData(micro);
             iDataMicro = vDataMicro;
+            
             Console.WriteLine("Data read succesfully.");
             Console.WriteLine("Sampling.");
-            //Point3D[] pointsMicro = s.Sample(iDataMicro, numberOfPointsMicro);
+            pointsMicro = s.Sample(iDataMicro, numberOfPointsMicro);
 
             FeatureVector[] featureVectorsMicro = new FeatureVector[pointsMicro.Length];
 
-            Console.WriteLine("Computing feature vectors.");
+
+            
+            Console.WriteLine("Computing micro feature vectors.");
             for (int i = 0; i < pointsMicro.Length; i++)
             {
                 featureVectorsMicro[i] = fc.ComputeFeatureVector(iDataMicro, pointsMicro[i]);
@@ -169,27 +193,72 @@ namespace DataView
             iDataMacro = vDataMacro;
             Console.WriteLine("Data read succesfully.");
             Console.WriteLine("Sampling.");
-            //Point3D[] pointsMacro = s.Sample(iDataMacro, numberOfPointsMacro);
+            pointsMacro = s.Sample(iDataMacro, numberOfPointsMacro);
 
             FeatureVector[] featureVectorsMacro = new FeatureVector[pointsMacro.Length];
 
-            Console.WriteLine("Computing feature vectors.");
+            Console.WriteLine("Computing macro feature vectors.");
+
+            
             for (int i = 0; i < pointsMacro.Length; i++)
-            {
                 featureVectorsMacro[i] = fc.ComputeFeatureVector(iDataMacro, pointsMacro[i]);
-            }
 
             //----------------------------------------MATCHES-------------------------------------------------
             Console.WriteLine("\nMatching.");
-            Match[] matches = matcher.Match(featureVectorsMicro, featureVectorsMacro, threshold);
-            Console.WriteLine("Count of matches: " + matches.Length);
+
+            //temporarily turned off
+            //Match[] matches = matcher.Match(featureVectorsMicro, featureVectorsMacro, threshold);
+
+            //Forced correct values for matches
+            
+            Match[] matches = new Match[100];
+            Random rnd = new Random();
+
+            for (int i = 0; i < matches.Length; i++) {
+
+                double randomCoordinate = rnd.NextDouble() * 5;
+
+                FeatureVector fv1 = new FeatureVector(new Point3D(randomCoordinate, randomCoordinate, randomCoordinate), i, i, i, i, i);
+                FeatureVector fv2 = new FeatureVector(new Point3D(randomCoordinate, randomCoordinate, randomCoordinate), i, i, i, i, i);
+                matches[i] = new Match(fv1, fv2, 100);
+            }
+
+
+            Console.WriteLine("Data are loaded correctly: " + CheckDataIntegrity(iDataMicro, iDataMacro));
+            Console.WriteLine("Matches are " + CalculateCorrectMatches(matches, 5) + " % correct");
+
+            //Filtering of matches outside of bounds
+
+            /*
+            List<Match> listOfMatches = new List<Match>();
+            foreach(Match currentMatch in matches) {
+                if (matchInBounds(iDataMicro, iDataMacro, currentMatch.F1.Point) && matchInBounds(iDataMicro, iDataMacro, currentMatch.F2.Point))
+                    listOfMatches.Add(currentMatch);
+            }
+
+            //matches = new Match[listOfMatches.Count];
+            for(int i = 0; i<listOfMatches.Count; i++) {
+                matches[i] = listOfMatches[i];
+            }
+            */
+
+            
+
+            
 
             //------------------------------------GET TRANSFORMATION -----------------------------------------
+
             Console.WriteLine("Computing transformations.\n");
+
 
             List<Transform3D> transformations = new List<Transform3D>();
             for (int i = 0; i < matches.Length; i++)
             {
+                /*
+                if(souhlasneIndexy.Contains(i)) {
+                    Console.WriteLine("This is what is the same.");
+                }
+                */
                 transformations.Add(transformer.GetTransformation(matches[i], iDataMicro, iDataMacro));
                 //transformations.Add(transformer.GetTransformation(matches[i], vData, vData2, configuration));
             }
@@ -200,8 +269,69 @@ namespace DataView
             Console.WriteLine("Solution found.");
             Console.WriteLine(solution);
 
-            Cut(solution.RotationMatrix, solution.TranslationVector);
+            
+            //Cut(solution.RotationMatrix, solution.TranslationVector);
         }
+
+        /// <summary>
+        /// Checks whether the match is in bounds for both micro and macro data
+        /// </summary>
+        /// <param name="iMicroData">Reference for micro data</param>
+        /// <param name="iMacroData">Reference for macro data</param>
+        /// <param name="point">Center point</param>
+        /// <returns>Returns true if the points + radius is within bounds for both micro and macro data</returns>
+        public static bool matchInBounds(IData iMicroData, IData iMacroData, Point3D point)
+        {
+            int maxX = (int)(Math.Min((iMicroData.Measures[0] - 1) * iMicroData.XSpacing, (iMacroData.Measures[0] - 1) * iMacroData.XSpacing));
+            int maxY = (int)(Math.Min((iMicroData.Measures[1] - 1) * iMicroData.YSpacing, (iMacroData.Measures[1] - 1) * iMacroData.YSpacing));
+            int maxZ = (int)(Math.Min((iMicroData.Measures[2] - 1) * iMicroData.ZSpacing, (iMacroData.Measures[2] - 1) * iMacroData.ZSpacing));
+
+            bool returnValue = ((point.X + TestRotationComputer.radius) < maxX) &&
+                ((point.Y + TestRotationComputer.radius) < maxY) &&
+                ((point.Z + TestRotationComputer.radius) < maxZ);
+            return returnValue;
+        }
+
+        /// <summary>
+        /// This method calculates the percentage of correct matches
+        /// Works only for known test data
+        /// </summary>
+        /// <param name="matches">Array of matches</param>
+        /// <param name="threshold">Tolerance for considering match a correct one</param>
+        /// <returns>The percentage of correct matches</returns>
+        public static int CalculateCorrectMatches(Match[] matches, double threshold) {
+            int correctMatches = 0;
+
+            foreach (Match currentMatch in matches)
+            {
+                if (currentMatch.F1.Point.Distance(currentMatch.F2.Point) <= threshold)
+                    correctMatches++;
+            }
+            return (int) (((double)correctMatches / (double) matches.Length) * 100);
+        }
+
+        public static bool CheckDataIntegrity(IData iMicroData, IData iMacroData)
+        {
+            int maxX = (int)(Math.Min((iMicroData.Measures[0] - 1) * iMicroData.XSpacing, (iMacroData.Measures[0] - 1) * iMacroData.XSpacing));
+            int maxY = (int)(Math.Min((iMicroData.Measures[1] - 1) * iMicroData.YSpacing, (iMacroData.Measures[1] - 1) * iMacroData.YSpacing));
+            int maxZ = (int)(Math.Min((iMicroData.Measures[2] - 1) * iMicroData.ZSpacing, (iMacroData.Measures[2] - 1) * iMacroData.ZSpacing));
+
+            Console.WriteLine("Loop dimensions are [" + maxX + ", " + maxY + ", " + maxZ + "]");
+            for(int x = 0; x<maxX; x++)
+            {
+                for(int y = 0; y<maxY; y++)
+                {
+                    for(int z = 0; z<maxZ; z++)
+                    {
+                        if (iMicroData.GetValue(x, y, z) != iMacroData.GetValue(x, y, z))
+                            return false;
+                    }
+                }
+            }
+
+            return true;
+        }
+
 
         public static TransData SettingFakeData(string macro, int[] translation, double phi, double[] axis)
         {
@@ -380,6 +510,13 @@ namespace DataView
             return alpha;
         }
 
+        /// <summary>
+        /// Test feature vektoru
+        /// </summary>
+        /// <param name="macro"></param>
+        /// <param name="countPoints"></param>
+        /// <param name="countSimilarities"></param>
+        /// <param name="a"></param>
         public static void TestFeatureVector(string macro, int countPoints, int countSimilarities, int a)
         {
             Random rnd = new Random();
@@ -500,7 +637,7 @@ namespace DataView
             series1.YValueType = ChartValueType.Int32;//y axis type
             // series.YValuesPerPoint = 6;
 
-            //Marker
+            //Marker 
             //series1.MarkerStyle = MarkerStyle.Star4;
             //series1.MarkerSize = 10;
             //series1.MarkerStep = 1;

@@ -88,7 +88,7 @@ namespace DataView
                 if (n.right != null)
                 {
                     if (minDist < smDist)
-                            SearchSubtree(n.right);
+                        SearchSubtree(n.right);
                 }
             }
             else
@@ -111,7 +111,7 @@ namespace DataView
                 if (n.left != null)
                 {
                     if (minDist < smDist)
-                            SearchSubtree(n.left);
+                        SearchSubtree(n.left);
                 }
             }
         }

@@ -7,7 +7,7 @@ using MathNet.Numerics.LinearAlgebra;
 
 namespace DataView
 {
-    class TestRotationComputer
+    class TestRotationComputerPCA
     {
 
         public static double radius = 1;
@@ -25,98 +25,51 @@ namespace DataView
         {
             Random mainRnd = new Random();
 
-            Vector<double> vectorMicro = GetDirectionVector(dMicro, pointMicro, count, radius, mainRnd);
-            Vector<double> vectorMacro = GetDirectionVector(dMacro, pointMacro, count, radius, mainRnd);
-            
-
-            Matrix<double> matrixMacro = Matrix<double>.Build.Dense(1, 3);
-            matrixMacro[0, 0] = vectorMacro[0];
-            matrixMacro[0, 1] = vectorMacro[1];
-            matrixMacro[0, 2] = vectorMacro[2];
-
-            Matrix<double> matrixMicro = Matrix<double>.Build.Dense(1, 3);
-            matrixMicro[0, 0] = vectorMicro[0];
-            matrixMicro[0, 1] = vectorMicro[1];
-            matrixMicro[0, 2] = vectorMicro[2];
+            Matrix<double> basisMicro = GetPointBasis(dMicro, pointMicro, count, radius, mainRnd);
+            Matrix<double> basisMacro = GetPointBasis(dMacro, pointMacro, count, radius, mainRnd);
 
 
+            //START OF A TEST
 
-            Vector<double> testVector1Normalized = NormalizeVector(vectorMicro);
-            Vector<double> testVector2Normalized = NormalizeVector(vectorMacro);
+            /*
+            basisMacro.SetRow(0, new double[] { 1, 3, 2 });
+            basisMacro.SetRow(1, new double[] { 2, 1, 3 });
+            basisMacro.SetRow(2, new double[] { 3, 2, 1 });
 
-            Vector<double> crossProduct = Vector<double>.Build.Dense(3);
-            if(ParallelVectors(vectorMacro, vectorMicro))
-                crossProduct = findOrthogonalVector(vectorMicro);
-            else
+            basisMicro.SetRow(0, new double[] { 5, 2, -1 });
+            basisMicro.SetRow(1, new double[] { -4, 3, 2 });
+            basisMicro.SetRow(2, new double[] { 1, -2, 5 });
+
+            Console.WriteLine("This is basis macro: " + basisMacro);
+            Console.WriteLine("This is basis micro: " + basisMicro);
+            */
+
+            //END OF A TEST
+
+            Matrix<double> transitionMatrix = Matrix<double>.Build.Dense(3, 3);
+
+            Matrix<double> equationMatrix = Matrix<double>.Build.Dense(3, 4);
+
+
+
+            for (int basisNumber = 0; basisNumber<3; basisNumber++)
             {
-                Matrix<double> tempCrossProduct = CrossProduct(testVector1Normalized, testVector2Normalized);
-                crossProduct = Vector<double>.Build.DenseOfArray(new double[] { tempCrossProduct[0, 0], tempCrossProduct[0, 1], tempCrossProduct[0, 2] });
+                for (int i = 0; i < 3; i++)
+                    equationMatrix.SetColumn(i, basisMacro.Column(i));
+
+                equationMatrix.SetColumn(3, basisMicro.Column(basisNumber));
+
+                Vector<double> result = EquationComputer.CalculateSolution(equationMatrix);
+
+                transitionMatrix.SetColumn(basisNumber, result);
             }
 
-            /*
-            Console.WriteLine(crossProduct);
-            Console.WriteLine("This is dot product with microVector: " + ScalarProduct(testVector1Normalized, crossProduct));
-            Console.WriteLine("This is dot product with macroVector: " + ScalarProduct(testVector2Normalized, crossProduct));
-            */
+            Console.WriteLine(basisMacro * transitionMatrix); //Transformation of macro to micro basis
 
-            crossProduct = NormalizeVector(crossProduct);
-
-            /*
-            Console.WriteLine("This is dot product with first vector: " + ScalarProduct(testVector1Normalized, crossProduct));
-            Console.WriteLine("This is dot product with second vector: " + ScalarProduct(crossProduct, testVector2Normalized));
-
-            Console.WriteLine("Test of orthonormality (its dot product with itself is equal to 1)");
-            Console.WriteLine(ScalarProduct(crossProduct, crossProduct));
-            Console.WriteLine();
-            */
-
-            double cosine = ScalarProduct(testVector1Normalized, testVector2Normalized);
-            cosine = Constrain(cosine, -1, 1);
-            double sine = Math.Sqrt(1 - Math.Pow(cosine, 2));
-
-            //Derived from Rodrigue's formula - https://mathworld.wolfram.com/RodriguesRotationFormula.html
-
-            Matrix<double> rotationMatrix = Matrix<double>.Build.Dense(3, 3);
-            rotationMatrix[0, 0] = cosine + (Math.Pow(crossProduct[0], 2) * (1 - cosine));
-            rotationMatrix[0, 1] = (crossProduct[0] * crossProduct[1] * (1 - cosine)) - (crossProduct[2] * sine);
-            rotationMatrix[0, 2] = (crossProduct[1] * sine) + (crossProduct[0] * crossProduct[2] * (1 - cosine));
-            rotationMatrix[1, 0] = (crossProduct[2] * sine) + (crossProduct[0] * crossProduct[1] * (1 - cosine));
-            rotationMatrix[1, 1] = cosine + (Math.Pow(crossProduct[1], 2) * (1 - cosine));
-            rotationMatrix[1, 2] = -(crossProduct[0] * sine) + (crossProduct[1] * crossProduct[2] * (1 - cosine));
-            rotationMatrix[2, 0] = -(crossProduct[1] * sine) + (crossProduct[0] * crossProduct[2] * (1 - cosine));
-            rotationMatrix[2, 1] = (crossProduct[0] * sine) + (crossProduct[1] * crossProduct[2] * (1 - cosine));
-            rotationMatrix[2, 2] = cosine + (Math.Pow(crossProduct[2], 2) * (1 - cosine));
-
-            /*
-            Console.WriteLine("This is the non scaled result:");
-            Console.WriteLine(matrixMacro * rotationMatrix); //aligning macro vector to micro
-            */
-
-            Matrix<double> nonScaledMatrix = matrixMacro * rotationMatrix;
-
-            if (nonScaledMatrix.ColumnCount != 3)
-                throw new ArgumentException("Matrix doesnt have 3 columns");
-
-            if (nonScaledMatrix.RowCount != 1)
-                throw new ArgumentException("Matrix doesnt have 1 row");
+            
 
 
-            Matrix<double> scalingMatrix = Matrix<double>.Build.Dense(3, 3);
-            for (int i = 0; i < 3; i++)
-                scalingMatrix[i, i] = vectorMicro[i] / nonScaledMatrix[0, i];
-
-            /*
-            Console.WriteLine("This is a scaling matrix");
-            Console.WriteLine(scalingMatrix);
-            */
-            rotationMatrix *= scalingMatrix;
-
-            /*
-            Console.WriteLine("This is the final result: ");
-            Console.WriteLine(matrixMacro * rotationMatrix); //aligning macro vector to micro
-            */
-
-            return rotationMatrix;
+            return transitionMatrix;
         }
 
         /// <summary>
@@ -158,6 +111,12 @@ namespace DataView
             return false;
         }
 
+        /// <summary>
+        /// Finds orthogonal vector to the one passed as a parameter
+        /// </summary>
+        /// <param name="inputVector"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
         private static Vector<double> findOrthogonalVector(Vector<double> inputVector)
         {
             if (inputVector.Count != 3)
@@ -192,6 +151,14 @@ namespace DataView
             return currentValue;
         }
 
+        /// <summary>
+        /// Normalizes vector passsed as a parameter
+        /// </summary>
+        /// <param name="vector">Vector to normalize</param>
+        /// <returns>
+        /// Returns normalized vector if its magnitude is not equal to 0.
+        /// Otherwise it returns Vector with 3 rows and 0 columns.
+        /// </returns>
         private static Vector<double> NormalizeVector(Vector<double> vector) {
 
             double magnitude = vector.L2Norm();
@@ -204,7 +171,6 @@ namespace DataView
         }
 
         /// <summary>
-        /// ForTesting
         /// Computes the crossProduct of vectors size 3
         /// </summary>
         /// <param name="u"></param>
@@ -219,6 +185,13 @@ namespace DataView
             return w;
         }
 
+        /// <summary>
+        /// Calculates the dot product for the two given vectors
+        /// </summary>
+        /// <param name="vector1">First vector</param>
+        /// <param name="vector2">Second vector</param>
+        /// <returns>Returns the scalar product of the two given vectors</returns>
+        /// <exception cref="ArgumentException"></exception>
         private static double ScalarProduct(Vector<double> vector1, Vector<double> vector2)
         {
             int upperBound = vector1.AsArray().Length;
@@ -234,7 +207,7 @@ namespace DataView
         }
 
         // od pana V�i
-        private static Vector<double> GetDirectionVector(IData d, Point3D point, int count, double radius, Random rnd)
+        private static Matrix<double> GetPointBasis(IData d, Point3D point, int count, double radius, Random rnd)
         {
             List<Point3D> pointsInSphere = GetSphere(point, radius, count, rnd.Next()); 
 
@@ -244,8 +217,12 @@ namespace DataView
             double min = double.MaxValue;
             double max = double.MinValue;
 
-            Point3D wAvg = new Point3D(0, 0, 0);
-            double ws = 0;
+            Point3D wAvgHigh = new Point3D(0, 0, 0);
+            Point3D wAvgLow = new Point3D(0, 0, 0);
+
+            double wsHigh = 0;
+            double wsLow = 0;
+
 
             for (int i = 0; i < count; i++)
             {
@@ -258,30 +235,95 @@ namespace DataView
             for (int i = 0; i < count; i++)
             {
 
-                double w = (values[i] - min) / (max - min); //percentage from the overall range
-                ws += w;
+                double wHigh = (values[i] - min) / (max - min); //percentage from the overall range
+                double wLow = 1 - wHigh;
 
-                wAvg.X += pointsInSphere[i].X * w;
-                wAvg.Y += pointsInSphere[i].Y * w;
-                wAvg.Z += pointsInSphere[i].Z * w;
+                wsLow += wLow;
+                wsHigh += wHigh;
+
+                wAvgHigh.X += pointsInSphere[i].X * wHigh;
+                wAvgHigh.Y += pointsInSphere[i].Y * wHigh;
+                wAvgHigh.Z += pointsInSphere[i].Z * wHigh;
+
+                wAvgLow.X += pointsInSphere[i].X * wLow;
+                wAvgLow.Y += pointsInSphere[i].Y * wLow;
+                wAvgLow.Z += pointsInSphere[i].Z * wLow;
             }
 
 
-            wAvg.X /= ws;
-            wAvg.Y /= ws;
-            wAvg.Z /= ws;
+            wAvgHigh.X /= wsHigh;
+            wAvgHigh.Y /= wsHigh;
+            wAvgHigh.Z /= wsHigh;
 
-            double diffX = wAvg.X - point.X;
-            double diffY = wAvg.Y - point.Y;
-            double diffZ = wAvg.Z - point.Z;
+            wAvgLow.X /= wsLow;
+            wAvgLow.Y /= wsLow;
+            wAvgLow.Z /= wsLow;
 
-            Vector<double> resultVector = Vector<double>.Build.Dense(3);
+            double diffXHigh = wAvgHigh.X - point.X;
+            double diffYHigh = wAvgHigh.Y - point.Y;
+            double diffZHigh = wAvgHigh.Z - point.Z;
 
-            resultVector[0] = diffX;
-            resultVector[1] = diffY;
-            resultVector[2] = diffZ;
+            double diffXLow = wAvgLow.X - point.X;
+            double diffYLow = wAvgLow.Y - point.Y;
+            double diffZLow = wAvgLow.Z - point.Z;
 
-            return resultVector;
+
+            Vector<double> highConcentrationVector = Vector<double>.Build.Dense(3);
+            highConcentrationVector[0] = diffXHigh;
+            highConcentrationVector[1] = diffYHigh;
+            highConcentrationVector[2] = diffZHigh;
+
+            Vector<double> lowConcentrationVector = Vector<double>.Build.Dense(3);
+            lowConcentrationVector[0] = diffXLow;
+            lowConcentrationVector[1] = diffYLow;
+            lowConcentrationVector[2] = diffZLow;
+
+            highConcentrationVector = NormalizeVector(highConcentrationVector);
+            lowConcentrationVector = NormalizeVector(lowConcentrationVector);
+
+            Vector<double> crossProductVector = Vector<double>.Build.Dense(3);
+
+            if (ParallelVectors(highConcentrationVector, lowConcentrationVector))
+                crossProductVector = findOrthogonalVector(highConcentrationVector);
+            else
+                crossProductVector = CrossProduct(highConcentrationVector, lowConcentrationVector).Row(0);
+
+            crossProductVector = NormalizeVector(crossProductVector);
+
+
+            Matrix<double> resultMatrix = Matrix<double>.Build.Dense(3, 3);
+
+            resultMatrix[0, 0] = highConcentrationVector[0];
+            resultMatrix[1, 0] = highConcentrationVector[1];
+            resultMatrix[2, 0] = highConcentrationVector[2];
+
+            resultMatrix[0, 1] = lowConcentrationVector[0];
+            resultMatrix[1, 1] = lowConcentrationVector[1];
+            resultMatrix[2, 1] = lowConcentrationVector[2];
+
+            resultMatrix[0, 2] = crossProductVector[0];
+            resultMatrix[1, 2] = crossProductVector[1];
+            resultMatrix[2, 2] = crossProductVector[2];
+
+
+            /*
+            resultMatrix[0, 0] = highConcentrationVector[0];
+            resultMatrix[0, 1] = highConcentrationVector[1];
+            resultMatrix[0, 2] = highConcentrationVector[2];
+
+            resultMatrix[1, 0] = lowConcentrationVector[0];
+            resultMatrix[1, 1] = lowConcentrationVector[1];
+            resultMatrix[1, 2] = lowConcentrationVector[2];
+
+            resultMatrix[2, 0] = crossProductVector[0];
+            resultMatrix[2, 1] = crossProductVector[1];
+            resultMatrix[2, 2] = crossProductVector[2];
+            */
+
+            Console.WriteLine("This is a test whether the basis are orthogonal.");
+            Console.WriteLine(ScalarProduct(highConcentrationVector, lowConcentrationVector));
+
+            return resultMatrix;
         }
 
         private static List<Point3D> GetSphere(Point3D p, double r, int count, int seed)

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace DataView
 {
     /// <summary>
-    /// 
+    /// This class represents the data
     /// </summary>
     class VolumetricData : IData
     {
@@ -21,9 +21,9 @@ namespace DataView
         private Data data;
 
         /// <summary>
-        /// 
+        /// Initializes the spacings between points, loads the data using Read method
         /// </summary>
-        /// <param name="dataFileName"></param>
+        /// <param name="dataFileName">Path to raw file</param>
         public VolumetricData(string dataFileName)
         {
             this.Data = new Data(dataFileName);
@@ -44,12 +44,15 @@ namespace DataView
         }
 
         /// <summary>
-        /// 
+        /// Reads the raw data from a file
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Returns array with the data</returns>
         public int[][,] Read()
         {
-            using (BinaryReader br = new BinaryReader(new FileStream(Data.ElementDataFile, FileMode.Open)))
+
+            Console.WriteLine(Data.ElementDataFile);
+            string fileDirectory = Program.directory + Data.ElementDataFile;
+            using (BinaryReader br = new BinaryReader(new FileStream(fileDirectory, FileMode.Open)))
             {
                 int width = Data.DimSize[0];
                 int depth = Data.DimSize[1];
@@ -389,7 +392,9 @@ namespace DataView
             int xLDC = (int)(x / xSpacing); // coordinates of left down corner of the rectangle in the array in which the pixel is situated
             int yLDC = (int)(y / ySpacing);
             int zLDC = (int)(z / zSpacing);
+            
 
+            //Interpolated value is within bounds
             if (xLDC < Data.DimSize[0] && yLDC < Data.DimSize[1] && zLDC < Data.DimSize[2] && xLDC >= 0 && yLDC >= 0 && zLDC >= 0)
             {
                 int zRDC = zLDC + 1;
@@ -402,11 +407,10 @@ namespace DataView
                 double valueB = Interpolation2DReal(x, y, zRDC, xLDC, yLDC);
 
                 return InterpolationReal(valueA, valueB, z, zLDC, ZSpacing);
+
             }
-            else
-            {
-                return 0;
-            }
+
+            return 0;
         }
 
         public double GetValue(Point3D point)

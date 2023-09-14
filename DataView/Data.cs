@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Text.RegularExpressions;
 
 namespace DataView
 {
@@ -40,50 +37,66 @@ namespace DataView
         }
 
         /// <summary>
-        /// 
+        /// Function fetches data type information from a file passed
         /// </summary>
-        /// <param name="fileName"></param>
+        /// <param name="fileName">Path to a file where to read the information</param>
         private void SetFeatures(string fileName) // method setting instance atributes
         {
+            
+            
             using (StreamReader sr = new StreamReader(fileName))
             {
                 string newLine;
-                string s; // pomocná proměnná
+
+                Regex regex;
+                MatchCollection matches;
+
+                
                 while ((newLine = sr.ReadLine()) != null)
                 {
                     if (newLine.Contains("ElementSpacing"))
                     {
-                        s = newLine.Substring(newLine.IndexOf("=") + 2);
-                        string[] a = s.Split(' ');
-                        elementSpacing = new double[a.Length];
-                        for (int i = 0; i < a.Length; i++)
-                        {
-                            ElementSpacing[i] = GetDouble(a[i], -1234);
-                        }
+                        regex = new Regex(@"\b\d+(?:[.,]\d+)?\b"); //Pattern for searching decimal and whole numbers within the string
+                        matches = regex.Matches(newLine);
+
+                        elementSpacing = new double[matches.Count];
+
+                        for(int i = 0; i<elementSpacing.Length; i++)
+                            ElementSpacing[i] = GetDouble(matches[i].ToString(), -1234);
                     }
-                    if (newLine.Contains("DimSize"))
+
+                    else if (newLine.Contains("DimSize"))
                     {
-                        s = newLine.Substring(newLine.IndexOf("=") + 2);
-                        string[] a = s.Split(' ');
-                        dimSize = new int[a.Length];
-                        for (int i = 0; i < a.Length; i++)
-                        {
-                            DimSize[i] = int.Parse(a[i]);
-                        }
+                        regex = new Regex(@"\d+"); //Patern for searching whole numbers within the string
+                        matches = regex.Matches(newLine);
+
+                        dimSize = new int[matches.Count];
+
+                        for (int i = 0; i < dimSize.Length; i++)
+                            DimSize[i] = int.Parse(matches[i].ToString());
                     }
+
                     else if (newLine.Contains("ElementType"))
                     {
-                        s = newLine.Substring(newLine.IndexOf("=") + 2);
-                        elementType = s;
+                        regex = new Regex(@"(?<==\s*)\S+"); //Pattern for matching words after = sign
+                        matches = regex.Matches(newLine);
+
+                        if(matches.Count == 0)
+                            throw new Exception("ElementType not specified in the .md file");
+
+                        elementType = matches[0].ToString();
                     }
+
                     else if (newLine.Contains("ElementDataFile"))
                     {
-                        s = newLine.Substring(newLine.IndexOf("=") + 2);
-                        elementDataFile = s;
-                    }
-                    else
-                    {
 
+                        regex = new Regex(@"(?<==\s*)\S+"); //Pattern for matching words after = sign
+                        matches = regex.Matches(newLine);
+
+                        if (matches.Count == 0)
+                            throw new Exception("ElementDataFile not specified in the .md file");
+
+                        elementDataFile = matches[0].ToString();
                     }
                 }
             }

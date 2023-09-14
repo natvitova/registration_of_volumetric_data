@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace DataView
 {
@@ -32,26 +31,12 @@ namespace DataView
             int width = array.GetLength(0);
             int height = array.GetLength(1);
 
-            double max = 0;
-            double c;
-
-            for (int i = 0; i < width; i++) //TODO .Max() ?
-            {
-                for (int j = 0; j < height; j++)
-                {
-                    c = array[i, j];
-                    if (c > max)
-                    {
-                        max = c;
-                    }
-                }
-            }
+            double max = GetMax(width, height); //could be set to 1, which is the least it can get;
+            if (max == 0)
+                max = 1;
 
             Bitmap bitmap = new Bitmap(width, height);
-            if (max == 0)
-            {
-                max = 1;
-            }
+
             for (int x = 0; x < width; x++)
             {
                 for (int y = 0; y < height; y++)
@@ -65,5 +50,22 @@ namespace DataView
             return bitmap;
         }
 
+        private double GetMax(int width, int height) {
+            double max = 0; //could be set to 1, which is the least it can get; 
+            double c;
+
+            for (int i = 0; i < width; i++) //TODO .Max() ?
+            {
+                for (int j = 0; j < height; j++)
+                {
+                    c = array[i, j];
+                    if (c > max)
+                    {
+                        max = c;
+                    }
+                }
+            }
+            return max;
+        }
     }
 }
