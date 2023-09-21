@@ -1,9 +1,8 @@
-**Sample Data Generator**
+**Brief information about how to use an app Sample Data Generator**
 
-Brief information about how to use an app Sample Data Generator. The
-main goal of this small application is to test the functionality of a 3D
+The main goal of this small application is to test the functionality of a 3D
 registration algorithm. This app should be capable of creating test data
-with desired rotation and translation. Here are few screenshots
+with desired rotation and translation. Here are a few screenshots
 
 ![Obsah obrázku snímek obrazovky, text, software, Počítačová ikona Popis
 byl vytvořen
