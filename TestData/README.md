@@ -7,15 +7,13 @@ with desired rotation and translation. Here are few screenshots
 
 ![Obsah obrázku snímek obrazovky, text, software, Počítačová ikona Popis
 byl vytvořen
-automaticky](./images/media/image1.png){width="5.236459973753281in"
-height="2.9507042869641293in"}
+automaticky](./images/media/image1.png)
 
 *User interface of the application*
 
 ![Obsah obrázku text, snímek obrazovky, displej, číslo Popis byl
 vytvořen
-automaticky](./images/media/image2.png){width="1.7363068678915135in"
-height="2.232393919510061in"}
+automaticky](./images/media/image2.png)
 
 *Details of a transformation*
 
