@@ -5,7 +5,7 @@ namespace DataView
 {
     public class Candidate
     {
-        Transform3D originalTranform;
+        private Transform3D originalTranform;
 
         // properties of Q        
         static double[] tensorProductsSum; // sum of tensor products, diagonal only
@@ -16,6 +16,11 @@ namespace DataView
 
         double[] rotation; // rotation matrix
         double[] translation; // translation
+
+        public Transform3D getOriginalTransform()
+        {
+            return originalTranform;
+        }
 
         /// <summary>
         /// initializes rotation and translation from dual quaternion representation
@@ -104,7 +109,7 @@ namespace DataView
         /// Finally finds maximum number from the transition matrix and returns it
         /// </summary>
         /// <param name="target"></param>
-        /// <returns></returns>
+        /// <returns>Passed rotation matrices have wrong dimensions</returns>
         public double AlternativeRotationMatrixDistance(Candidate target)
         {
             Matrix<double> thisRotationMatrix = this.originalTranform.RotationMatrix;
@@ -161,7 +166,7 @@ namespace DataView
         /// </summary>
         /// <param name="target"></param>
         /// <returns></returns>
-        /// <exception cref="ArgumentException"></exception>
+        /// <exception cref="ArgumentException">Passed rotation matrices have wrong dimensions</exception>
         public double FrobeniusRotationMatrixDistance(Candidate target)
         {
 
@@ -236,7 +241,7 @@ namespace DataView
         /// </summary>
         /// <param name="target">Target candidate</param>
         /// <returns>Returns the value where all normalized weights are "concantenated"</returns>
-        /// <exception cref="ArgumentException"></exception>
+        /// <exception cref="ArgumentException">Passed rotation matrices have wrong dimensions</exception>
         public double RotationMatrixDistance(Candidate target)
         {
 
@@ -317,6 +322,19 @@ namespace DataView
             }
             */
             return resultNumber;
+        }
+
+        /// <summary>
+        /// Calculates Euclidean norm of a difference between the two vectors
+        /// </summary>
+        /// <param name="target">Target candidate</param>
+        /// <returns>Norm of a difference between the two translation vectors</returns>
+        public double TranslationVectorDistance(Candidate target)
+        {
+            Vector<double> thisTranslationVector = this.originalTranform.TranslationVector;
+            Vector<double> targetTranslationVector = target.originalTranform.TranslationVector;
+
+            return (thisTranslationVector - targetTranslationVector).L2Norm();
         }
 
         private Matrix<double> normalizeMatrix(Matrix<double> matrix)

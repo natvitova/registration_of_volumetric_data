@@ -291,6 +291,19 @@ namespace DataView
                     rotationMatrix[0, 2] = 4 + random.Next(-1, 2) * random.NextDouble();
                     rotationMatrix[1, 2] = 7 + random.Next(-1, 2) * random.NextDouble();
                     rotationMatrix[2, 2] = 3 + random.Next(-1, 2) * random.NextDouble();
+
+                    translationVector[0] = 1 + random.Next(-1, 2) * random.NextDouble();
+                    translationVector[1] = 2 + random.Next(-1, 2) * random.NextDouble();
+                    translationVector[2] = 3 + random.Next(-1, 2) * random.NextDouble();
+
+
+                    if (i%3 == 0)
+                    {
+                        translationVector[0] = random.Next();
+                        translationVector[1] = random.Next();
+                        translationVector[2] = random.Next();
+                    }
+
                 }
 
                 transformations.Add(new Transform3D(rotationMatrix, translationVector));

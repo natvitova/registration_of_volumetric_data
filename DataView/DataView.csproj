@@ -108,58 +108,67 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="FeatureComputer.cs" />
-    <Compile Include="FeatureComputerRings.cs" />
-    <Compile Include="FeatureComputerNormedRings.cs" />
-    <Compile Include="FeatureVector.cs" />
-    <Compile Include="Form1.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Form1.Designer.cs">
-      <DependentUpon>Form1.cs</DependentUpon>
-    </Compile>
-    <Compile Include="IData.cs" />
-    <Compile Include="IFeatureComputer.cs" />
-    <Compile Include="IMatcher.cs" />
-    <Compile Include="ISampler.cs" />
-    <Compile Include="ITransformer.cs" />
-    <Compile Include="KDTree.cs" />
-    <Compile Include="Match.cs" />
-    <Compile Include="Matcher.cs" />
-    <Compile Include="PCATester.cs" />
-    <Compile Include="PictureMaker.cs" />
-    <Compile Include="Point3D.cs" />
-    <Compile Include="Data.cs" />
-    <Compile Include="PointWithFeatures.cs" />
-    <Compile Include="PointRated.cs" />
-    <Compile Include="RotationComputer.cs" />
-    <Compile Include="Test.cs" />
-    <Compile Include="TransData.cs" />
-    <Compile Include="Sampler.cs" />
-    <Compile Include="SamplerFeatureVector.cs" />
-    <Compile Include="SamplerFake.cs" />
-    <Compile Include="SamplerHalfFake.cs" />
-    <Compile Include="SamplerRandomFake.cs" />
-    <Compile Include="Configuration.cs" />
-    <Compile Include="TestDataBuilder.cs" />
-    <Compile Include="Transformer3D.cs" />
-    <Compile Include="VolumetricData.cs" />
-    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TestFeatureComputer.cs" />
-    <Compile Include="TestRotationComputer.cs" />
-    <Compile Include="TestRotationComputerPCA.cs" />
-    <Compile Include="EquationComputer.cs" />
+    <Compile Include="DataView\Configuration.cs" />
+    <Compile Include="DataView\Data.cs" />
+    <Compile Include="DataView\EquationComputer.cs" />
+    <Compile Include="DataView\FeatureComputer.cs" />
+    <Compile Include="DataView\FeatureComputerNormedRings.cs" />
+    <Compile Include="DataView\FeatureComputerRings.cs" />
+    <Compile Include="DataView\FeatureVector.cs" />
+    <Compile Include="DataView\Form1.cs" />
+    <Compile Include="DataView\Form1.Designer.cs" />
+    <Compile Include="DataView\IData.cs" />
+    <Compile Include="DataView\IFeatureComputer.cs" />
+    <Compile Include="DataView\IMatcher.cs" />
+    <Compile Include="DataView\ISampler.cs" />
+    <Compile Include="DataView\ITransformer.cs" />
+    <Compile Include="DataView\KDTree.cs" />
+    <Compile Include="DataView\Match.cs" />
+    <Compile Include="DataView\Matcher.cs" />
+    <Compile Include="DataView\PCATester.cs" />
+    <Compile Include="DataView\PictureMaker.cs" />
+    <Compile Include="DataView\Point3D.cs" />
+    <Compile Include="DataView\PointRated.cs" />
+    <Compile Include="DataView\PointWithFeatures.cs" />
+    <Compile Include="DataView\Program.cs" />
+    <Compile Include="DataView\RotationComputer.cs" />
+    <Compile Include="DataView\Sampler.cs" />
+    <Compile Include="DataView\SamplerFake.cs" />
+    <Compile Include="DataView\SamplerFeatureVector.cs" />
+    <Compile Include="DataView\SamplerHalfFake.cs" />
+    <Compile Include="DataView\SamplerRandomFake.cs" />
+    <Compile Include="DataView\Test.cs" />
+    <Compile Include="DataView\TestDataBuilder.cs" />
+    <Compile Include="DataView\TestFeatureComputer.cs" />
+    <Compile Include="DataView\TestRotationComputer.cs" />
+    <Compile Include="DataView\TestRotationComputerPCA.cs" />
+    <Compile Include="DataView\TransData.cs" />
+    <Compile Include="DataView\Transformer3D.cs" />
+    <Compile Include="DataView\VolumetricData.cs" />
+    <Compile Include="TransformSelect\Candidate.cs" />
+    <Compile Include="TransformSelect\Density.cs" />
+    <Compile Include="TransformSelect\DistanceTree.cs" />
+    <Compile Include="TransformSelect\TestDensity.cs" />
+    <Compile Include="TransformSelect\ThreadedExecution.cs" />
+    <Compile Include="TransformSelect\Transform3D.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
     <None Include="packages.config" />
+    <None Include="DataView\App.config" />
+    <None Include="DataView\packages.config" />
+    <None Include="TransformSelect\App.config" />
+    <None Include="TransformSelect\packages.config" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TransformSelect\TransformSelect.csproj">
       <Project>{6d50024e-1984-4ea2-9455-8684ad1c4690}</Project>
       <Name>TransformSelect</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="DataView\" />
+    <Folder Include="TransformSelect\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
