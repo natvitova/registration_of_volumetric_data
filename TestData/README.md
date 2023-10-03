@@ -1,18 +1,28 @@
-**Brief information about how to use an app Sample Data Generator**
+**Sample Data Generator**
 
-The main goal of this small application is to test the functionality of a 3D
+Brief information about how to use an app Sample Data Generator. The
+main goal of this small application is to test the functionality of a 3D
 registration algorithm. This app should be capable of creating test data
-with desired rotation and translation. Here are a few screenshots
+with desired rotation and translation. Here are few screenshots
 
 ![Obsah obrázku snímek obrazovky, text, software, Počítačová ikona Popis
 byl vytvořen
-automaticky](./images/media/image1.png)
+automaticky](./images/media/image1.png){width="5.236459973753281in"
+height="2.9507042869641293in"}
 
-*User interface of the application*
+*User interface of the application (shown only Macro and Micro data with applied transformation)*
+
+![Obsah obrázku snímek obrazovky, text, software, Počítačová ikona Popis
+byl vytvořen
+automaticky](./images/media/image2.png){width="5.236459973753281in"
+height="2.9507042869641293in"}
+
+*Filtered only micro data (micro original = source of the points, micro new is representation of what the result looks like)*
 
 ![Obsah obrázku text, snímek obrazovky, displej, číslo Popis byl
 vytvořen
-automaticky](./images/media/image2.png)
+automaticky](./images/media/image3.png){width="1.7363068678915135in"
+height="2.232393919510061in"}
 
 *Details of a transformation*
 
