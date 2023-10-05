@@ -41,7 +41,7 @@ namespace DataView
             TransformationDistances transformationDistances = fillArrayWithDistances(selectedNode, candidates); //the selected node as the initial can be random
             double[] distances = normalizeDistances(transformationDistances);
 
-            ScoreElement[] scores = fillArrayWithScores(distances, radius);
+            ScoreElement<int>[] scores = fillArrayWithScores(distances, radius);
 
             Array.Sort(scores);
 
@@ -88,9 +88,9 @@ namespace DataView
         /// <param name="distances">Array with distances of transformations</param>
         /// <param name="radius">Currently used radius</param>
         /// <returns>Returns scores of transformations</returns>
-        private ScoreElement[] fillArrayWithScores(double[] distances, double radius)
+        private ScoreElement<int>[] fillArrayWithScores(double[] distances, double radius)
         {
-            ScoreElement[] scores = new ScoreElement[distances.Length];
+            ScoreElement<int>[] scores = new ScoreElement<int>[distances.Length];
 
             for (int i = 0; i < scores.Length; i++)
             {
@@ -104,7 +104,7 @@ namespace DataView
                     {
 
                         if (scores[i] == null)
-                            scores[i] = new ScoreElement(1, i); //One is the current score
+                            scores[i] = new ScoreElement<int>(1, i); //One is the current score
 
                         else
                             scores[i].incrementScore();
@@ -283,66 +283,6 @@ namespace DataView
             }
 
             return distances;
-        }
-    }
-
-    /// <summary>
-    /// Wrapper object for score and candidate index
-    /// </summary>
-    public class ScoreElement: IComparable<ScoreElement>
-    {
-        private int score;
-        private int candidateIndex;
-
-        /// <summary>
-        /// Wrapper for score and candidate index
-        /// </summary>
-        /// <param name="score">Score of a candidate transformation at candidateIndex</param>
-        /// <param name="candidateIndex">Index of the particular candidate in candidate array</param>
-        public ScoreElement(int score, int candidateIndex)
-        {
-            this.score = score;
-            this.candidateIndex = candidateIndex;
-        }
-
-        /// <summary>
-        /// Getter for score
-        /// </summary>
-        /// <returns>Returns the score of a candidate at candidateIndex</returns>
-        public int getScore()
-        {
-            return score;
-        }
-
-        /// <summary>
-        /// Getter for candidate index
-        /// </summary>
-        /// <returns>Returns the index of a candidate.</returns>
-        public int getCandidateIndex()
-        {
-            return candidateIndex;
-        }
-
-        /// <summary>
-        /// Increments score
-        /// </summary>
-        public void incrementScore()
-        {
-            score++;
-        }
-
-        /// <summary>
-        /// Descending order used
-        /// </summary>
-        /// <param name="other">Other instance of ScoreElement</param>
-        /// <returns>
-        /// Returns positive number if this instance has lower score than other.
-        /// If this instance has higher score, the return value is negative.
-        /// If equal, it returns 0
-        /// </returns>
-        public int CompareTo(ScoreElement other)
-        {
-            return other.getScore() - this.getScore();
         }
     }
 

@@ -149,9 +149,10 @@
     <Compile Include="TransformSelect\Candidate.cs" />
     <Compile Include="TransformSelect\Density.cs" />
     <Compile Include="TransformSelect\DistanceTree.cs" />
-    <Compile Include="TransformSelect\TestDensity.cs" />
+    <Compile Include="TransformSelect\TestDensityMoreComparisons.cs" />
     <Compile Include="TransformSelect\ThreadedExecution.cs" />
     <Compile Include="TransformSelect\Transform3D.cs" />
+    <Compile Include="TransformSelect\TestDensity.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

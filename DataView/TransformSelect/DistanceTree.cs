@@ -63,7 +63,7 @@ namespace DataView
                     this.close = new DTNode(cn, c, depth+1);
                 }
 
-                //Pokus o odstraneni chyby - podminka na velikost fn
+                //Pokus o odstraneni chyby - podminka na velikost f
 
                 if(f.Count != 0)
                 {

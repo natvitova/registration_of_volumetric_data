@@ -71,7 +71,7 @@ namespace DataView
 
 
 
-            ScoreElement[] scores = new ScoreElement[candidates.Length];
+            ScoreElement<double>[] scores = new ScoreElement<double>[candidates.Length];
 
             for (int i = 0; i < arrayOfSimilarCandidatesList.Length; i++)
             {
@@ -81,7 +81,7 @@ namespace DataView
                 foreach (SimilarTransformation similarTransformation in arrayOfSimilarCandidatesList[i])
                     currentScore += similarTransformation.getTransformationScore();
 
-                scores[i] = new ScoreElement(currentScore, i);
+                scores[i] = new ScoreElement<double>(currentScore, i);
             }
 
             Array.Sort(scores);
@@ -308,9 +308,9 @@ namespace DataView
     /// <summary>
     /// Wrapper object for score and candidate index
     /// </summary>
-    public class ScoreElement: IComparable<ScoreElement>
+    public class ScoreElement<T> : IComparable<ScoreElement<T>> where T : struct, IComparable<T>
     {
-        private double score;
+        private T score;
         private int candidateIndex;
 
         /// <summary>
@@ -318,7 +318,7 @@ namespace DataView
         /// </summary>
         /// <param name="score">Score of a candidate transformation at candidateIndex</param>
         /// <param name="candidateIndex">Index of the particular candidate in candidate array</param>
-        public ScoreElement(double score, int candidateIndex)
+        public ScoreElement(T score, int candidateIndex)
         {
             this.score = score;
             this.candidateIndex = candidateIndex;
@@ -328,7 +328,7 @@ namespace DataView
         /// Getter for score
         /// </summary>
         /// <returns>Returns the score of a candidate at candidateIndex</returns>
-        public double getScore()
+        public T getScore()
         {
             return score;
         }
@@ -342,6 +342,19 @@ namespace DataView
             return candidateIndex;
         }
 
+        public void incrementScore()
+        {
+            if (!(typeof(T) == typeof(int)))
+                throw new Exception("This method is supposed to be used only in combination with ScoreElement<int>");
+
+            object scoreObject = score;
+            int scoreNumber = (int)scoreObject;
+            scoreNumber++;
+            scoreObject = scoreNumber;
+
+            score = (T)scoreObject;
+        }
+
         /// <summary>
         /// Descending order used
         /// </summary>
@@ -351,9 +364,26 @@ namespace DataView
         /// If this instance has higher score, the return value is negative.
         /// If equal, it returns 0
         /// </returns>
-        public int CompareTo(ScoreElement other)
+        public int CompareTo(ScoreElement<T> other)
         {
-            return Math.Sign(other.getScore() - this.getScore());
+            object otherObject = other.getScore();
+            object thisObject = getScore();
+
+            if (typeof(T) == typeof(int))
+            {
+                int otherScore = (int)otherObject;
+                int thisScore = (int)thisObject;
+                return otherScore - thisScore;
+            }
+            else if (typeof(T) == typeof(double))
+            {
+                double otherScore = (double)otherObject;
+                double thisScore = (double)thisObject;
+                return Math.Sign(otherScore - thisScore);
+            }
+            else
+                throw new Exception("The generic parameter T is supposed to be double or int");
+
         }
     }
 }
