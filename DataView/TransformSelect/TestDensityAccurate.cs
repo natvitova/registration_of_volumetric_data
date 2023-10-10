@@ -25,9 +25,19 @@ namespace DataView
                 candidates[i] = new Candidate(transforms[i]);
 
             List<TransformationComparison>[] transformationComparisonsArray = getTransformationComparisonList(candidates);
-            double median = TransformationComparison.getMedianDistance();
 
-            return findClosest(transformationComparisonsArray, candidates, median, 0);
+            int part = 2;
+
+            double startRadius = TransformationComparison.getMedianDistance(part);
+
+            if (double.IsInfinity(startRadius))
+            {
+                part *= 2;
+                startRadius = TransformationComparison.getMedianDistance(part);
+            }
+
+
+            return findClosest(transformationComparisonsArray, candidates, startRadius, 0);
         }
 
         /// <summary>
@@ -44,6 +54,8 @@ namespace DataView
 
             for (int selectedNode = 0; selectedNode < candidates.Length; selectedNode++)
             {
+
+                Console.WriteLine("Calculating distances from " + selectedNode);
                 //Intialize list and assign it to all candidates
                 List<TransformationComparison> similarTransformationsList = new List<TransformationComparison>();
                 arrayOfTransformationComparisonList[selectedNode] = similarTransformationsList;
@@ -119,7 +131,7 @@ namespace DataView
             if (radius < 1)
                 return candidates[maxIndex].toTransform3D();
 
-            return findClosest(transformationComparisons, candidates, radius*2, maxIndex);
+            return findClosest(transformationComparisons, candidates, radius/2, maxIndex);
         }
     }
 
@@ -149,9 +161,10 @@ namespace DataView
         /// Returns the median distance that is a real number (not infinity)
         /// </summary>
         /// <returns>Returns the median distance</returns>
-        public static double getMedianDistance()
+        public static double getMedianDistance(int part)
         {
-            return distances.ElementAt(distances.Count / 2);
+            
+            return distances.ElementAt(distances.Count / part);
         }
 
         /// <summary>

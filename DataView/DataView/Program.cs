@@ -203,7 +203,7 @@ namespace DataView
 
             //Forced correct values for matches
             
-            Match[] matches = new Match[1000];
+            Match[] matches = new Match[100];
             Random rnd = new Random();
 
             for (int i = 0; i < matches.Length; i++) {
@@ -213,7 +213,7 @@ namespace DataView
                 FeatureVector fv1 = new FeatureVector(new Point3D(randomCoordinate, randomCoordinate, randomCoordinate), i, i, i, i, i);
                 FeatureVector fv2 = new FeatureVector(new Point3D(randomCoordinate, randomCoordinate, randomCoordinate), i, i, i, i, i);
 
-                /*
+                
                 //Adding false matches
                 if ((i%8) != 0)
                 {
@@ -221,7 +221,7 @@ namespace DataView
                     fv2 = new FeatureVector(new Point3D(rnd.NextDouble() * iDataMacro.Measures[0], rnd.NextDouble() * iDataMacro.Measures[1], rnd.NextDouble() * iDataMacro.Measures[2]), i, i, i, i, i);
                 }
 
-                */
+                
 
                 matches[i] = new Match(fv1, fv2, 100);
             }
@@ -258,7 +258,7 @@ namespace DataView
 
                 //CODE BELLOW IS FOR TESTING PURPOSES ONLY (Tests whether the density search works)
 
-                
+                /*
                 Matrix<double> rotationMatrix = Matrix<double>.Build.Dense(3, 3);
                 Vector<double> translationVector = Vector<double>.Build.Dense(3);
 
@@ -307,12 +307,12 @@ namespace DataView
                 }
 
                 transformations.Add(new Transform3D(rotationMatrix, translationVector));
-
+                */
                 //END OF A TEST
 
                 //Calculate transformation and if the transformation doesnt exist, it will skip it and print out the error message
 
-                /*
+                
                 try
                 {
                     transformations.Add(transformer.GetTransformation(matches[i], iDataMicro, iDataMacro));
@@ -322,7 +322,7 @@ namespace DataView
                     Console.WriteLine(e.Message);
                     continue;
                 }
-                */
+                
                 
             }
 
