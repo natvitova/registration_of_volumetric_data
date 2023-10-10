@@ -203,7 +203,7 @@ namespace DataView
 
             //Forced correct values for matches
             
-            Match[] matches = new Match[100];
+            Match[] matches = new Match[1000];
             Random rnd = new Random();
 
             for (int i = 0; i < matches.Length; i++) {
@@ -323,11 +323,12 @@ namespace DataView
                     continue;
                 }
                 */
+                
             }
 
             Candidate.initSums(iDataMicro.Measures[0] / iDataMicro.XSpacing, iDataMicro.Measures[1] / iDataMicro.YSpacing, iDataMicro.Measures[2] / iDataMicro.ZSpacing);
 
-            TestDensity testDensity = new TestDensity();
+            TestDensityAccurate testDensity = new TestDensityAccurate();
             Transform3D t = testDensity.Find(transformations.ToArray());
 
             /*

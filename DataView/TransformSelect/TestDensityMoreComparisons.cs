@@ -100,7 +100,7 @@ namespace DataView
                 Console.WriteLine("Point cluster related to transformation: " +  candidates[referenceTransformationIndex].toTransform3D() + "with score: " + scores[i].getScore());
 
                 arrayOfSimilarCandidatesList[index].Sort();
-                for (int j = 0; j < arrayOfSimilarCandidatesList[index].Count; j++)
+                for (int j = 0; j < arrayOfSimilarCandidatesList[index].Count; j++)
                 {
                     int currentTransformation = arrayOfSimilarCandidatesList[index][j].getIndex();
 
@@ -125,7 +125,7 @@ namespace DataView
 
             usedIndexes = new HashSet<int>();
 
-            
+
 
             //Filter candidates
             for (int i = 0; i < scores.Length && usedIndexes.Count < (filteredCandidates.Length); i++)
@@ -155,7 +155,7 @@ namespace DataView
     /// <summary>
     /// Represents the similarity of transformations
     /// </summary>
-    public class SimilarTransformation: IComparable<SimilarTransformation>
+    public class SimilarTransformation : IComparable<SimilarTransformation>
     {
         private static uint maxTotalDistance = uint.MaxValue;
 
