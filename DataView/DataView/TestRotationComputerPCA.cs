@@ -213,7 +213,7 @@ namespace DataView
             return result;
         }
 
-        // od pana V�i
+        // od pana Váši
         private static Matrix<double> GetPointBasis(IData d, Point3D point, int count, double radius, Random rnd)
         {
             List<Point3D> pointsInSphere = GetSphere(point, radius, count, rnd.Next()); 
@@ -233,10 +233,19 @@ namespace DataView
 
             for (int i = 0; i < count; i++)
             {
-                values[i] = d.GetValue(pointsInSphere[i]);
+                try
+                {
+                    values[i] = d.GetValue(pointsInSphere[i]);
 
-                min = Math.Min(min, values[i]);
-                max = Math.Max(max, values[i]);
+                    min = Math.Min(min, values[i]);
+                    max = Math.Max(max, values[i]);
+                }
+                catch
+                {
+                    //The point is out of bounds for the particular 3D object
+                    continue;
+                }
+                
             }
 
             //Values min and max are the same
@@ -303,6 +312,8 @@ namespace DataView
 
             Matrix<double> resultMatrix = Matrix<double>.Build.Dense(3, 3);
 
+            //The matrix is composed out of unit vectors
+
             resultMatrix[0, 0] = highConcentrationVector[0];
             resultMatrix[1, 0] = highConcentrationVector[1];
             resultMatrix[2, 0] = highConcentrationVector[2];
@@ -314,21 +325,6 @@ namespace DataView
             resultMatrix[0, 2] = crossProductVector[0];
             resultMatrix[1, 2] = crossProductVector[1];
             resultMatrix[2, 2] = crossProductVector[2];
-
-
-            /*
-            resultMatrix[0, 0] = highConcentrationVector[0];
-            resultMatrix[0, 1] = highConcentrationVector[1];
-            resultMatrix[0, 2] = highConcentrationVector[2];
-
-            resultMatrix[1, 0] = lowConcentrationVector[0];
-            resultMatrix[1, 1] = lowConcentrationVector[1];
-            resultMatrix[1, 2] = lowConcentrationVector[2];
-
-            resultMatrix[2, 0] = crossProductVector[0];
-            resultMatrix[2, 1] = crossProductVector[1];
-            resultMatrix[2, 2] = crossProductVector[2];
-            */
 
             return resultMatrix;
         }

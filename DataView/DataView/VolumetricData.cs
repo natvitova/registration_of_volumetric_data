@@ -12,8 +12,9 @@ namespace DataView
     /// </summary>
     class VolumetricData : IData
     {
+
         private int[][,] vData;
-        private int[] values;
+        private VolumetricDataDistribution volumetricDataDistribution;
         private double xSpacing;
         private double ySpacing;
         private double zSpacing;
@@ -49,7 +50,6 @@ namespace DataView
         /// <returns>Returns array with the data</returns>
         public int[][,] Read()
         {
-
             Console.WriteLine(Data.ElementDataFile);
             string fileDirectory = Program.directory + Data.ElementDataFile;
             using (BinaryReader br = new BinaryReader(new FileStream(fileDirectory, FileMode.Open)))
@@ -62,6 +62,10 @@ namespace DataView
                 int c = 0;
                 if (Data.ElementType == "MET_USHORT")
                 {
+                    int numberOfBits = 16; //Two byte data type
+                    volumetricDataDistribution = new VolumetricDataDistribution(step: 1, (1 << numberOfBits) - 1);
+
+
                     for (int k = 0; k < height; k++)
                     {
                      //   VData[k] = new int[width, depth];
@@ -76,6 +80,8 @@ namespace DataView
                                 c = 256 * b + a;
 
                                 VData[k][i, j] = c;
+
+                                volumetricDataDistribution.AddValue(c);
                             }
                         }
                     }
@@ -83,6 +89,9 @@ namespace DataView
 
                 else if (Data.ElementType == "MET_UCHAR")
                 {
+                    int numberOfBits = 8; //One byte data type
+                    volumetricDataDistribution = new VolumetricDataDistribution(step: 1, (1 << numberOfBits) - 1);
+
                     for (int k = 0; k < height; k++)
                     {
                         VData[k] = new int[width, depth];
@@ -93,6 +102,8 @@ namespace DataView
                                 c = br.ReadByte();
 
                                 VData[k][i, j] = c;
+
+                                volumetricDataDistribution.AddValue(c);
                             }
                         }
                     }
@@ -104,6 +115,7 @@ namespace DataView
                 }
 
                 br.Close();
+                volumetricDataDistribution.CreateDistributionArray();
                 return VData;
             }
         }
@@ -389,6 +401,10 @@ namespace DataView
 
         public double GetValue(double x, double y, double z) // Interpolation3D in real coordinates 
         {
+
+            if(x < 0 || y < 0 || z < 0)
+                throw new ArgumentException("This value is not within bounds");
+
             int xLDC = (int)(x / xSpacing); // coordinates of left down corner of the rectangle in the array in which the pixel is situated
             int yLDC = (int)(y / ySpacing);
             int zLDC = (int)(z / zSpacing);
@@ -407,10 +423,9 @@ namespace DataView
                 double valueB = Interpolation2DReal(x, y, zRDC, xLDC, yLDC);
 
                 return InterpolationReal(valueA, valueB, z, zLDC, ZSpacing);
-
             }
 
-            return 0;
+            throw new ArgumentException("This value is not within bounds");
         }
 
         public double GetValue(Point3D point)
@@ -576,6 +591,11 @@ namespace DataView
             return histo;
         }
 
+        public double GetValueDistribution(double value)
+        {
+            return this.volumetricDataDistribution.GetDistributionPercentage(value);
+        }
+
         public double XSpacing { get => xSpacing; set => xSpacing = value; }
         public double YSpacing { get => ySpacing; set => ySpacing = value; }
         public double ZSpacing { get => zSpacing; set => zSpacing = value; }
@@ -583,6 +603,5 @@ namespace DataView
         internal Data Data { get => data; set => data = value; }
         public int[] Measures { get => Data.DimSize; set => Data.DimSize = value; }
         public int[][,] VData { get => vData; set => vData = value; }
-        public int[] Values { get => values; set => values = value; }
     }
 }

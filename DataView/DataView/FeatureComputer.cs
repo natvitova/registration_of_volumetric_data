@@ -63,11 +63,21 @@ namespace DataView
             for (double r = delta; r <= 5*delta; r += delta)
             {
                 double sum = 0;
-                List<Point3D> points = GetSphere(p, r, (i + 1) * 500);
+                //List<Point3D> points = GetSphere(p, r, (i + 1) * 500);
+                List<Point3D> points = GetSpheresIntersticePoints(p, r, r, 500, 20);
 
                 foreach (Point3D point in points)
                 {
-                    sum += d.GetValue(point); //real coordinates
+                    try
+                    {
+                        sum += d.GetValue(point); //real coordinates
+                    }
+                    catch
+                    {
+                        //Catches if the point is out of bounds
+                        continue;
+                    }
+                    
                 }
                 double avg = sum / points.Count;
                 norm += avg * avg;
@@ -78,6 +88,36 @@ namespace DataView
             norm = (norm == 0) ? 1 : Math.Sqrt(norm);
 
             return new FeatureVector(p, fv[0] / norm, fv[1] / norm, fv[2] / norm, fv[3] / norm, fv[4] / norm);
+        }
+
+        /// <summary>
+        /// This method returns list of points that are within certain distance defined as minRadius and maxRadius from the center of the sphere passed as a point
+        /// </summary>
+        /// <param name="point">Center of a sphere</param>
+        /// <param name="minRadius">Generated point's minimum distance from the center of a sphere</param>
+        /// <param name="maxRadius">Generated point's maximum distance from the center of a sphere</param>
+        /// <returns>Returns list of points that are within certain distance from the center of the sphere.</returns>
+        private List<Point3D> GetSpheresIntersticePoints(Point3D point, double minRadius, double maxRadius, int count, int seed)
+        {
+            if (minRadius > maxRadius)
+                throw new ArgumentException("The min radius should be smaller than the max radius");
+
+            Random random = new Random(seed);
+
+            List<Point3D> listOfPoints = new List<Point3D>();
+            while (listOfPoints.Count < count)
+            {
+                double radius = GetRandomDouble(minRadius, maxRadius+0.0001, random);
+                double angleTheta = random.NextDouble() * 2 * Math.PI;
+                double anglePhi = random.NextDouble() * 2 * Math.PI;
+                double x = radius * Math.Cos(anglePhi) * Math.Sin(angleTheta);
+                double y = radius * Math.Sin(angleTheta) * Math.Sin(anglePhi);
+                double z = radius * Math.Cos(angleTheta);
+
+                listOfPoints.Add(new Point3D(x, y, z));
+            }
+
+            return listOfPoints;
         }
 
         private double GetRandomDouble(double minimum, double maximum, Random r)

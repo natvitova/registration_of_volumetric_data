@@ -99,9 +99,9 @@ namespace DataView
         /// <returns></returns>
         public double Distance(Point3D differentPoint)
         {
-            double xSquared = Math.Pow(this.x, 2) - Math.Pow(differentPoint.x, 2);
-            double ySquared = Math.Pow(this.y, 2) - Math.Pow(differentPoint.y, 2);
-            double zSquared = Math.Pow(this.z, 2) - Math.Pow(differentPoint.z, 2);
+            double xSquared = Math.Pow((this.x - differentPoint.x), 2);
+            double ySquared = Math.Pow((this.y - differentPoint.y), 2);
+            double zSquared = Math.Pow((this.z - differentPoint.z), 2);
 
             return Math.Sqrt(xSquared + ySquared + zSquared);
         }

@@ -194,63 +194,6 @@ namespace DataView
                 children.Add(i);
             root = new DTNode(0, children, 0);
 
-
-
-            //Test
-            Dictionary<int, List<Transform3D>> dict = new Dictionary<int, List<Transform3D>>();
-
-            double maxDistance = double.MinValue;
-            double minDistance = double.MaxValue;
-
-            for (int i = 1; i < candidates.Length; i++)
-            {
-                double distance = cands[0].SqrtDistanceTo(candidates[i]);
-                minDistance = Math.Min(distance, minDistance);
-                maxDistance = Math.Max(distance, maxDistance);
-            }
-
-            for (int i = 1; i < candidates.Length; i++)
-            {
-                double currentDistance = candidates[0].SqrtDistanceTo(candidates[i]);
-
-                double percentage = (currentDistance - minDistance) / (maxDistance - minDistance);
-                percentage = percentage * 100;
-                int percentageIndex = (int)(percentage/5);
-                //int percentage = (int)(((currentDistance - minDistance) / ((maxDistance - minDistance)*5)));
-                if (dict.ContainsKey(percentageIndex))
-                {
-                    try
-                    {
-                        List<Transform3D> transformations = dict[percentageIndex];
-                        transformations.Add(candidates[i].toTransform3D());
-                        dict[percentageIndex] = transformations;
-                    }
-                    catch (Exception e)
-                    {
-
-                    }
-                }
-                else
-                {
-                    List<Transform3D> transformations = new List<Transform3D>
-                    {
-                        candidates[i].toTransform3D()
-                    };
-                    dict[percentageIndex] = transformations;
-                }
-            }
-
-            foreach (int key in dict.Keys)
-            {
-                Console.WriteLine("This is the percentage " + (key*5).ToString());
-                foreach (Transform3D transformation in dict[key])
-                {
-                    Console.WriteLine(transformation.ToString());
-                }
-            }
-            //END OF A TEST
-
-
         }
 
         public List<int> findAllCloserThan(Candidate query, double dist)

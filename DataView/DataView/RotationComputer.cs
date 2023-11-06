@@ -45,8 +45,6 @@ namespace DataView
 
             Console.Write("v3: " + base2.Column(2));
             Console.WriteLine("v3t: " + v3t.ToString());
-
-            return;
         }
 
         /// <summary>
@@ -310,8 +308,6 @@ namespace DataView
         // od pana V�i
         private static Matrix<double> GetSymetricMatrixForEigenVectors(IData d, Point3D point, int count, double radius, Random rnd)
         {
-
-
             List<Point3D> pointsInSphere = GetSphere(point, radius, count, rnd.Next());
 
             Matrix<double> result = Matrix<double>.Build.Dense(3, 3);
@@ -398,7 +394,7 @@ namespace DataView
         }
         
         /// <summary>
-        /// Computes a vector v of size 3 where v[0] = average(m[0,0], m[0,1], m[0,2], ..., m[0,m.CollumCount - 1])
+        /// Computes a vector v of size 3 where v[0] = average(m[0,0], m[0,1], m[0,2], ..., m[0,m.ColumnCount - 1])
         /// </summary>
         /// <param name="m">3 * n  matrix</param>
         /// <returns></returns>

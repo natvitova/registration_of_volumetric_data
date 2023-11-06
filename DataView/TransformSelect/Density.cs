@@ -51,8 +51,8 @@ namespace DataView
         private double[] density(object input, int threadId, object[] parameters)
         {
             double[] result = new double[100];
-            Candidate[] candidate = (Candidate[])parameters[0];            
-            double t = (double)parameters[1];            
+            Candidate[] candidate = (Candidate[])parameters[0];
+            double t = (double)parameters[1];
             for (int i = 0; i < 100; i++)
             {
                 int idx = (int)input + i;

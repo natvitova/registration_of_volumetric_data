@@ -165,6 +165,11 @@ namespace DataView
             throw new NotImplementedException();
         }
 
+        public double GetValueDistribution(double value)
+        {
+            throw new NotImplementedException();
+        }
+
         public Matrix<double> RotationM { get => rotationM; set => rotationM = value; }
         public double XSpacing { get => xSpacing; set => xSpacing = value; }
         public double YSpacing { get => ySpacing; set => ySpacing = value; }

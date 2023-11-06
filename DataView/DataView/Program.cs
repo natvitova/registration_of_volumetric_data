@@ -8,6 +8,7 @@ using System.Windows.Forms.DataVisualization.Charting;
 using Microsoft.Extensions.Configuration;
 using CsvHelper;
 using System.Globalization;
+using System.Security.Cryptography;
 
 namespace DataView
 {
@@ -149,13 +150,23 @@ namespace DataView
 
         public static void MainFunction(string micro, string macro, Point3D[] pointsMicro, Point3D[] pointsMacro) // the truly main function
         {
+            //----------------------------------------TEST OF DISTRIBUTION CLASS----------------------------------------------
+            //VolumetricDataDistribution volumetricDataDistribution = new VolumetricDataDistribution(0.5, 100);
+            //volumetricDataDistribution.AddValue(2);
+            //volumetricDataDistribution.AddValue(4);
+            //volumetricDataDistribution.CreateDistributionArray();
+            //volumetricDataDistribution.GetDistributionPercentage(2);
+            //----------------------------------------END OF TEST----------------------------------------------
+
+
             //----------------------------------------PARAMETERS----------------------------------------------
             int numberOfPointsMicro = 1_000;
             int numberOfPointsMacro = 1_000;
             double threshold = 10; //percentage - top 10% best matches should be kept
             ISampler s = new Sampler(configuration);
-            IFeatureComputer fc = new FeatureComputer();
+            //IFeatureComputer fc = new FeatureComputer();
             //IFeatureComputer fc = new TestFeatureComputer();
+            IFeatureComputer fc = new FeatureComputerVectorDeviation();
             IMatcher matcher = new Matcher();
 
             ITransformer transformer = new Transformer3D();
@@ -193,16 +204,43 @@ namespace DataView
 
             
             for (int i = 0; i < pointsMacro.Length; i++)
+            {
                 featureVectorsMacro[i] = fc.ComputeFeatureVector(iDataMacro, pointsMacro[i]);
+            }
+
+            //Test if some of the points even have the possibilty for matching with the correct point
+
+            Console.WriteLine("The number of sample points is the same: " + ((pointsMacro.Length == pointsMicro.Length) ? "True" : "No"));
+
+
+            /*
+            int similarPoints = 0;
+            const int toleranceRadius = 1;
+            for(int i = 0; i<pointsMacro.Length; i++)
+            {
+                for (int j = 0; j < pointsMicro.Length; j++)
+                {
+                    if (pointsMacro[i].Distance(pointsMicro[j]) < toleranceRadius)
+                    {
+                       // Console.WriteLine("these points are similar: " )
+                        similarPoints++;
+                        break;
+                    }
+                }
+            }
+
+            Console.WriteLine("Number of similar points: " + similarPoints);
+            */
 
             //----------------------------------------MATCHES-------------------------------------------------
-            Console.WriteLine("\nMatching.");
+            Console.WriteLine("Matching.");
 
             //temporarily turned off
-            //Match[] matches = matcher.Match(featureVectorsMicro, featureVectorsMacro, threshold);
+            Match[] matches = matcher.Match(featureVectorsMicro, featureVectorsMacro, threshold);
 
             //Forced correct values for matches
-            
+
+            /*
             Match[] matches = new Match[100];
             Random rnd = new Random();
 
@@ -213,21 +251,25 @@ namespace DataView
                 FeatureVector fv1 = new FeatureVector(new Point3D(randomCoordinate, randomCoordinate, randomCoordinate), i, i, i, i, i);
                 FeatureVector fv2 = new FeatureVector(new Point3D(randomCoordinate, randomCoordinate, randomCoordinate), i, i, i, i, i);
 
-                
+
+                /*
                 //Adding false matches
                 if ((i%8) != 0)
                 {
                     fv1 = new FeatureVector(new Point3D(rnd.NextDouble() * iDataMicro.Measures[0], rnd.NextDouble() * iDataMicro.Measures[1], rnd.NextDouble() * iDataMicro.Measures[2]), i, i, i, i, i);
                     fv2 = new FeatureVector(new Point3D(rnd.NextDouble() * iDataMacro.Measures[0], rnd.NextDouble() * iDataMacro.Measures[1], rnd.NextDouble() * iDataMacro.Measures[2]), i, i, i, i, i);
                 }
-
                 
 
                 matches[i] = new Match(fv1, fv2, 100);
             }
+            
 
             Console.WriteLine("Data are loaded correctly: " + CheckDataIntegrity(iDataMicro, iDataMacro));
-            Console.WriteLine("Matches are " + CalculateCorrectMatches(matches, 5) + " % correct");
+            
+            */
+            Console.WriteLine("Matches are " + CalculateCorrectMatches(matches, 3) + " % correct");
+
 
             //Filtering of matches outside of bounds
 
@@ -256,9 +298,10 @@ namespace DataView
             for (int i = 0; i < matches.Length; i++)
             {
 
+                /*
                 //CODE BELLOW IS FOR TESTING PURPOSES ONLY (Tests whether the density search works)
 
-                /*
+                
                 Matrix<double> rotationMatrix = Matrix<double>.Build.Dense(3, 3);
                 Vector<double> translationVector = Vector<double>.Build.Dense(3);
 
@@ -273,9 +316,9 @@ namespace DataView
                         }
                     }
 
-                    translationVector[0] = random.Next();
-                    translationVector[1] = random.Next();
-                    translationVector[2] = random.Next();
+                    translationVector[0] = random.Next(100);
+                    translationVector[1] = random.Next(100);
+                    translationVector[2] = random.Next(100);
                 }
 
                 else
@@ -308,6 +351,7 @@ namespace DataView
 
                 transformations.Add(new Transform3D(rotationMatrix, translationVector));
                 */
+
                 //END OF A TEST
 
                 //Calculate transformation and if the transformation doesnt exist, it will skip it and print out the error message
@@ -329,6 +373,7 @@ namespace DataView
             Candidate.initSums(iDataMicro.Measures[0] / iDataMicro.XSpacing, iDataMicro.Measures[1] / iDataMicro.YSpacing, iDataMicro.Measures[2] / iDataMicro.ZSpacing);
 
             TestDensityAccurate testDensity = new TestDensityAccurate();
+            //Density testDensity = new Density();
             Transform3D t = testDensity.Find(transformations.ToArray());
 
             /*
@@ -361,6 +406,18 @@ namespace DataView
             return returnValue;
         }
 
+
+        public static int CalculateSameHeightMatches(Match[] matches, double threshold)
+        {
+            int correctMatches = 0;
+
+            foreach (Match currentMatch in matches)
+            {
+                if (currentMatch.F1.Point.Distance(currentMatch.F2.Point) <= threshold)
+                    correctMatches++;
+            }
+            return (int)(((double)correctMatches / (double)matches.Length) * 100);
+        }
         /// <summary>
         /// This method calculates the percentage of correct matches
         /// Works only for known test data
@@ -375,6 +432,11 @@ namespace DataView
             {
                 if (currentMatch.F1.Point.Distance(currentMatch.F2.Point) <= threshold)
                     correctMatches++;
+                else
+                {
+                    Console.WriteLine("These points are not considered correctly matched: " + currentMatch.F1.Point + ", " + currentMatch.F2.Point);
+                    Console.WriteLine("This is their distance: "  + currentMatch.F1.Point.Distance(currentMatch.F2.Point));
+                }
             }
             return (int) (((double)correctMatches / (double) matches.Length) * 100);
         }
