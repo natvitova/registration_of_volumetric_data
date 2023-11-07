@@ -142,7 +142,7 @@
     <Compile Include="DataView\TestDataBuilder.cs" />
     <Compile Include="DataView\TestFeatureComputer.cs" />
     <Compile Include="DataView\TestRotationComputer.cs" />
-    <Compile Include="DataView\TestRotationComputerPCA.cs" />
+    <Compile Include="DataView\TestUniformRotationComputerPCA.cs" />
     <Compile Include="DataView\TransData.cs" />
     <Compile Include="DataView\Transformer3D.cs" />
     <Compile Include="DataView\VolumetricData.cs" />
@@ -158,6 +158,7 @@
     <Compile Include="DataView\FeatureComputerVectorDeviation.cs" />
     <Compile Include="DataView\PointSurrounding.cs" />
     <Compile Include="DataView\VolumetricDataDistribution.cs" />
+    <Compile Include="DataView\TestRotationComputerPCA.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

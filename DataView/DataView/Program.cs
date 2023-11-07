@@ -213,7 +213,7 @@ namespace DataView
             Console.WriteLine("The number of sample points is the same: " + ((pointsMacro.Length == pointsMicro.Length) ? "True" : "No"));
 
 
-            /*
+            
             int similarPoints = 0;
             const int toleranceRadius = 1;
             for(int i = 0; i<pointsMacro.Length; i++)
@@ -230,7 +230,8 @@ namespace DataView
             }
 
             Console.WriteLine("Number of similar points: " + similarPoints);
-            */
+            Console.WriteLine();
+            
 
             //----------------------------------------MATCHES-------------------------------------------------
             Console.WriteLine("Matching.");
