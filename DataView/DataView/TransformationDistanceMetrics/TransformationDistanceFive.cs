@@ -50,14 +50,14 @@ namespace DataView
         public double GetTransformationsSecond(Transform3D transformation1, Transform3D transformation2, IData microData)
         {
             Matrix<double> rotationMatrix1 = transformation1.RotationMatrix;
-            Matrix<double> rotationMatrix2 = transformation1.RotationMatrix;
+            Matrix<double> rotationMatrix2 = transformation2.RotationMatrix;
 
             Vector<double> translationVector1 = transformation1.TranslationVector;
             Vector<double> translationVector2 = transformation2.TranslationVector;
 
             Vector<double> centerObject = Vector<double>.Build.DenseOfArray(new double[] { microData.Measures[0] / 2.0, microData.Measures[1] / 2.0, microData.Measures[2] / 2.0 });
-            translationVector1 -= centerObject;
-            translationVector2 -= centerObject;
+            //translationVector1 -= centerObject;
+            //translationVector2 -= centerObject;
 
             double redPart = calculateRedPart(microData);
             double greenPart = calculateGreenPart(translationVector1, translationVector2, rotationMatrix1);
@@ -82,6 +82,7 @@ namespace DataView
 
             return calculateFrobeniusMatrixProduct(leftMatrix, rightMatrix);
         }
+
 
         private double  calculateRedPart(IData microData)
         {
@@ -137,6 +138,7 @@ namespace DataView
             if (matrix1.RowCount != matrix2.RowCount)
                 throw new ArgumentException("Matrices need to have the same number of rows");
 
+            
             double sum = 0;
             for (int i = 0; i < matrix1.RowCount; i++)
             {

@@ -212,7 +212,12 @@ namespace DataView
             {
                 Matrix<double> rotationMatrix1 = GenerateRandomRotationMatrix(random);
                 Matrix<double> rotationMatrix2 = GenerateRandomRotationMatrix(random);
+                
 
+                Console.WriteLine("Rotation matrix 1: " + rotationMatrix1);
+                Console.WriteLine("Inverse of rotation matrix 1: " + rotationMatrix1.Inverse());
+                Console.WriteLine("Rotation matrix 2: " + rotationMatrix2);
+                Console.WriteLine("Inverse of rotation matrix 2: " + rotationMatrix2.Inverse());
                 //Random translation vectors
                 //Vector<double> translationVector1 = Vector<double>.Build.DenseOfArray(new double[] { random.NextDouble() * 10, random.NextDouble() * 10, random.NextDouble() * 10 });
                 //Vector<double> translationVector2 = Vector<double>.Build.DenseOfArray(new double[] { random.NextDouble() * 10, random.NextDouble() * 10, random.NextDouble() * 10 });
@@ -457,9 +462,9 @@ namespace DataView
         public static Matrix<double> GenerateRandomRotationMatrix(Random random)
         {
             //The angle should be 2*PI
-            double angleX = random.NextDouble() * Math.PI;
-            double angleY = random.NextDouble() * Math.PI;
-            double angleZ = random.NextDouble() * Math.PI;
+            double angleX = random.NextDouble() * 2*Math.PI;
+            double angleY = random.NextDouble() * 2*Math.PI;
+            double angleZ = random.NextDouble() * 2*Math.PI;
 
             Matrix<double> rotationMatrixX = Matrix<double>.Build.DenseOfArray(new double[,]
             {
