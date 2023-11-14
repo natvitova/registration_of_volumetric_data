@@ -159,6 +159,11 @@
     <Compile Include="DataView\PointSurrounding.cs" />
     <Compile Include="DataView\VolumetricDataDistribution.cs" />
     <Compile Include="DataView\TestRotationComputerPCA.cs" />
+    <Compile Include="DataView\TransformationDistanceMetrics\TransformationDistanceFirst.cs" />
+    <Compile Include="DataView\TransformationDistanceMetrics\ITransformationDistance.cs" />
+    <Compile Include="DataView\TransformationDistanceMetrics\TransformationDistanceSecond.cs" />
+    <Compile Include="DataView\TransformationDistanceMetrics\TransformationDistanceFinal.cs" />
+    <Compile Include="DataView\TransformationDistanceMetrics\TransformationDistanceFive.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -176,6 +181,7 @@
   <ItemGroup>
     <Folder Include="DataView\" />
     <Folder Include="TransformSelect\" />
+    <Folder Include="DataView\TransformationDistanceMetrics\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

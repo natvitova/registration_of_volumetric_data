@@ -42,7 +42,9 @@ namespace DataView
 
             dotProductsSum = tensorProductsSum[0] + tensorProductsSum[1] + tensorProductsSum[2];
             
+            //This is not correct, it doesnt consider origin point [0, 0, 0] => one of the dimensions need to be 
             numberOfPoints = xSize*ySize*zSize;
+
             inverseNumberOfPoints = 1.0 / numberOfPoints;
             Density.radius = Math.Sqrt(xSize * xSize + ySize * ySize + zSize * zSize)/4;
         }

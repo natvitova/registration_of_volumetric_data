@@ -1,7 +1,6 @@
 ﻿using System;
 using MathNet.Numerics.LinearAlgebra;
 using System.Collections.Generic;
-using System.Security.Policy;
 
 namespace DataView
 {
@@ -16,10 +15,8 @@ namespace DataView
             Random random = new Random();
             int seed = random.Next();
 
-            seed = 20; //Currently set to 20 for test purpose
+            seed = 20; //Currently set to 20 for test purposes
             
-
-            //Matrix<double> GetPointBasis()
             PointSurrounding pointSurrounding = GetPointSurrounding(d, p, COUNT, RADIUS, seed);
 
 
@@ -66,10 +63,6 @@ namespace DataView
                 throw new ArgumentException("Basis cannot be calculated because all sampled values in the point surrounding are the same.");
 
             double distributionValueAvg = 0;
-
-
-            //Tady je chyba, protože ty values nemají všechny body z points in sphere a
-            //potom se teda začnou nějak random házet nekorespondující indexy a těm se přiřazuje hodnota něčeho úplně jinýho
 
             for (int i = 0; i < values.Count; i++)
             {
