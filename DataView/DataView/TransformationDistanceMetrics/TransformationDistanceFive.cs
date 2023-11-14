@@ -47,7 +47,7 @@ namespace DataView
             return resultMatrix;
         }
 
-        public double GetTransformationsSecond(Transform3D transformation1, Transform3D transformation2, IData microData)
+        public double GetTransformationsDistance(Transform3D transformation1, Transform3D transformation2, IData microData)
         {
             Matrix<double> rotationMatrix1 = transformation1.RotationMatrix;
             Matrix<double> rotationMatrix2 = transformation2.RotationMatrix;
@@ -56,8 +56,8 @@ namespace DataView
             Vector<double> translationVector2 = transformation2.TranslationVector;
 
             Vector<double> centerObject = Vector<double>.Build.DenseOfArray(new double[] { microData.Measures[0] / 2.0, microData.Measures[1] / 2.0, microData.Measures[2] / 2.0 });
-            //translationVector1 -= centerObject;
-            //translationVector2 -= centerObject;
+            translationVector1 -= centerObject;
+            translationVector2 -= centerObject;
 
             double redPart = calculateRedPart(microData);
             double greenPart = calculateGreenPart(translationVector1, translationVector2, rotationMatrix1);

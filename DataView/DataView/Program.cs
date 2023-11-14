@@ -213,11 +213,14 @@ namespace DataView
                 Matrix<double> rotationMatrix1 = GenerateRandomRotationMatrix(random);
                 Matrix<double> rotationMatrix2 = GenerateRandomRotationMatrix(random);
                 
-
+                /*
                 Console.WriteLine("Rotation matrix 1: " + rotationMatrix1);
                 Console.WriteLine("Inverse of rotation matrix 1: " + rotationMatrix1.Inverse());
                 Console.WriteLine("Rotation matrix 2: " + rotationMatrix2);
                 Console.WriteLine("Inverse of rotation matrix 2: " + rotationMatrix2.Inverse());
+                */
+
+
                 //Random translation vectors
                 //Vector<double> translationVector1 = Vector<double>.Build.DenseOfArray(new double[] { random.NextDouble() * 10, random.NextDouble() * 10, random.NextDouble() * 10 });
                 //Vector<double> translationVector2 = Vector<double>.Build.DenseOfArray(new double[] { random.NextDouble() * 10, random.NextDouble() * 10, random.NextDouble() * 10 });
@@ -228,9 +231,9 @@ namespace DataView
                 Transform3D transformation1 = new Transform3D(rotationMatrix1, translationVector1);
                 Transform3D transformation2 = new Transform3D(rotationMatrix2, translationVector2);
 
-                double distanceFirstMethod = transformationDistanceFirst.GetTransformationsSecond(transformation1, transformation2, iDataMicro);
-                double distanceSecondMethod = transformationDistanceSecond.GetTransformationsSecond(transformation1, transformation2, iDataMicro);
-                double distanceFifthMethod = transformationDistanceFive.GetTransformationsSecond(transformation1, transformation2, iDataMicro);
+                double distanceFirstMethod = transformationDistanceFirst.GetTransformationsDistance(transformation1, transformation2, iDataMicro);
+                double distanceSecondMethod = transformationDistanceSecond.GetTransformationsDistance(transformation1, transformation2, iDataMicro);
+                double distanceFifthMethod = transformationDistanceFive.GetTransformationsDistance(transformation1, transformation2, iDataMicro);
 
                 //This is the older unchanged method
                 Candidate candidate1 = new Candidate(transformation1);
@@ -250,6 +253,7 @@ namespace DataView
                 Console.WriteLine("-------------------------------------------------");
                 Console.WriteLine();
 
+                Console.WriteLine("This is the ratio between first method and fifth method: " + (distanceFirstMethod / distanceFifthMethod));
                 //Calculating the ration to see if the results of "Candidate" method doesn't return results always multiplied by the same factor - it doesn't (factor changes)
                 /*
                 Console.WriteLine("Ratio elemenetary/candidate: " + (distanceFirstMethod / distanceCandidate));

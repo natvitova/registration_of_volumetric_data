@@ -10,7 +10,7 @@ namespace DataView
     /// </summary>
 	class TransformationDistanceFirst : ITransformationDistance
 	{
-        public double GetTransformationsSecond(Transform3D transformation1, Transform3D transformation2, IData micro)
+        public double GetTransformationsDistance(Transform3D transformation1, Transform3D transformation2, IData micro)
         {
 
             Matrix<double> rotationMatrix1 = transformation1.RotationMatrix;
