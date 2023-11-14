@@ -37,9 +37,9 @@ namespace DataView
 
             for (double x = 0; x <= sizeX; x += microData.XSpacing)
             {
-                for (double y = 0; y < sizeY; y += microData.YSpacing)
+                for (double y = 0; y <= sizeY; y += microData.YSpacing)
                  {
-                    for (double z = 0; z < sizeZ; z += microData.ZSpacing)
+                    for (double z = 0; z <= sizeZ; z += microData.ZSpacing)
                     {
 
                         double currentX = Math.Pow(x, 2);

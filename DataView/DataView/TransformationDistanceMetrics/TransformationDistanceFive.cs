@@ -56,8 +56,10 @@ namespace DataView
             Vector<double> translationVector2 = transformation2.TranslationVector;
 
             Vector<double> centerObject = Vector<double>.Build.DenseOfArray(new double[] { microData.Measures[0] / 2.0, microData.Measures[1] / 2.0, microData.Measures[2] / 2.0 });
+            /*
             translationVector1 -= centerObject;
             translationVector2 -= centerObject;
+            */
 
             double redPart = calculateRedPart(microData);
             double greenPart = calculateGreenPart(translationVector1, translationVector2, rotationMatrix1);
@@ -77,7 +79,11 @@ namespace DataView
         private double calculatePinkPart(Matrix<double> rotationMatrix1, Matrix<double> rotationMatrix2)
         {
 
+            Console.WriteLine("This is rotation matrix 1: " + rotationMatrix1.Transpose());
+            Console.WriteLine("This is rotation matrix 2: " + rotationMatrix2);
+
             Matrix<double> leftMatrix = -2 * rotationMatrix1.Transpose() * rotationMatrix2;
+
             Matrix<double> rightMatrix = vertexSumMatrix;
 
             return calculateFrobeniusMatrixProduct(leftMatrix, rightMatrix);

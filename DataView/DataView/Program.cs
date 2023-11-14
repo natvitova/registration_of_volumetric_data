@@ -9,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using CsvHelper;
 using System.Globalization;
 using System.Security.Cryptography;
+using System.Threading;
 
 namespace DataView
 {
@@ -150,7 +151,7 @@ namespace DataView
 
         public static void MainFunction(string micro, string macro, Point3D[] pointsMicro, Point3D[] pointsMacro) // the truly main function
         {
-
+            Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
 
             //----------------------------------------TEST OF DISTRIBUTION CLASS----------------------------------------------
             //VolumetricDataDistribution volumetricDataDistribution = new VolumetricDataDistribution(0.5, 100);
@@ -203,6 +204,7 @@ namespace DataView
             TransformationDistanceFirst transformationDistanceFirst = new TransformationDistanceFirst();
             TransformationDistanceSecond transformationDistanceSecond = new TransformationDistanceSecond();
             TransformationDistanceFive transformationDistanceFive = new TransformationDistanceFive();
+            TransformationDistanceFinal transformationDistanceFinal = new TransformationDistanceFinal(iDataMicro);
 
             Console.WriteLine();
             Console.WriteLine("-------------------------------------------------");
@@ -234,6 +236,7 @@ namespace DataView
                 double distanceFirstMethod = transformationDistanceFirst.GetTransformationsDistance(transformation1, transformation2, iDataMicro);
                 double distanceSecondMethod = transformationDistanceSecond.GetTransformationsDistance(transformation1, transformation2, iDataMicro);
                 double distanceFifthMethod = transformationDistanceFive.GetTransformationsDistance(transformation1, transformation2, iDataMicro);
+                double distanceFinalMethod = transformationDistanceFinal.GetTransformationsDistances(transformation1, transformation2, iDataMicro);
 
                 //This is the older unchanged method
                 Candidate candidate1 = new Candidate(transformation1);
@@ -243,10 +246,12 @@ namespace DataView
                 Console.WriteLine("This is distance calculated by the first method: " + distanceFirstMethod);
                 Console.WriteLine("This is distance calculated by the second method: " + distanceSecondMethod);
                 Console.WriteLine("This is distance calculated by the fifth method: " + distanceFifthMethod);
+                Console.WriteLine("This is distance calculated by the final method: " + distanceFinalMethod);
                 Console.WriteLine("This is distance calculated by the candidate method: " + distanceCandidate);
 
                 Console.WriteLine("Difference between 1st and 2nd method: " + Math.Abs(distanceFirstMethod - distanceSecondMethod));
                 Console.WriteLine("Difference between 1st and 5th method: " + Math.Abs(distanceFirstMethod - distanceFifthMethod));
+                Console.WriteLine("Difference between 1st and final method: " + Math.Abs(distanceFirstMethod - distanceFinalMethod));
                 Console.WriteLine("Difference between 1st and candidate method: " + Math.Abs(distanceFirstMethod - distanceCandidate));
 
                 Console.WriteLine();
