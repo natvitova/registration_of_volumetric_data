@@ -162,8 +162,8 @@
     <Compile Include="DataView\TransformationDistanceMetrics\TransformationDistanceFirst.cs" />
     <Compile Include="DataView\TransformationDistanceMetrics\ITransformationDistance.cs" />
     <Compile Include="DataView\TransformationDistanceMetrics\TransformationDistanceSecond.cs" />
-    <Compile Include="DataView\TransformationDistanceMetrics\TransformationDistanceFinal.cs" />
     <Compile Include="DataView\TransformationDistanceMetrics\TransformationDistanceFive.cs" />
+    <Compile Include="DataView\TransformationDistanceMetrics\TransformationDistanceSix.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

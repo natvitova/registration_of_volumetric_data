@@ -151,6 +151,7 @@ namespace DataView
 
         public static void MainFunction(string micro, string macro, Point3D[] pointsMicro, Point3D[] pointsMacro) // the truly main function
         {
+            //Sets Locale to US
             Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
 
             //----------------------------------------TEST OF DISTRIBUTION CLASS----------------------------------------------
@@ -185,13 +186,9 @@ namespace DataView
 
             FeatureVector[] featureVectorsMicro = new FeatureVector[pointsMicro.Length];
 
-
-
             Console.WriteLine("Computing micro feature vectors.");
             for (int i = 0; i < pointsMicro.Length; i++)
-            {
                 featureVectorsMicro[i] = fc.ComputeFeatureVector(iDataMicro, pointsMicro[i]);
-            }
 
             //----------------------------------------TEST OF TRANSFORMATION METRICS---------------------------
 
@@ -201,20 +198,32 @@ namespace DataView
 
             Candidate.initSums(iDataMicro.Measures[0] / iDataMicro.XSpacing, iDataMicro.Measures[1] / iDataMicro.YSpacing, iDataMicro.Measures[2] / iDataMicro.ZSpacing);
 
-            TransformationDistanceFirst transformationDistanceFirst = new TransformationDistanceFirst();
-            TransformationDistanceSecond transformationDistanceSecond = new TransformationDistanceSecond();
-            TransformationDistanceFive transformationDistanceFive = new TransformationDistanceFive();
-            TransformationDistanceFinal transformationDistanceFinal = new TransformationDistanceFinal(iDataMicro);
 
             Console.WriteLine();
             Console.WriteLine("-------------------------------------------------");
             Console.WriteLine();
 
+            double difference12 = 0;
+            double difference15 = 0;
+            double difference16 = 0;
+
+            Candidate.initSums(iDataMicro.Measures[0] / iDataMicro.XSpacing, iDataMicro.Measures[1] / iDataMicro.YSpacing, iDataMicro.Measures[2] / iDataMicro.ZSpacing);
+
+            TransformationDistanceFirst transformationDistanceFirst = new TransformationDistanceFirst();
+            TransformationDistanceSecond transformationDistanceSecond = new TransformationDistanceSecond();
+            TransformationDistanceFive transformationDistanceFive = new TransformationDistanceFive(iDataMicro);
+            TransformationDistanceSix transformationDistanceSix = new TransformationDistanceSix(iDataMicro);
+
             for (int i = 0; i < NUMBER_OF_TESTS; i++)
             {
                 Matrix<double> rotationMatrix1 = GenerateRandomRotationMatrix(random);
                 Matrix<double> rotationMatrix2 = GenerateRandomRotationMatrix(random);
-                
+
+
+
+
+
+
                 /*
                 Console.WriteLine("Rotation matrix 1: " + rotationMatrix1);
                 Console.WriteLine("Inverse of rotation matrix 1: " + rotationMatrix1.Inverse());
@@ -224,48 +233,54 @@ namespace DataView
 
 
                 //Random translation vectors
-                //Vector<double> translationVector1 = Vector<double>.Build.DenseOfArray(new double[] { random.NextDouble() * 10, random.NextDouble() * 10, random.NextDouble() * 10 });
-                //Vector<double> translationVector2 = Vector<double>.Build.DenseOfArray(new double[] { random.NextDouble() * 10, random.NextDouble() * 10, random.NextDouble() * 10 });
+                Vector<double> translationVector1 = Vector<double>.Build.DenseOfArray(new double[] { random.NextDouble() * 10, random.NextDouble() * 10, random.NextDouble() * 10 });
+                Vector<double> translationVector2 = Vector<double>.Build.DenseOfArray(new double[] { random.NextDouble() * 10, random.NextDouble() * 10, random.NextDouble() * 10 });
 
-                Vector<double> translationVector1 = Vector<double>.Build.Dense(3);
-                Vector<double> translationVector2 = Vector<double>.Build.Dense(3);
+                //Vector<double> translationVector1 = Vector<double>.Build.Dense(3);
+                //Vector<double> translationVector2 = Vector<double>.Build.Dense(3);
 
                 Transform3D transformation1 = new Transform3D(rotationMatrix1, translationVector1);
                 Transform3D transformation2 = new Transform3D(rotationMatrix2, translationVector2);
 
                 double distanceFirstMethod = transformationDistanceFirst.GetTransformationsDistance(transformation1, transformation2, iDataMicro);
-                double distanceSecondMethod = transformationDistanceSecond.GetTransformationsDistance(transformation1, transformation2, iDataMicro);
-                double distanceFifthMethod = transformationDistanceFive.GetTransformationsDistance(transformation1, transformation2, iDataMicro);
-                double distanceFinalMethod = transformationDistanceFinal.GetTransformationsDistances(transformation1, transformation2, iDataMicro);
+                Console.WriteLine("This is distance calculated by the first method: " + distanceFirstMethod);
 
-                //This is the older unchanged method
+                double distanceSecondMethod = transformationDistanceSecond.GetTransformationsDistance(transformation1, transformation2, iDataMicro);
+                Console.WriteLine("This is distance calculated by the second method: " + distanceSecondMethod);
+
+                double distanceFifthMethod = transformationDistanceFive.GetTransformationsDistance(transformation1, transformation2, iDataMicro);
+                Console.WriteLine("This is distance calculated by the fifth method: " + distanceFifthMethod);
+
+                double distanceSixthMethod = transformationDistanceSix.GetTransformationsDistance(transformation1, transformation2, iDataMicro);
+                Console.WriteLine("This is distance calculated by the sixth method: " + distanceSixthMethod);
+
                 Candidate candidate1 = new Candidate(transformation1);
                 Candidate candidate2 = new Candidate(transformation2);
-                double distanceCandidate = candidate1.DistanceTo(candidate2);
 
-                Console.WriteLine("This is distance calculated by the first method: " + distanceFirstMethod);
-                Console.WriteLine("This is distance calculated by the second method: " + distanceSecondMethod);
-                Console.WriteLine("This is distance calculated by the fifth method: " + distanceFifthMethod);
-                Console.WriteLine("This is distance calculated by the final method: " + distanceFinalMethod);
+                double distanceCandidate = candidate1.DistanceTo(candidate2);
                 Console.WriteLine("This is distance calculated by the candidate method: " + distanceCandidate);
 
-                Console.WriteLine("Difference between 1st and 2nd method: " + Math.Abs(distanceFirstMethod - distanceSecondMethod));
-                Console.WriteLine("Difference between 1st and 5th method: " + Math.Abs(distanceFirstMethod - distanceFifthMethod));
-                Console.WriteLine("Difference between 1st and final method: " + Math.Abs(distanceFirstMethod - distanceFinalMethod));
-                Console.WriteLine("Difference between 1st and candidate method: " + Math.Abs(distanceFirstMethod - distanceCandidate));
+                difference12 += Math.Abs(distanceFirstMethod - distanceSecondMethod);
+                difference15 += Math.Abs(distanceFirstMethod - distanceFifthMethod);
+                difference16 += Math.Abs(distanceFirstMethod - distanceSixthMethod);
+
 
                 Console.WriteLine();
                 Console.WriteLine("-------------------------------------------------");
                 Console.WriteLine();
 
-                Console.WriteLine("This is the ratio between first method and fifth method: " + (distanceFirstMethod / distanceFifthMethod));
-                //Calculating the ration to see if the results of "Candidate" method doesn't return results always multiplied by the same factor - it doesn't (factor changes)
+                //Calculating the ratio to see if the results of "Candidate" method doesn't return results always multiplied by the same factor - it doesn't (factor changes)
                 /*
                 Console.WriteLine("Ratio elemenetary/candidate: " + (distanceFirstMethod / distanceCandidate));
                 Console.WriteLine("Ratio elemenetary/candidate: " + (distanceSecondMethod / distanceCandidate));
                 */
 
             }
+
+
+            Console.WriteLine("This is the total difference between 1st and 2nd method: " + difference12);
+            Console.WriteLine("This is the total differnece between 1st and 5th method: " + difference15);
+            Console.WriteLine("This is the total differnece between 1st and 6th method: " + difference16);
             //----------------------------------------END OF TEST----------------------------------------------
 
 
@@ -284,15 +299,11 @@ namespace DataView
 
             
             for (int i = 0; i < pointsMacro.Length; i++)
-            {
                 featureVectorsMacro[i] = fc.ComputeFeatureVector(iDataMacro, pointsMacro[i]);
-            }
 
             //Test if some of the points even have the possibilty for matching with the correct point
 
             Console.WriteLine("The number of sample points is the same: " + ((pointsMacro.Length == pointsMicro.Length) ? "True" : "No"));
-
-
             
             int similarPoints = 0;
             const int toleranceRadius = 1;
@@ -468,9 +479,14 @@ namespace DataView
             //Cut(solution.RotationMatrix, solution.TranslationVector);
         }
 
+        /// <summary>
+        /// ONLY FOR TEST PURPOSES
+        /// Generates random rotation matrix
+        /// </summary>
+        /// <param name="random">Instance of class Random</param>
+        /// <returns>Returns random rotation matrix</returns>
         public static Matrix<double> GenerateRandomRotationMatrix(Random random)
         {
-            //The angle should be 2*PI
             double angleX = random.NextDouble() * 2*Math.PI;
             double angleY = random.NextDouble() * 2*Math.PI;
             double angleZ = random.NextDouble() * 2*Math.PI;
@@ -530,6 +546,7 @@ namespace DataView
             }
             return (int)(((double)correctMatches / (double)matches.Length) * 100);
         }
+
         /// <summary>
         /// This method calculates the percentage of correct matches
         /// Works only for known test data
@@ -1080,6 +1097,7 @@ namespace DataView
 
             return chart1;
         }
+
         public static void Cut(int t, IData data)
         {
             double[] point = { 0, t, 0 };
@@ -1225,6 +1243,7 @@ namespace DataView
                 csv.WriteRecords(data);
             }
         }
+
         public static void WriteCSVdouble(double[] data, string fileName)
         {
             using (var writer = new StreamWriter(fileName))
@@ -1233,6 +1252,7 @@ namespace DataView
                 csv.WriteRecords(data);
             }
         }
+
         /// <summary>
         /// 
         /// </summary>
@@ -1272,6 +1292,7 @@ namespace DataView
 
             return points;
         }
+
         static double GetRandomDouble(double minimum, double maximum, Random r)
         {
             return r.NextDouble() * (maximum - minimum) + minimum;

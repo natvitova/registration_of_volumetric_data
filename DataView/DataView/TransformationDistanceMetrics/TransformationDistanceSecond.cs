@@ -12,7 +12,7 @@ namespace DataView
     /// </summary>
     class TransformationDistanceSecond : ITransformationDistance
     {
-        public double GetTransformationsDistance(Transform3D transformation1, Transform3D transformation2, IData micro)
+        public double GetTransformationsDistance(Transform3D transformation1, Transform3D transformation2, IData microData)
         {
             Matrix<double> rotationMatrix1 = transformation1.RotationMatrix;
             Vector<double> translationVector1 = transformation1.TranslationVector;
@@ -22,19 +22,19 @@ namespace DataView
 
             double sum = 0;
 
-            int sizeX = micro.Measures[0];
-            int sizeY = micro.Measures[1];
-            int sizeZ = micro.Measures[2];
+            int sizeX = microData.Measures[0];
+            int sizeY = microData.Measures[1];
+            int sizeZ = microData.Measures[2];
 
-            for (double x = 0; x <= sizeX; x += micro.XSpacing)
+            for (double x = 0; x < sizeX; x += microData.XSpacing)
             {
-                for (double y = 0; y <= sizeY; y += micro.YSpacing)
+                for (double y = 0; y < sizeY; y += microData.YSpacing)
                 {
-                    for (double z = 0; z <= sizeZ; z += micro.ZSpacing)
+                    for (double z = 0; z < sizeZ; z += microData.ZSpacing)
                     {
                         Vector<double> originalVector = Vector<double>.Build.DenseOfArray(new double[] { x, y, z });
 
-                        Matrix<double> calculation = ((rotationMatrix1.Multiply(originalVector) + translationVector1) - (rotationMatrix2.Multiply(originalVector) + translationVector2)).ToColumnMatrix();
+                        Matrix<double> calculation = (rotationMatrix1.Multiply(originalVector) + translationVector1 - rotationMatrix2.Multiply(originalVector) - translationVector2).ToColumnMatrix();
                         Matrix<double> result = calculation.Transpose() * calculation;
 
                         sum += result[0,0];

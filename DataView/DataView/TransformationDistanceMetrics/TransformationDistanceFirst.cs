@@ -25,11 +25,11 @@ namespace DataView
             int sizeY = micro.Measures[1];
             int sizeZ = micro.Measures[2];
 
-            for(double x = 0; x<=sizeX; x+=micro.XSpacing)
+            for(double x = 0; x < sizeX; x+=micro.XSpacing)
             {
-                for (double y = 0; y <= sizeY; y+= micro.YSpacing)
+                for (double y = 0; y < sizeY; y+= micro.YSpacing)
                 {
-                    for (double z = 0; z <= sizeZ; z += micro.ZSpacing)
+                    for (double z = 0; z < sizeZ; z += micro.ZSpacing)
                     {
                         Vector<double> originalVector = Vector<double>.Build.DenseOfArray(new double[] { x, y, z });
 
