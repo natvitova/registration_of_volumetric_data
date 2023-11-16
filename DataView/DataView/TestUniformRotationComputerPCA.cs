@@ -77,7 +77,6 @@ namespace DataView
                 Console.WriteLine("This is the basis for pointMicro: " + basisMicro);
                 Console.WriteLine("This is the basis for pointMacro: " + basisMacro);
                 Console.WriteLine("This is their transition matrix: " + transitionMatrix);
-
             }
 
             return transitionMatrix;
@@ -189,9 +188,7 @@ namespace DataView
         {
             List<Point3D> pointsInSphere = GetSphere(point, radius, spacing);
 
-            Matrix<double> result = Matrix<double>.Build.Dense(3, 3);
-
-            double[] values = new double[pointsInSphere.Count];
+            List<double> values = new List<double>();
             double min = double.MaxValue;
             double max = double.MinValue;
 
@@ -202,28 +199,19 @@ namespace DataView
             double wsLow = 0;
 
 
-            for (int i = 0; i < values.Length; i++)
+            for (int i = 0; i < pointsInSphere.Count; i++)
             {
-                try
-                {
-                    values[i] = d.GetValue(pointsInSphere[i]);
-
-                    min = Math.Min(min, values[i]);
-                    max = Math.Max(max, values[i]);
-                }
-                catch
-                {
-                    //The point is out of bounds for the particular 3D object
-                    continue;
-                }
-                
+                try { values.Add(d.GetValue(pointsInSphere[i])); }
+                catch { continue; } //The value is not within the bounds of the image
+                min = Math.Min(min, values[values.Count - 1]);
+                max = Math.Max(max, values[values.Count - 1]);
             }
 
             //Values min and max are the same
             if (Math.Abs(min - max) < Double.Epsilon)
                 throw new ArgumentException("Basis cannot be calculated because all sampled values in the point surrounding are the same.");
 
-            for (int i = 0; i < values.Length; i++)
+            for (int i = 0; i < values.Count; i++)
             {
                 double wHigh = (values[i] - min) / (max - min); //percentage from the overall range
                 double wLow = 1 - wHigh;
@@ -332,17 +320,15 @@ namespace DataView
         }
 
         /// <summary>
-        /// Gets points 
+        /// Gets points uniformly distributed from the center point
         /// </summary>
-        /// <param name="p"></param>
-        /// <param name="r"></param>
-        /// <param name="spacing"></param>
-        /// <returns></returns>
+        /// <param name="p">Center around which the points are generated</param>
+        /// <param name="r">Generated point's distance from the center</param>
+        /// <param name="spacing">Spacing between the points</param>
+        /// <returns>A grid of points uniformly distributed in the sphere radius from a given point.</returns>
         private static List<Point3D> GetSphere(Point3D p, double r, double spacing)
         {
             List<Point3D> points = new List<Point3D>();
-
-            //Random rnd = new Random(seed);
 
             for(double x = -r; x<=r; x+=spacing)
             {
@@ -355,7 +341,6 @@ namespace DataView
 
                     for (double z = zBounds.MinCoordinate; z <= zBounds.MaxCoordinate; z += spacing)
                         points.Add(new Point3D(x, y, z));
-
                 }
             }
 

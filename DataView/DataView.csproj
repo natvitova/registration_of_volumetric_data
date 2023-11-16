@@ -164,6 +164,7 @@
     <Compile Include="DataView\TransformationDistanceMetrics\TransformationDistanceSecond.cs" />
     <Compile Include="DataView\TransformationDistanceMetrics\TransformationDistanceFive.cs" />
     <Compile Include="DataView\TransformationDistanceMetrics\TransformationDistanceSix.cs" />
+    <Compile Include="DataView\TransformationDistanceMetrics\TransformationDistanceSeven.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

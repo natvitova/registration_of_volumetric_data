@@ -218,8 +218,6 @@ namespace DataView
         {
             List<Point3D> pointsInSphere = GetSphere(point, radius, count, rnd.Next()); 
 
-            Matrix<double> result = Matrix<double>.Build.Dense(3, 3);
-
             double[] values = new double[count];
             double min = double.MaxValue;
             double max = double.MinValue;

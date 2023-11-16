@@ -154,6 +154,7 @@ namespace DataView
             //Sets Locale to US
             Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
 
+
             //----------------------------------------TEST OF DISTRIBUTION CLASS----------------------------------------------
             //VolumetricDataDistribution volumetricDataDistribution = new VolumetricDataDistribution(0.5, 100);
             //volumetricDataDistribution.AddValue(2);
@@ -190,6 +191,21 @@ namespace DataView
             for (int i = 0; i < pointsMicro.Length; i++)
                 featureVectorsMicro[i] = fc.ComputeFeatureVector(iDataMicro, pointsMicro[i]);
 
+            //----------------------------------------MACRO CT------------------------------------------------
+            Console.WriteLine("\nReading macro data.");
+            VolumetricData vDataMacro = new VolumetricData(macro);
+            iDataMacro = vDataMacro;
+            Console.WriteLine("Data read succesfully.");
+            Console.WriteLine("Sampling.");
+            pointsMacro = s.Sample(iDataMacro, numberOfPointsMacro);
+
+            FeatureVector[] featureVectorsMacro = new FeatureVector[pointsMacro.Length];
+
+            Console.WriteLine("Computing macro feature vectors.");
+            for (int i = 0; i < pointsMacro.Length; i++)
+                featureVectorsMacro[i] = fc.ComputeFeatureVector(iDataMacro, pointsMacro[i]);
+
+
             //----------------------------------------TEST OF TRANSFORMATION METRICS---------------------------
 
             Random random = new Random(5);
@@ -206,6 +222,7 @@ namespace DataView
             double difference12 = 0;
             double difference15 = 0;
             double difference16 = 0;
+            double difference17 = 0;
 
             Candidate.initSums(iDataMicro.Measures[0] / iDataMicro.XSpacing, iDataMicro.Measures[1] / iDataMicro.YSpacing, iDataMicro.Measures[2] / iDataMicro.ZSpacing);
 
@@ -213,23 +230,12 @@ namespace DataView
             TransformationDistanceSecond transformationDistanceSecond = new TransformationDistanceSecond();
             TransformationDistanceFive transformationDistanceFive = new TransformationDistanceFive(iDataMicro);
             TransformationDistanceSix transformationDistanceSix = new TransformationDistanceSix(iDataMicro);
+            TransformationDistanceSeven transformationDistanceSeven = new TransformationDistanceSeven(iDataMicro);
 
             for (int i = 0; i < NUMBER_OF_TESTS; i++)
             {
                 Matrix<double> rotationMatrix1 = GenerateRandomRotationMatrix(random);
                 Matrix<double> rotationMatrix2 = GenerateRandomRotationMatrix(random);
-
-
-
-
-
-
-                /*
-                Console.WriteLine("Rotation matrix 1: " + rotationMatrix1);
-                Console.WriteLine("Inverse of rotation matrix 1: " + rotationMatrix1.Inverse());
-                Console.WriteLine("Rotation matrix 2: " + rotationMatrix2);
-                Console.WriteLine("Inverse of rotation matrix 2: " + rotationMatrix2.Inverse());
-                */
 
 
                 //Random translation vectors
@@ -254,6 +260,9 @@ namespace DataView
                 double distanceSixthMethod = transformationDistanceSix.GetTransformationsDistance(transformation1, transformation2, iDataMicro);
                 Console.WriteLine("This is distance calculated by the sixth method: " + distanceSixthMethod);
 
+                double distanceSeventhMethod = transformationDistanceSeven.GetTransformationsDistance(transformation1, transformation2, iDataMicro);
+                Console.WriteLine("This is distance calculated by the seventh method: " + distanceSeventhMethod);
+
                 Candidate candidate1 = new Candidate(transformation1);
                 Candidate candidate2 = new Candidate(transformation2);
 
@@ -263,6 +272,7 @@ namespace DataView
                 difference12 += Math.Abs(distanceFirstMethod - distanceSecondMethod);
                 difference15 += Math.Abs(distanceFirstMethod - distanceFifthMethod);
                 difference16 += Math.Abs(distanceFirstMethod - distanceSixthMethod);
+                difference17 += Math.Abs(distanceFirstMethod - distanceSeventhMethod);
 
 
                 Console.WriteLine();
@@ -281,25 +291,8 @@ namespace DataView
             Console.WriteLine("This is the total difference between 1st and 2nd method: " + difference12);
             Console.WriteLine("This is the total differnece between 1st and 5th method: " + difference15);
             Console.WriteLine("This is the total differnece between 1st and 6th method: " + difference16);
+            Console.WriteLine("This is the total difference between 1st and 7th method: " + difference17);
             //----------------------------------------END OF TEST----------------------------------------------
-
-
-
-            //----------------------------------------MACRO CT------------------------------------------------
-            Console.WriteLine("\nReading macro data.");
-            VolumetricData vDataMacro = new VolumetricData(macro);
-            iDataMacro = vDataMacro;
-            Console.WriteLine("Data read succesfully.");
-            Console.WriteLine("Sampling.");
-            pointsMacro = s.Sample(iDataMacro, numberOfPointsMacro);
-
-            FeatureVector[] featureVectorsMacro = new FeatureVector[pointsMacro.Length];
-
-            Console.WriteLine("Computing macro feature vectors.");
-
-            
-            for (int i = 0; i < pointsMacro.Length; i++)
-                featureVectorsMacro[i] = fc.ComputeFeatureVector(iDataMacro, pointsMacro[i]);
 
             //Test if some of the points even have the possibilty for matching with the correct point
 
