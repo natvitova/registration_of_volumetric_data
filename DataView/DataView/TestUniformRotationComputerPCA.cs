@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using MathNet.Numerics.LinearAlgebra;
+using MathNet.Numerics;
 
 namespace DataView
 {
@@ -10,8 +11,7 @@ namespace DataView
     /// </summary>
     class TestUniformRotationComputerPCA
     {
-
-        public static double radius = 1;
+        public static double radius = 3;
 
         /// <summary>
         /// Calculates the rotation matrix from dMicro to dMacro
@@ -31,18 +31,157 @@ namespace DataView
 
             try
             {
+                //basisMacro = GetAveragePointBasis(dMacro, pointMacro, spacing, radius);
+                //basisMicro = GetAveragePointBasis(dMicro, pointMicro, spacing, radius);
+
                 basisMicro = GetPointBasis(dMicro, pointMicro, spacing, radius);
                 basisMacro = GetPointBasis(dMacro, pointMacro, spacing, radius);
+
             }
             catch (Exception e) { throw e; }
 
+            Console.WriteLine(basisMacro);
+            Console.WriteLine(basisMicro);
+            //Matrix<double> resultMatrix = calculationRotationMatrix(basisMicro, basisMacro);
+            Matrix<double> resultMatrix = calculateTransitionMatrix(basisMicro, basisMacro);
+            
+            if (pointMacro.Distance(pointMicro) <= 1)
+            {
+                Console.WriteLine("These points are relatively close: ");
+                Console.WriteLine(pointMicro);
+                Console.WriteLine(pointMacro);
+
+                Console.WriteLine("This is the basis for pointMicro: " + basisMicro);
+                Console.WriteLine("This is the basis for pointMacro: " + basisMacro);
+
+
+                Console.WriteLine(resultMatrix);
+            }
+            
+
+            return resultMatrix;
+        }
+
+        private static EulerAngles CalculateRotationMatrixForVectors(Vector<double> vectorMicro, Vector<double> vectorMacro)
+        {
+            Vector<double> testVector1Normalized = NormalizeVector(vectorMicro);
+            Vector<double> testVector2Normalized = NormalizeVector(vectorMacro);
+
+            Vector<double> crossProduct = Vector<double>.Build.Dense(3);
+            if (ParallelVectors(vectorMacro, vectorMicro))
+                crossProduct = findOrthogonalVector(vectorMicro);
+            else
+            {
+                Matrix<double> tempCrossProduct = CrossProduct(testVector1Normalized, testVector2Normalized);
+                crossProduct = Vector<double>.Build.DenseOfArray(new double[] { tempCrossProduct[0, 0], tempCrossProduct[0, 1], tempCrossProduct[0, 2] });
+            }
+
+            crossProduct = NormalizeVector(crossProduct);
+
+            double cosine = testVector1Normalized.DotProduct(testVector2Normalized);
+            cosine = Constrain(cosine, -1, 1);
+            double sine = Math.Sqrt(1 - Math.Pow(cosine, 2));
+
+            //Derived from Rodrigue's formula - https://mathworld.wolfram.com/RodriguesRotationFormula.html
+
+            Matrix<double> rotationMatrix = Matrix<double>.Build.Dense(3, 3);
+            rotationMatrix[0, 0] = cosine + (Math.Pow(crossProduct[0], 2) * (1 - cosine));
+            rotationMatrix[0, 1] = (crossProduct[0] * crossProduct[1] * (1 - cosine)) - (crossProduct[2] * sine);
+            rotationMatrix[0, 2] = (crossProduct[1] * sine) + (crossProduct[0] * crossProduct[2] * (1 - cosine));
+            rotationMatrix[1, 0] = (crossProduct[2] * sine) + (crossProduct[0] * crossProduct[1] * (1 - cosine));
+            rotationMatrix[1, 1] = cosine + (Math.Pow(crossProduct[1], 2) * (1 - cosine));
+            rotationMatrix[1, 2] = -(crossProduct[0] * sine) + (crossProduct[1] * crossProduct[2] * (1 - cosine));
+            rotationMatrix[2, 0] = -(crossProduct[1] * sine) + (crossProduct[0] * crossProduct[2] * (1 - cosine));
+            rotationMatrix[2, 1] = (crossProduct[0] * sine) + (crossProduct[1] * crossProduct[2] * (1 - cosine));
+            rotationMatrix[2, 2] = cosine + (Math.Pow(crossProduct[2], 2) * (1 - cosine));
+
+            double phi = Math.Atan2(rotationMatrix[2, 1], rotationMatrix[2, 2]);
+            double theta = Math.Asin(-rotationMatrix[2, 0]);
+            double psi = Math.Atan2(rotationMatrix[1, 0], rotationMatrix[0, 0]);
+
+            return new EulerAngles(phi, theta, psi);
+        }
+
+        /// <summary>
+        /// Calculates the matrix using angles between the bases
+        /// </summary>
+        /// <param name="basisMicro">Micro basis</param>
+        /// <param name="basisMacro">Macro basis</param>
+        /// <returns>Returns rotation matrix to align micro to macro basis</returns>
+        private static Matrix<double> calculationRotationMatrix(Matrix<double> basisMicro, Matrix<double> basisMacro)
+        {
+            EulerAngles eulerAnglesHigh = CalculateRotationMatrixForVectors(basisMicro.Column(0), basisMacro.Column(0));
+            EulerAngles eulerAnglesLow = CalculateRotationMatrixForVectors(basisMicro.Column(1), basisMacro.Column(1));
+            EulerAngles eulerAnglesCross = CalculateRotationMatrixForVectors(basisMicro.Column(2), basisMacro.Column(2));
+
+            double averageRotationX = (eulerAnglesHigh.RotationX + eulerAnglesLow.RotationX + eulerAnglesCross.RotationX)/3;
+            double averageRotationY = (eulerAnglesHigh.RotationY + eulerAnglesLow.RotationY + eulerAnglesCross.RotationY) / 3;
+            double averageRotationZ = (eulerAnglesHigh.RotationZ + eulerAnglesLow.RotationZ + eulerAnglesCross.RotationZ) / 3;
+
+
+            /*
+            Vector<double> rotatedMicro = eulerAnglesHigh.Multiply(basisMicro.Column(0));
+
+            Console.WriteLine("Micro vector: " + basisMicro.Column(0));
+            Console.WriteLine("Macro vector: " + basisMacro.Column(0));
+
+            Console.WriteLine("Rotated micro: " + rotatedMicro);
+            Console.WriteLine("Rotation matrix: " + eulerAnglesHigh);
+            */
+
+            /*
+            Console.WriteLine("Macro basis with applied transformation: " + (rotationMatrixX * rotationMatrixY * rotationMatrixZ).Multiply(basisMacro.Column(0)));
+            Console.WriteLine("Micro basis with applied transformation: " + (rotationMatrixX * rotationMatrixY * rotationMatrixZ).Multiply(basisMicro.Column(0)));
+            */
+
+            //check if the rotation matrix does transform elements  of micro basis to macro
+            //if not, transpose it ( or inverse it, the result should be the same) and try again
+            //if neither of the solutions work, throw error
+
+            return GetRotationMatrix(averageRotationX, averageRotationY, averageRotationZ);
+        }
+
+        private static Matrix<double> GetRotationMatrix(double angleX, double angleY, double angleZ)
+        {
+            Matrix<double> rotationMatrixX = Matrix<double>.Build.DenseOfArray(new double[,]
+            {
+                    { 1, 0, 0 },
+                    { 0, Math.Cos(angleX), -Math.Sin(angleX) },
+                    { 0, Math.Sin(angleX), Math.Cos(angleX) }
+            });
+
+            Matrix<double> rotationMatrixY = Matrix<double>.Build.DenseOfArray(new double[,]
+            {
+                    { Math.Cos(angleY), 0, Math.Sin(angleY) },
+                    { 0, 1, 0 },
+                    { -Math.Sin(angleY), 0, Math.Cos(angleY) }
+             });
+
+            Matrix<double> rotationMatrixZ = Matrix<double>.Build.DenseOfArray(new double[,]
+            {
+                    { Math.Cos(angleZ), -Math.Sin(angleZ), 0 },
+                    { Math.Sin(angleZ), Math.Cos(angleZ), 0 },
+                    { 0, 0, 1 }
+            });
+
+            return (rotationMatrixX * rotationMatrixY * rotationMatrixZ);
+        }
+
+        /// <summary>
+        /// Calculates the transition matrix between two given bases
+        /// </summary>
+        /// <param name="basisMicro">Micro basis</param>
+        /// <param name="basisMacro">Macro basis</param>
+        /// <returns>Returns transition matrix</returns>
+        private static Matrix<double> calculateTransitionMatrix(Matrix<double> basisMicro, Matrix<double> basisMacro)
+        {
             Matrix<double> transitionMatrix = Matrix<double>.Build.Dense(3, 3);
 
             Matrix<double> equationMatrix = Matrix<double>.Build.Dense(3, 4);
 
 
             //Calculation of the transition matrix
-            for (int basisNumber = 0; basisNumber<3; basisNumber++)
+            for (int basisNumber = 0; basisNumber < 3; basisNumber++)
             {
                 for (int i = 0; i < 3; i++)
                     equationMatrix.SetColumn(i, basisMicro.Column(i));
@@ -58,28 +197,101 @@ namespace DataView
             }
 
             //Replace 0 values
-            for(int i = 0; i<transitionMatrix.RowCount; i++)
+            for (int i = 0; i < transitionMatrix.RowCount; i++)
             {
-                for(int j = 0; j<transitionMatrix.ColumnCount; j++)
+                for (int j = 0; j < transitionMatrix.ColumnCount; j++)
                 {
                     if (Math.Abs(transitionMatrix[i, j]) <= Double.Epsilon)
                         transitionMatrix[i, j] = 0;
                 }
             }
 
+            return transitionMatrix;
+        }
 
-            if (pointMacro.Distance(pointMicro) <= 1)
+
+
+        /// <summary>
+        /// Samples points around p and returns the basis thats the most common
+        /// </summary>
+        /// <param name="data">Instance to data</param>
+        /// <param name="p">Point p around which the points should be sampled</param>
+        /// <param name="spacing">Spacing between the points</param>
+        /// <param name="radius">Radius arpind the sampled </param>
+        /// <returns></returns>
+        private static Matrix<double> GetAveragePointBasis(IData data, Point3D p, double spacing, double radius)
+        {
+            List<Matrix<double>> matrices = new List<Matrix<double>>();
+
+            for (int i = 0; i<3; i++)
             {
-                Console.WriteLine("These points are relatively close: ");
-                Console.WriteLine(pointMicro);
-                Console.WriteLine(pointMacro);
-
-                Console.WriteLine("This is the basis for pointMicro: " + basisMicro);
-                Console.WriteLine("This is the basis for pointMacro: " + basisMacro);
-                Console.WriteLine("This is their transition matrix: " + transitionMatrix);
+                for (int j = -1; j <= 1; j++)
+                {
+                    Point3D currentPoint = new Point3D();
+                    switch (i)
+                    {
+                        case 0:
+                            currentPoint = new Point3D(p.X + j * spacing, p.Y, p.Z);
+                            break;
+                        case 1:
+                            currentPoint = new Point3D(p.X, p.Y + j * spacing, p.Z); 
+                            break;
+                        case 2:
+                            currentPoint = new Point3D(p.X, p.Y, p.Z + j * spacing);
+                            break;
+                    }
+                    try
+                    {
+                        matrices.Add(GetPointBasis(data, currentPoint, spacing, radius));
+                    }
+                    catch
+                    {
+                        //If the basis cant be calculated
+                        continue;
+                    }
+                }
             }
 
-            return transitionMatrix;
+            if (matrices.Count == 0)
+                throw new Exception("None of the matrices could be constructed");
+
+            double[] sqrtAverageDistances = new double[matrices.Count];
+            //Select the one that is the closest to all other
+            Vector<double> zeroTranslationVector = Vector<double>.Build.Dense(3);
+
+            for (int i = 0; i<matrices.Count; i++)
+            {
+                Transform3D currentlyTestedTransformation = new Transform3D(matrices[i], zeroTranslationVector);
+                for(int j = i+1; j<matrices.Count; j++)
+                {
+                    Transform3D temporarilyTestedTransformation = new Transform3D(matrices[j], zeroTranslationVector);
+                    double distance = currentlyTestedTransformation.SqrtDistanceTo(temporarilyTestedTransformation);
+                    sqrtAverageDistances[j] += distance / (matrices.Count-1);
+                    sqrtAverageDistances[i] += distance / (matrices.Count - 1);
+                }
+            }
+
+            int smallestIndex = 0;
+
+            //Finds element with smalles average distance
+            for(int i = 1; i<matrices.Count; i++)
+            {
+                if (sqrtAverageDistances[i] < sqrtAverageDistances[smallestIndex])
+                    smallestIndex = i;
+            }
+
+            return matrices[smallestIndex];
+        }
+
+        private static double Constrain(double value, double minValue, double maxValue)
+        {
+            if (value > maxValue)
+                return maxValue;
+
+            if (value < minValue)
+                return minValue;
+
+            return value;
         }
 
         /// <summary>
@@ -383,30 +595,65 @@ namespace DataView
             return r.NextDouble() * (maximum - minimum) + minimum;
         }
 
-        /// <summary>
-        /// This is a messenger class for passing min and max bounds
-        /// </summary>
-        private class SphereBounds
+        
+    }
+
+    /// <summary>
+    /// This is a messenger class for passing min and max bounds
+    /// </summary>
+    class SphereBounds
+    {
+        private double minCoordinate;
+        private double maxCoordinate;
+
+        public SphereBounds(double minCoordinate, double maxCoordinate)
         {
-            private double minCoordinate;
-            private double maxCoordinate;
+            this.minCoordinate = minCoordinate;
+            this.maxCoordinate = maxCoordinate;
+        }
 
-            public SphereBounds(double minCoordinate, double maxCoordinate)
-            {
-                this.minCoordinate = minCoordinate;
-                this.maxCoordinate = maxCoordinate;
-            }
+        //GETTERS
+        public double MinCoordinate
+        {
+            get { return minCoordinate; }
+        }
 
-            //GETTERS
-            public double MinCoordinate
-            {
-                get { return minCoordinate; }
-            }
+        public double MaxCoordinate
+        {
+            get { return maxCoordinate; }
+        }
+    }
 
-            public double MaxCoordinate
-            {
-                get { return maxCoordinate; }
-            }
+    /// <summary>
+    /// This is a messenger class for passing Euler angles of a rotation
+    /// </summary>
+    class EulerAngles
+    {
+        private double rotationX;
+        private double rotationY;
+        private double rotationZ;
+
+        public EulerAngles(double rotationX, double rotationY, double rotationZ)
+        {
+            this.rotationX = rotationX;
+            this.rotationY = rotationY;
+            this.rotationY = rotationZ;
+        }
+
+        //GETTERS
+        public double RotationX
+        {
+            get { return rotationX; }
+        }
+
+        public double RotationY
+        {
+            get { return rotationY; }
+        }
+
+        public double RotationZ
+        {
+            get { return rotationZ; }
         }
     }
 }

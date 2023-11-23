@@ -14,7 +14,7 @@ namespace DataView
     /// If the biggest number of points within the radius is smaller than {threshold} percentage of total number of transformations => returns transformation with biggest score from previous iteration
     /// </summary>
 
-    public class TestDensityAccurate
+    class TestDensityAccurate
     {
         public Transform3D Find(Transform3D[] transforms)
         {

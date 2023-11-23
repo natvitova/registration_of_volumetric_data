@@ -53,22 +53,7 @@ namespace DataView
                 crossProduct = Vector<double>.Build.DenseOfArray(new double[] { tempCrossProduct[0, 0], tempCrossProduct[0, 1], tempCrossProduct[0, 2] });
             }
 
-            /*
-            Console.WriteLine(crossProduct);
-            Console.WriteLine("This is dot product with microVector: " + ScalarProduct(testVector1Normalized, crossProduct));
-            Console.WriteLine("This is dot product with macroVector: " + ScalarProduct(testVector2Normalized, crossProduct));
-            */
-
             crossProduct = NormalizeVector(crossProduct);
-
-            /*
-            Console.WriteLine("This is dot product with first vector: " + ScalarProduct(testVector1Normalized, crossProduct));
-            Console.WriteLine("This is dot product with second vector: " + ScalarProduct(crossProduct, testVector2Normalized));
-
-            Console.WriteLine("Test of orthonormality (its dot product with itself is equal to 1)");
-            Console.WriteLine(ScalarProduct(crossProduct, crossProduct));
-            Console.WriteLine();
-            */
 
             double cosine = ScalarProduct(testVector1Normalized, testVector2Normalized);
             cosine = Constrain(cosine, -1, 1);

@@ -14,7 +14,7 @@ namespace DataView
     /// vq*t1^T*t1 - 2*vq*t1^T*t2 + vq*t2^T*t2 - black part
     /// diag(- 2*R1^T*R2) . diag(Σ(from i = 1 to vq)qi*qi^T), where . denotes Dot Product
     /// </summary>
-    class TransformationDistanceSeven: ITransformationDistance
+    class TransformationDistance: ITransformationDistance
 	{
         private int numberOfVertices = 0;
 
@@ -31,7 +31,7 @@ namespace DataView
         /// Constructor initializes precomputed values for the given data
         /// </summary>
         /// <param name="microData">Instance of IData for Micro Data</param>
-        public TransformationDistanceSeven(IData microData)
+        public TransformationDistance(IData microData)
         {
             int sizeX = microData.Measures[0];
             int sizeY = microData.Measures[1];
@@ -62,7 +62,6 @@ namespace DataView
                     }
                 }
             }
-            Console.WriteLine("This is the dot product result: " + sumOfMultipliedVertices);
         }
 
         /// <summary>
@@ -141,10 +140,9 @@ namespace DataView
         /// </summary>
         /// <param name="transformation1">Transformation 1</param>
         /// <param name="transformation2">Transformation 2</param>
-        /// <param name="microData">Data on which the transformation is applied (in this case micro data).</param>
         /// <returns>Returns number evaluating the proximity of two given transformations.</returns>
         /// <exception cref="ArgumentException">Throws exception if either of the matrices is not rotation matrix.</exception>
-        public double GetTransformationsDistance(Transform3D transformation1, Transform3D transformation2, IData microData)
+        public double GetTransformationsDistance(Transform3D transformation1, Transform3D transformation2)
         {
             Matrix<double> rotationMatrix1 = transformation1.RotationMatrix;
             Matrix<double> rotationMatrix2 = transformation2.RotationMatrix;
@@ -152,8 +150,10 @@ namespace DataView
             Vector<double> translationVector1 = transformation1.TranslationVector;
             Vector<double> translationVector2 = transformation2.TranslationVector;
 
+            /*
             if (!IsRotationMatrix(rotationMatrix1) || !IsRotationMatrix(rotationMatrix2))
                 throw new ArgumentException("Matrix isn't rotation matrix");
+            */
 
 
             //The centroid of the object was translated to the origin, thus the translation
@@ -171,6 +171,11 @@ namespace DataView
             result += pinkPart;
 
             return result;
+        }
+
+        public double GetSqrtTransformationDistance(Transform3D transformation1, Transform3D transformation2)
+        {
+            return Math.Sqrt(GetTransformationsDistance(transformation1, transformation2));
         }
 
         /// <summary>

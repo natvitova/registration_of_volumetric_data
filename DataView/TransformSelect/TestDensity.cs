@@ -12,7 +12,7 @@ namespace DataView
 
     //TODO: This class is ineffective, optimizations needed
 
-    public class TestDensity
+    class TestDensity
     {
         //Original radius describing what values are summed together
         //The algorithm used bellow gradually divides transformations into 2 groups one of which is considered relevant. This division continues until there is either only one value or all transformations have 0 distance to the selected one

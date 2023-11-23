@@ -8,8 +8,8 @@ using System.Windows.Forms.DataVisualization.Charting;
 using Microsoft.Extensions.Configuration;
 using CsvHelper;
 using System.Globalization;
-using System.Security.Cryptography;
 using System.Threading;
+using DataView;
 
 namespace DataView
 {
@@ -20,6 +20,7 @@ namespace DataView
     {
         public static string directoryBigger = @"/Users/pepazetek/Desktop/registration_of_volumetric_data/TestData/BiggerRange/";
         public static string directorySmaller = @"/Users/pepazetek/Desktop/registration_of_volumetric_data/TestData/SmallerRange/";
+        public static string directoryGenerated = @"/Users/pepazetek/Downloads/Transformace/";
 
         //Choose one from the above options
         public static string directory = directoryBigger;
@@ -40,6 +41,10 @@ namespace DataView
             //Paths where the files are located
             string fileNameMacroBiggerRange = directoryBigger + @"ellipsoidMacroBiggerRange.mhd";
             string fileNameMicroBiggerRange = directoryBigger + @"ellipsoidMicroBiggerRange.mhd";
+
+            string fileNameMacroGenerated = directoryGenerated + @"Macrofilemacro.mhd";
+            string fileNameMicroGenerated = directoryGenerated + @"Microfilemicro.mhd";
+
 
             string fileNameMacroSmallerRange = directorySmaller + @"ellipsoidMacroSmallerRange.mhd";
             string fileNameMicroSmallerRange = directorySmaller + @"ellipsoidMicroSmallerRange.mhd";
@@ -154,16 +159,6 @@ namespace DataView
             //Sets Locale to US
             Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
 
-
-            //----------------------------------------TEST OF DISTRIBUTION CLASS----------------------------------------------
-            //VolumetricDataDistribution volumetricDataDistribution = new VolumetricDataDistribution(0.5, 100);
-            //volumetricDataDistribution.AddValue(2);
-            //volumetricDataDistribution.AddValue(4);
-            //volumetricDataDistribution.CreateDistributionArray();
-            //volumetricDataDistribution.GetDistributionPercentage(2);
-            //----------------------------------------END OF TEST----------------------------------------------
-
-
             //----------------------------------------PARAMETERS----------------------------------------------
             int numberOfPointsMicro = 1_000;
             int numberOfPointsMacro = 1_000;
@@ -205,171 +200,20 @@ namespace DataView
             for (int i = 0; i < pointsMacro.Length; i++)
                 featureVectorsMacro[i] = fc.ComputeFeatureVector(iDataMacro, pointsMacro[i]);
 
+            //----------------------------------------SETUP TRANSFORMATION METRICS------------------------------------------------
+            //What object is the result transformation going to be applied on (in this case, micro)
+            ITransformationDistance transformationDistance = new TransformationDistance(iDataMicro);
 
-            //----------------------------------------TEST OF TRANSFORMATION METRICS---------------------------
-
-            Random random = new Random(5);
-
-            const int NUMBER_OF_TESTS = 5;
-
-            Candidate.initSums(iDataMicro.Measures[0] / iDataMicro.XSpacing, iDataMicro.Measures[1] / iDataMicro.YSpacing, iDataMicro.Measures[2] / iDataMicro.ZSpacing);
-
-
-            Console.WriteLine();
-            Console.WriteLine("-------------------------------------------------");
-            Console.WriteLine();
-
-            double difference12 = 0;
-            double difference15 = 0;
-            double difference16 = 0;
-            double difference17 = 0;
-
-            Candidate.initSums(iDataMicro.Measures[0] / iDataMicro.XSpacing, iDataMicro.Measures[1] / iDataMicro.YSpacing, iDataMicro.Measures[2] / iDataMicro.ZSpacing);
-
-            TransformationDistanceFirst transformationDistanceFirst = new TransformationDistanceFirst();
-            TransformationDistanceSecond transformationDistanceSecond = new TransformationDistanceSecond();
-            TransformationDistanceFive transformationDistanceFive = new TransformationDistanceFive(iDataMicro);
-            TransformationDistanceSix transformationDistanceSix = new TransformationDistanceSix(iDataMicro);
-            TransformationDistanceSeven transformationDistanceSeven = new TransformationDistanceSeven(iDataMicro);
-
-            for (int i = 0; i < NUMBER_OF_TESTS; i++)
-            {
-                Matrix<double> rotationMatrix1 = GenerateRandomRotationMatrix(random);
-                Matrix<double> rotationMatrix2 = GenerateRandomRotationMatrix(random);
-
-
-                //Random translation vectors
-                Vector<double> translationVector1 = Vector<double>.Build.DenseOfArray(new double[] { random.NextDouble() * 10, random.NextDouble() * 10, random.NextDouble() * 10 });
-                Vector<double> translationVector2 = Vector<double>.Build.DenseOfArray(new double[] { random.NextDouble() * 10, random.NextDouble() * 10, random.NextDouble() * 10 });
-
-                //Vector<double> translationVector1 = Vector<double>.Build.Dense(3);
-                //Vector<double> translationVector2 = Vector<double>.Build.Dense(3);
-
-                Transform3D transformation1 = new Transform3D(rotationMatrix1, translationVector1);
-                Transform3D transformation2 = new Transform3D(rotationMatrix2, translationVector2);
-
-                double distanceFirstMethod = transformationDistanceFirst.GetTransformationsDistance(transformation1, transformation2, iDataMicro);
-                Console.WriteLine("This is distance calculated by the first method: " + distanceFirstMethod);
-
-                double distanceSecondMethod = transformationDistanceSecond.GetTransformationsDistance(transformation1, transformation2, iDataMicro);
-                Console.WriteLine("This is distance calculated by the second method: " + distanceSecondMethod);
-
-                double distanceFifthMethod = transformationDistanceFive.GetTransformationsDistance(transformation1, transformation2, iDataMicro);
-                Console.WriteLine("This is distance calculated by the fifth method: " + distanceFifthMethod);
-
-                double distanceSixthMethod = transformationDistanceSix.GetTransformationsDistance(transformation1, transformation2, iDataMicro);
-                Console.WriteLine("This is distance calculated by the sixth method: " + distanceSixthMethod);
-
-                double distanceSeventhMethod = transformationDistanceSeven.GetTransformationsDistance(transformation1, transformation2, iDataMicro);
-                Console.WriteLine("This is distance calculated by the seventh method: " + distanceSeventhMethod);
-
-                Candidate candidate1 = new Candidate(transformation1);
-                Candidate candidate2 = new Candidate(transformation2);
-
-                double distanceCandidate = candidate1.DistanceTo(candidate2);
-                Console.WriteLine("This is distance calculated by the candidate method: " + distanceCandidate);
-
-                difference12 += Math.Abs(distanceFirstMethod - distanceSecondMethod);
-                difference15 += Math.Abs(distanceFirstMethod - distanceFifthMethod);
-                difference16 += Math.Abs(distanceFirstMethod - distanceSixthMethod);
-                difference17 += Math.Abs(distanceFirstMethod - distanceSeventhMethod);
-
-
-                Console.WriteLine();
-                Console.WriteLine("-------------------------------------------------");
-                Console.WriteLine();
-
-                //Calculating the ratio to see if the results of "Candidate" method doesn't return results always multiplied by the same factor - it doesn't (factor changes)
-                /*
-                Console.WriteLine("Ratio elemenetary/candidate: " + (distanceFirstMethod / distanceCandidate));
-                Console.WriteLine("Ratio elemenetary/candidate: " + (distanceSecondMethod / distanceCandidate));
-                */
-
-            }
-
-
-            Console.WriteLine("This is the total difference between 1st and 2nd method: " + difference12);
-            Console.WriteLine("This is the total differnece between 1st and 5th method: " + difference15);
-            Console.WriteLine("This is the total differnece between 1st and 6th method: " + difference16);
-            Console.WriteLine("This is the total difference between 1st and 7th method: " + difference17);
-            //----------------------------------------END OF TEST----------------------------------------------
-
-            //Test if some of the points even have the possibilty for matching with the correct point
+            Transform3D.SetTransformationDistance(transformationDistance);
 
             Console.WriteLine("The number of sample points is the same: " + ((pointsMacro.Length == pointsMicro.Length) ? "True" : "No"));
-            
-            int similarPoints = 0;
-            const int toleranceRadius = 1;
-            for(int i = 0; i<pointsMacro.Length; i++)
-            {
-                for (int j = 0; j < pointsMicro.Length; j++)
-                {
-                    if (pointsMacro[i].Distance(pointsMicro[j]) < toleranceRadius)
-                    {
-                       // Console.WriteLine("these points are similar: " )
-                        similarPoints++;
-                        break;
-                    }
-                }
-            }
-
-            Console.WriteLine("Number of similar points: " + similarPoints);
-            Console.WriteLine();
-            
 
             //----------------------------------------MATCHES-------------------------------------------------
             Console.WriteLine("Matching.");
 
-            //temporarily turned off
             Match[] matches = matcher.Match(featureVectorsMicro, featureVectorsMacro, threshold);
 
-            //Forced correct values for matches
-
-            /*
-            Match[] matches = new Match[100];
-            Random rnd = new Random();
-
-            for (int i = 0; i < matches.Length; i++) {
-
-                double randomCoordinate = rnd.NextDouble() * 5;
-
-                FeatureVector fv1 = new FeatureVector(new Point3D(randomCoordinate, randomCoordinate, randomCoordinate), i, i, i, i, i);
-                FeatureVector fv2 = new FeatureVector(new Point3D(randomCoordinate, randomCoordinate, randomCoordinate), i, i, i, i, i);
-
-
-                /*
-                //Adding false matches
-                if ((i%8) != 0)
-                {
-                    fv1 = new FeatureVector(new Point3D(rnd.NextDouble() * iDataMicro.Measures[0], rnd.NextDouble() * iDataMicro.Measures[1], rnd.NextDouble() * iDataMicro.Measures[2]), i, i, i, i, i);
-                    fv2 = new FeatureVector(new Point3D(rnd.NextDouble() * iDataMacro.Measures[0], rnd.NextDouble() * iDataMacro.Measures[1], rnd.NextDouble() * iDataMacro.Measures[2]), i, i, i, i, i);
-                }
-                
-
-                matches[i] = new Match(fv1, fv2, 100);
-            }
-            
-
-            Console.WriteLine("Data are loaded correctly: " + CheckDataIntegrity(iDataMicro, iDataMacro));
-            
-            */
             Console.WriteLine("Matches are " + CalculateCorrectMatches(matches, 3) + " % correct");
-
-
-            //Filtering of matches outside of bounds
-
-            /*
-            List<Match> listOfMatches = new List<Match>();
-            foreach(Match currentMatch in matches) {
-                if (matchInBounds(iDataMicro, iDataMacro, currentMatch.F1.Point) && matchInBounds(iDataMicro, iDataMacro, currentMatch.F2.Point))
-                    listOfMatches.Add(currentMatch);
-            }
-
-            //matches = new Match[listOfMatches.Count];
-            for(int i = 0; i<listOfMatches.Count; i++) {
-                matches[i] = listOfMatches[i];
-            }
-            */
 
             //------------------------------------GET TRANSFORMATION -----------------------------------------
 
@@ -378,70 +222,9 @@ namespace DataView
 
             List<Transform3D> transformations = new List<Transform3D>();
 
-            
-
             for (int i = 0; i < matches.Length; i++)
             {
-
-                /*
-                //CODE BELLOW IS FOR TESTING PURPOSES ONLY (Tests whether the density search works)
-
-                
-                Matrix<double> rotationMatrix = Matrix<double>.Build.Dense(3, 3);
-                Vector<double> translationVector = Vector<double>.Build.Dense(3);
-
-                //Try generating a bad transformation
-                if(i%7 != 0)
-                {
-                    for(int j = 0; j<3; j++)
-                    {
-                        for (int k = 0; k < 3; k++)
-                        {
-                            rotationMatrix[j, k] = random.Next(1000);
-                        }
-                    }
-
-                    translationVector[0] = random.Next(100);
-                    translationVector[1] = random.Next(100);
-                    translationVector[2] = random.Next(100);
-                }
-
-                else
-                {
-                    rotationMatrix[0, 0] = 2 + random.Next(-1, 2) * random.NextDouble();
-                    rotationMatrix[1, 0] = 3 + random.Next(-1, 2) * random.NextDouble();
-                    rotationMatrix[2, 0] = 8 + random.Next(-1, 2) * random.NextDouble();
-
-                    rotationMatrix[0, 1] = 3 + random.Next(-1, 2) * random.NextDouble();
-                    rotationMatrix[1, 1] = 6 + random.Next(-1, 2) * random.NextDouble();
-                    rotationMatrix[2, 1] = 9 + random.Next(-1, 2) * random.NextDouble();
-
-                    rotationMatrix[0, 2] = 4 + random.Next(-1, 2) * random.NextDouble();
-                    rotationMatrix[1, 2] = 7 + random.Next(-1, 2) * random.NextDouble();
-                    rotationMatrix[2, 2] = 3 + random.Next(-1, 2) * random.NextDouble();
-
-                    translationVector[0] = 1 + random.Next(-1, 2) * random.NextDouble();
-                    translationVector[1] = 2 + random.Next(-1, 2) * random.NextDouble();
-                    translationVector[2] = 3 + random.Next(-1, 2) * random.NextDouble();
-
-
-                    if (i%3 == 0)
-                    {
-                        translationVector[0] = random.Next();
-                        translationVector[1] = random.Next();
-                        translationVector[2] = random.Next();
-                    }
-
-                }
-
-                transformations.Add(new Transform3D(rotationMatrix, translationVector));
-                */
-
-                //END OF A TEST
-
                 //Calculate transformation and if the transformation doesnt exist, it will skip it and print out the error message
-
-                
                 try
                 {
                     transformations.Add(transformer.GetTransformation(matches[i], iDataMicro, iDataMacro));
@@ -451,22 +234,33 @@ namespace DataView
                     Console.WriteLine(e.Message);
                     continue;
                 }
-                
-                
             }
 
             Candidate.initSums(iDataMicro.Measures[0] / iDataMicro.XSpacing, iDataMicro.Measures[1] / iDataMicro.YSpacing, iDataMicro.Measures[2] / iDataMicro.ZSpacing);
 
+            
+
+            //Density density = new Density();
+
             TestDensityAccurate testDensity = new TestDensityAccurate();
+            Transform3D tr = testDensity.Find(transformations.ToArray());
+
             //Density testDensity = new Density();
-            Transform3D t = testDensity.Find(transformations.ToArray());
+            //Transform3D t = testDensity.Find(transformations.ToArray());
+
+
+            /*
+            NewDensity newDensity = new NewDensity();
+            NewDensity.radius = Math.Sqrt(Math.Pow((iDataMicro.Measures[0] / 2.0), 2) + Math.Pow((iDataMicro.Measures[1] / 2.0), 2) + Math.Pow((iDataMicro.Measures[2] / 2.0), 2));
+            Transform3D t = newDensity.Find(transformations.ToArray());
+            */
 
             /*
             Density d = new Density(); // finder, we need an instance for certain complicated reason
             Transform3D solution = d.Find(transformations.ToArray());
             */
             Console.WriteLine("Solution found.");
-            Console.WriteLine(t);
+            Console.WriteLine(tr);
             
             
             //Cut(solution.RotationMatrix, solution.TranslationVector);
@@ -527,7 +321,6 @@ namespace DataView
             return returnValue;
         }
 
-
         public static int CalculateSameHeightMatches(Match[] matches, double threshold)
         {
             int correctMatches = 0;
@@ -552,7 +345,9 @@ namespace DataView
 
             foreach (Match currentMatch in matches)
             {
-                if (currentMatch.F1.Point.Distance(currentMatch.F2.Point) <= threshold)
+                Point3D microPoint = new Point3D(currentMatch.F1.Point.X, currentMatch.F1.Point.Y, currentMatch.F1.Point.Z + (iDataMacro.Measures[2]/2.0));
+
+                if (microPoint.Distance(currentMatch.F2.Point) <= threshold)
                     correctMatches++;
                 else
                 {
@@ -584,7 +379,6 @@ namespace DataView
 
             return true;
         }
-
 
         public static TransData SettingFakeData(string macro, int[] translation, double phi, double[] axis)
         {

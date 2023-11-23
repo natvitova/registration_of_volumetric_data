@@ -19,7 +19,7 @@ namespace DataView
             
             PointSurrounding pointSurrounding = GetPointSurrounding(d, p, COUNT, RADIUS, seed);
 
-
+            //use low and high concentration vector's magnitudes - replacement for the last value (distribution value avg)
             return new FeatureVector(p, pointSurrounding.HighConcentrationValue, pointSurrounding.LowConcentrationValue, pointSurrounding.AngleXY, pointSurrounding.AngleXZ, pointSurrounding.DistributionValueAvg);
         }
 
@@ -101,11 +101,13 @@ namespace DataView
             double diffYLow = wAvgLow.Y - point.Y;
             double diffZLow = wAvgLow.Z - point.Z;
 
-
+            
             Vector<double> highConcentrationVector = Vector<double>.Build.Dense(3);
             highConcentrationVector[0] = diffXHigh;
             highConcentrationVector[1] = diffYHigh;
             highConcentrationVector[2] = diffZHigh;
+
+            double highConcentrationVectorLength = highConcentrationVector.L2Norm();
 
             Vector<double> lowConcentrationVector = Vector<double>.Build.Dense(3);
             lowConcentrationVector[0] = diffXLow;
@@ -146,6 +148,9 @@ namespace DataView
             secondVector= Vector<double>.Build.DenseOfArray(new double[] { lowConcentrationVector[0], lowConcentrationVector[2] });
             double angleXZ = Math.Acos(DotProduct(firstVector, secondVector) / (firstVector.L2Norm() * secondVector.L2Norm()));
 
+
+
+            return new PointSurrounding(highConcentrationVectorLength, highConcentrationValue, lowConcentrationValue, angleXY, angleXZ);
             return new PointSurrounding(distributionValueAvg/values.Count, highConcentrationValue, lowConcentrationValue, angleXY, angleXZ);
         }
 

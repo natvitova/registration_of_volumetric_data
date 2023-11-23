@@ -5,7 +5,7 @@ namespace DataView
 {
     //TODO: This class is ineffective, optimizations needed
 
-    public class TestDensityMoreComparisons
+    class TestDensityMoreComparisons
     {
         public Transform3D Find(Transform3D[] transforms)
         {
@@ -155,7 +155,7 @@ namespace DataView
     /// <summary>
     /// Represents the similarity of transformations
     /// </summary>
-    public class SimilarTransformation : IComparable<SimilarTransformation>
+    class SimilarTransformation : IComparable<SimilarTransformation>
     {
         private static uint maxTotalDistance = uint.MaxValue;
 

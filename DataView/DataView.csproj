@@ -142,7 +142,6 @@
     <Compile Include="DataView\TestDataBuilder.cs" />
     <Compile Include="DataView\TestFeatureComputer.cs" />
     <Compile Include="DataView\TestRotationComputer.cs" />
-    <Compile Include="DataView\TestUniformRotationComputerPCA.cs" />
     <Compile Include="DataView\TransData.cs" />
     <Compile Include="DataView\Transformer3D.cs" />
     <Compile Include="DataView\VolumetricData.cs" />
@@ -159,12 +158,11 @@
     <Compile Include="DataView\PointSurrounding.cs" />
     <Compile Include="DataView\VolumetricDataDistribution.cs" />
     <Compile Include="DataView\TestRotationComputerPCA.cs" />
-    <Compile Include="DataView\TransformationDistanceMetrics\TransformationDistanceFirst.cs" />
     <Compile Include="DataView\TransformationDistanceMetrics\ITransformationDistance.cs" />
-    <Compile Include="DataView\TransformationDistanceMetrics\TransformationDistanceSecond.cs" />
-    <Compile Include="DataView\TransformationDistanceMetrics\TransformationDistanceFive.cs" />
-    <Compile Include="DataView\TransformationDistanceMetrics\TransformationDistanceSix.cs" />
-    <Compile Include="DataView\TransformationDistanceMetrics\TransformationDistanceSeven.cs" />
+    <Compile Include="DataView\TransformationDistanceMetrics\TransformationDistance.cs" />
+    <Compile Include="TransformSelect\NewDensity.cs" />
+    <Compile Include="TransformSelect\NewDistanceTree.cs" />
+    <Compile Include="DataView\TestUniformRotationComputerPCA.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

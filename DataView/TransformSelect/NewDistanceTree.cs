@@ -7,17 +7,19 @@ using Framework;
 
 namespace DataView
 {
-    class DTNode
+    class NewDTNode
     {
         int node;
-        DTNode close;
-        DTNode far;
+        NewDTNode close;
+        NewDTNode far;
         double threshold;
         List<int> items;
-        bool leaf;
-        public static Candidate[] cands;        
 
-        public DTNode(int n, List<int> children, int depth)
+        bool leaf;
+
+        public static Transform3D[] candidates;
+
+        public NewDTNode(int n, List<int> children, int depth)
         {
             if (children.Count<5)
             {
@@ -43,8 +45,8 @@ namespace DataView
 
                 foreach(int i in children)
                 {
-                    double distance = cands[node].SqrtDistanceTo(cands[i]);
-                    if (cands[node].SqrtDistanceTo(cands[i]) >= threshold)
+                    double distance = candidates[node].SqrtDistanceTo(candidates[i]);
+                    if (candidates[node].SqrtDistanceTo(candidates[i]) >= threshold)
                         f.Add(i);
                     else
                         c.Add(i);
@@ -54,14 +56,14 @@ namespace DataView
                 {
                     int cn = c[c.Count - 1];
                     c.RemoveAt(c.Count - 1);
-                    this.close = new DTNode(cn, c, depth+1);
+                    this.close = new NewDTNode(cn, c, depth+1);
                 }
 
                 if(f.Count != 0)
                 {
                     int fn = f[f.Count - 1];
                     f.RemoveAt(f.Count - 1);
-                    this.far = new DTNode(fn, f, depth + 1);
+                    this.far = new NewDTNode(fn, f, depth + 1);
                 }
             }
         }
@@ -99,7 +101,7 @@ namespace DataView
         {            
             double[] distances = new double[children.Count];
             for (int i = 0; i < distances.Length; i++)
-                distances[i] = cands[node].SqrtDistanceTo(cands[children[i]]);
+                distances[i] = candidates[node].SqrtDistanceTo(candidates[children[i]]);
             quickSelect(distances, 0, distances.Length-1, distances.Length / 2);
             return distances[distances.Length / 2];
         }
@@ -139,36 +141,39 @@ namespace DataView
             return l;
         }
 
-        internal void findAllCloserThan(Candidate query, double dist, List<int> result)
+        internal void findAllCloserThan(Transform3D query, double dist, List<int> result)
         {
+            double d;
+
             if (leaf)
             {
                 foreach(int i in items)
                 {
-                    double d = query.SqrtDistanceTo(cands[i]);
+                    d = query.SqrtDistanceTo(candidates[i]);
                     if (d < dist)
                         result.Add(i);
                 }
+                return;
             }
-            else
-            {
-                double d = query.SqrtDistanceTo(cands[node]);
-                if (d < dist)
-                    result.Add(node);
-                if (d <= (threshold + dist))
-                    if (close!= null)
-                        close.findAllCloserThan(query, dist, result);
-                if (d >= (threshold - dist))
-                    far.findAllCloserThan(query, dist, result);
-            }
+
+            d = query.SqrtDistanceTo(candidates[node]);
+
+            if (d < dist)
+                result.Add(node);
+
+            if (d <= (threshold + dist) && close != null)
+                close.findAllCloserThan(query, dist, result);
+
+            if (d >= (threshold - dist))
+                far.findAllCloserThan(query, dist, result);
         }
 
-        public DTNode getClose()
+        public NewDTNode getClose()
         {
             return close;
         }
 
-        public DTNode getFar()
+        public NewDTNode getFar()
         {
             return far;
         }
@@ -178,67 +183,29 @@ namespace DataView
         }
     }
 
-    class DistanceTree
+    class NewDistanceTree
     {
-        DTNode root;
-        Candidate[] cands;
-        public DistanceTree(Candidate[] candidates)
-        {
-            cands = candidates;
-            DTNode.cands = candidates;
-            List<int> children = new List<int>();
+        NewDTNode root;
 
+
+
+        public NewDistanceTree(Transform3D[] candidates)
+        {
+            NewDTNode.candidates = candidates;
+
+            List<int> children = new List<int>();
             for (int i = 1; i < candidates.Length; i++)
                 children.Add(i);
 
-            root = new DTNode(0, children, 0);
+            root = new NewDTNode(0, children, 0);
         }
 
-        public List<int> findAllCloserThan(Candidate query, double dist)
+
+        public List<int> findAllCloserThan(Transform3D query, double dist)
         {
             List<int> result = new List<int>();
             root.findAllCloserThan(query, dist, result);
             return result;
-        }
-
-        List<int> findAllCloserThanBF(Candidate query, double dist)
-        {
-            List<int> result = new List<int>();
-
-            for (int i = 0; i < cands.Length; i++)
-            {
-                if (query.SqrtDistanceTo(cands[i]) < dist)
-                    result.Add(i);
-            }
-
-            return result;
-        }
-
-        public void selfTest()
-        {
-            Random rnd = new Random();
-            double m1 = 0;
-            double m2 = 0;
-            for (int i = 0;i<10000;i++)
-            {
-                int query = rnd.Next(cands.Length);
-                double dist = rnd.NextDouble()*10;
-                DateTime s = DateTime.Now;
-                var r1 = findAllCloserThan(cands[query], dist);
-                m1 += (DateTime.Now - s).TotalMilliseconds;
-                s = DateTime.Now;
-                var r2 = findAllCloserThanBF(cands[query], dist);
-                m2 += (DateTime.Now - s).TotalMilliseconds;
-                if (r1.Count != r2.Count)
-                    throw new Exception("Different number of results");
-                foreach (int r in r1)
-                    if (!r2.Contains(r))
-                        throw new Exception("Result mismatch");
-                foreach (int r in r2)
-                    if (!r1.Contains(r))
-                        throw new Exception("Result mismatch");
-            }
-            Console.WriteLine("m1: {0}, m2:{1}", m1, m2);
         }
     }
 }

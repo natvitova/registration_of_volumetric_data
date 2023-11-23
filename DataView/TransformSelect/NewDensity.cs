@@ -1,44 +1,34 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Framework;
 
 
 namespace DataView
 {
-    class Density
+    class NewDensity
     {
         // configuration
         public static double radius = Double.NaN; // this has to be set for particular object roughly as average distance to centroid
         public static double spread = 25;
 
-        DistanceTree dt;
+        NewDistanceTree dt;
 
         public Transform3D Find(Transform3D[] transforms)
         {
-            
-            Candidate[] candidate = new Candidate[transforms.Length];
-
-            for (int i = 0; i < candidate.Length; i++)
-                candidate[i] = new Candidate(transforms[i]);
-
             int maxDensityIndex = -1;
 
-            dt = new DistanceTree(candidate);
+            dt = new NewDistanceTree(transforms);
 
             double maxDensity = 0;
             maxDensityIndex = -1;
 
             double t = -radius * Math.Log(0.01) / spread;
 
-            object[] teInput = new object[candidate.Length / 100+1];
+            object[] teInput = new object[transforms.Length / 100+1];
 
             for (int i = 0; i < teInput.Length; i++)
                 teInput[i] = i * 100;
 
-            ThreadedExecution<object, double[]> te = new ThreadedExecution<object, double[]>(teInput, new ThreadedExecution<object, double[]>.ExecBody(this.density), -1, new object[] { candidate, t});
+            ThreadedExecution<object, double[]> te = new ThreadedExecution<object, double[]>(teInput, new ThreadedExecution<object, double[]>.ExecBody(this.density), -1, new object[] { transforms, t});
 
             double[][] density = te.Execute();
 
@@ -51,14 +41,14 @@ namespace DataView
                         maxDensityIndex = i * 100 + j;
                     }
             }
-            return candidate[maxDensityIndex].toTransform3D();
+            return transforms[maxDensityIndex];
         }
 
         private double[] density(object input, int threadId, object[] parameters)
         {
             double[] result = new double[100];
 
-            Candidate[] candidate = (Candidate[])parameters[0];
+            Transform3D[] candidate = (Transform3D[])parameters[0];
             double t = (double)parameters[1];
 
             for (int i = 0; i < 100; i++)
