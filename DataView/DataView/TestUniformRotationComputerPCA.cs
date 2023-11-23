@@ -40,10 +40,11 @@ namespace DataView
             }
             catch (Exception e) { throw e; }
 
+
             Console.WriteLine(basisMacro);
             Console.WriteLine(basisMicro);
-            //Matrix<double> resultMatrix = calculationRotationMatrix(basisMicro, basisMacro);
-            Matrix<double> resultMatrix = calculateTransitionMatrix(basisMicro, basisMacro);
+            Matrix<double> resultMatrix = calculationRotationMatrix(basisMicro, basisMacro);
+            //Matrix<double> resultMatrix = calculateTransitionMatrix(basisMicro, basisMacro);
             
             if (pointMacro.Distance(pointMicro) <= 1)
             {
@@ -117,22 +118,6 @@ namespace DataView
             double averageRotationX = (eulerAnglesHigh.RotationX + eulerAnglesLow.RotationX + eulerAnglesCross.RotationX)/3;
             double averageRotationY = (eulerAnglesHigh.RotationY + eulerAnglesLow.RotationY + eulerAnglesCross.RotationY) / 3;
             double averageRotationZ = (eulerAnglesHigh.RotationZ + eulerAnglesLow.RotationZ + eulerAnglesCross.RotationZ) / 3;
-
-
-            /*
-            Vector<double> rotatedMicro = eulerAnglesHigh.Multiply(basisMicro.Column(0));
-
-            Console.WriteLine("Micro vector: " + basisMicro.Column(0));
-            Console.WriteLine("Macro vector: " + basisMacro.Column(0));
-
-            Console.WriteLine("Rotated micro: " + rotatedMicro);
-            Console.WriteLine("Rotation matrix: " + eulerAnglesHigh);
-            */
-
-            /*
-            Console.WriteLine("Macro basis with applied transformation: " + (rotationMatrixX * rotationMatrixY * rotationMatrixZ).Multiply(basisMacro.Column(0)));
-            Console.WriteLine("Micro basis with applied transformation: " + (rotationMatrixX * rotationMatrixY * rotationMatrixZ).Multiply(basisMicro.Column(0)));
-            */
 
             //check if the rotation matrix does transform elements  of micro basis to macro
             //if not, transpose it ( or inverse it, the result should be the same) and try again
