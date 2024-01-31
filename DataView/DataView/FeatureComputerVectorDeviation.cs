@@ -1,22 +1,28 @@
 ﻿using System;
 using MathNet.Numerics.LinearAlgebra;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace DataView
 {
     public class FeatureComputerVectorDeviation : IFeatureComputer
-	{
+    {
+        private QuickSelectClass testClass;
 
         FeatureVector IFeatureComputer.ComputeFeatureVector(IData d, Point3D p)
         {
+
+            //return new FeatureVector(p, p.X, p.Y, p.Z, 0, 0);
+
             const int COUNT = 10_000;
             const int RADIUS = 5;
 
             Random random = new Random();
+            testClass = new QuickSelectClass();
             int seed = random.Next();
 
             seed = 20; //Currently set to 20 for test purposes
-            
+
             PointSurrounding pointSurrounding = GetPointSurrounding(d, p, COUNT, RADIUS, seed);
 
             //use low and high concentration vector's magnitudes - replacement for the last value (distribution value avg)
@@ -27,110 +33,116 @@ namespace DataView
         {
             List<Point3D> pointsInSphere = GetSphere(point, radius, count, seed);
 
-            Matrix<double> result = Matrix<double>.Build.Dense(3, 3);
+            List<double> pointValues = new List<double>();
+            List<Point3D> lowPoints = new List<Point3D>();
+            List<Point3D> highPoints = new List<Point3D>();
 
-            //double[] values = new double[count];
-            List<double> values = new List<double>();
+            for (int i = 0; i < pointsInSphere.Count; i++)
+                pointValues.Add(d.GetValue(pointsInSphere[i]));
 
-            double min = double.MaxValue;
-            double max = double.MinValue;
+            double maxLow = testClass.QuickSelect<double>(pointValues, pointValues.Count / 2);
 
-            Point3D wAvgHigh = new Point3D(0, 0, 0);
-            Point3D wAvgLow = new Point3D(0, 0, 0);
+            double minLow = double.MaxValue;
+            double minHigh = double.MaxValue;
+            double maxHigh = double.MinValue;
 
-            double wsHigh = 0;
-            double wsLow = 0;
-
-
-            for (int i = 0; i < count; i++)
+            for (int i = 0; i<pointValues.Count; i++)
             {
-                try
+                if (pointValues[i] <= maxLow)
                 {
-                    values.Add(d.GetValue(pointsInSphere[i]));
-
-                    min = Math.Min(min, values[values.Count-1]);
-                    max = Math.Max(max, values[values.Count-1]);
-                }
-                catch
-                {
-                    //Point is outside of bounds for the currently sampled object
+                    minLow = Math.Min(minLow, pointValues[i]);
+                    lowPoints.Add(pointsInSphere[i]);
                     continue;
                 }
-            }
 
-            //Values min and max are the same
-            if (Math.Abs(min - max) < Double.Epsilon)
-                throw new ArgumentException("Basis cannot be calculated because all sampled values in the point surrounding are the same.");
+                minHigh = Math.Min(minHigh, pointValues[i]);
+                maxHigh = Math.Max(maxHigh, pointValues[i]);
+                highPoints.Add(pointsInSphere[i]);
+            }
 
             double distributionValueAvg = 0;
+            Point3D wAvgPoint = new Point3D();
+            double weightSum = 0;
 
-            for (int i = 0; i < values.Count; i++)
+            //Values min and max are the same
+            if (Math.Abs(minHigh - maxHigh) < Double.Epsilon || Math.Abs(minLow - maxLow) < Double.Epsilon)
+                throw new ArgumentException("Basis cannot be calculated because all sampled values in the point surrounding are the same.");
+
+            Vector<double> highConcentrationVector;
+            Vector<double> lowConcentrationVector;
+            double highConcentrationValue;
+            double lowConcentrationValue;
+
+            //Min values
+            for (int i = 0; i<lowPoints.Count; i++)
             {
-                //Add value distribution
-                distributionValueAvg += d.GetValueDistribution(values[i]);
+                double currentValue = d.GetValue(lowPoints[i]);
+                
+                distributionValueAvg += d.GetValueDistribution(currentValue); //Add value distribution
 
-                double wHigh = (values[i] - min) / (max - min); //percentage from the overall range
-                double wLow = 1 - wHigh;
+                double pointWeight = (currentValue - minHigh) / (maxHigh - minHigh); //percentage from the overall range
+                weightSum += pointWeight;
 
-                wsLow += wLow;
-                wsHigh += wHigh;
-
-                wAvgHigh.X += pointsInSphere[i].X * wHigh;
-                wAvgHigh.Y += pointsInSphere[i].Y * wHigh;
-                wAvgHigh.Z += pointsInSphere[i].Z * wHigh;
-
-                wAvgLow.X += pointsInSphere[i].X * wLow;
-                wAvgLow.Y += pointsInSphere[i].Y * wLow;
-                wAvgLow.Z += pointsInSphere[i].Z * wLow;
+                wAvgPoint.X += pointsInSphere[i].X * pointWeight;
+                wAvgPoint.Y += pointsInSphere[i].Y * pointWeight;
+                wAvgPoint.Z += pointsInSphere[i].Z * pointWeight;
             }
 
+            wAvgPoint.X /= weightSum;
+            wAvgPoint.Y /= weightSum;
+            wAvgPoint.Z /= weightSum;
 
-            wAvgHigh.X /= wsHigh;
-            wAvgHigh.Y /= wsHigh;
-            wAvgHigh.Z /= wsHigh;
-
-            wAvgLow.X /= wsLow;
-            wAvgLow.Y /= wsLow;
-            wAvgLow.Z /= wsLow;
-
-            double diffXHigh = wAvgHigh.X - point.X;
-            double diffYHigh = wAvgHigh.Y - point.Y;
-            double diffZHigh = wAvgHigh.Z - point.Z;
-
-            double diffXLow = wAvgLow.X - point.X;
-            double diffYLow = wAvgLow.Y - point.Y;
-            double diffZLow = wAvgLow.Z - point.Z;
-
-            
-            Vector<double> highConcentrationVector = Vector<double>.Build.Dense(3);
-            highConcentrationVector[0] = diffXHigh;
-            highConcentrationVector[1] = diffYHigh;
-            highConcentrationVector[2] = diffZHigh;
-
-            double highConcentrationVectorLength = highConcentrationVector.L2Norm();
-
-            Vector<double> lowConcentrationVector = Vector<double>.Build.Dense(3);
-            lowConcentrationVector[0] = diffXLow;
-            lowConcentrationVector[1] = diffYLow;
-            lowConcentrationVector[2] = diffZLow;
+            lowConcentrationVector = Vector<double>.Build.DenseOfArray(new double[] {
+                wAvgPoint.X - point.X,
+                wAvgPoint.Y - point.Y,
+                wAvgPoint.Z - point.Z
+            });
 
 
-            highConcentrationVector = NormalizeVector(highConcentrationVector);
-            lowConcentrationVector = NormalizeVector(lowConcentrationVector);
-
-            double highConcentrationValue = 0;
-            double lowConcentrationValue = 0;
-
-            try
-            {
-                highConcentrationValue = d.GetValue(wAvgHigh.X, wAvgHigh.Y, wAvgHigh.Z);
-                lowConcentrationValue = d.GetValue(wAvgLow.X, wAvgLow.Y, wAvgLow.Z);
-                //lowConcentrationValue = d.GetValue(wAvgLow);
-            }
+            try { lowConcentrationValue = d.GetValue(wAvgPoint); }
             catch
             {
-                throw new ApplicationException("The average for low and high concentration vector has been calculated, but both of them are outside of bounds. This indicates theres a bug in the FeatureComputerVectorDeviation class that needs to be resolved.");
+                throw new ApplicationException("The average for low concentration vector has been calculated, but it is outside of bounds. This indicates theres a bug in the FeatureComputerVectorDeviation class that needs to be resolved.");
             }
+
+            weightSum = 0;
+            wAvgPoint = new Point3D();
+
+            //Max values
+            for (int i = 0; i < highPoints.Count; i++)
+            {
+                double currentValue = d.GetValue(highPoints[i]);
+
+                distributionValueAvg += d.GetValueDistribution(currentValue); //Add value distribution
+
+                double pointWeight = (currentValue - minHigh) / (maxHigh - minHigh); //percentage from the overall range
+                weightSum += pointWeight;
+
+                wAvgPoint.X += pointsInSphere[i].X * pointWeight;
+                wAvgPoint.Y += pointsInSphere[i].Y * pointWeight;
+                wAvgPoint.Z += pointsInSphere[i].Z * pointWeight;
+            }
+
+            wAvgPoint.X /= weightSum;
+            wAvgPoint.Y /= weightSum;
+            wAvgPoint.Z /= weightSum;
+
+            highConcentrationVector = Vector<double>.Build.DenseOfArray(new double[] {
+                wAvgPoint.X - point.X,
+                wAvgPoint.Y - point.Y,
+                wAvgPoint.Z - point.Z
+            });
+
+            try { highConcentrationValue = d.GetValue(wAvgPoint); }
+            catch
+            {
+                throw new ApplicationException("The average for high concentration vector has been calculated, but it is outside of bounds. This indicates theres a bug in the FeatureComputerVectorDeviation class that needs to be resolved.");
+            }
+
+
+            double highConcentrationVectorLength = highConcentrationVector.L2Norm();
+            highConcentrationVector = NormalizeVector(highConcentrationVector);
+            lowConcentrationVector = NormalizeVector(lowConcentrationVector);
 
             //Normalize the highConcentration and lowConcentration values - percentage range (normalizing based on the distribution should be considered)
             highConcentrationValue = d.GetValueDistribution(highConcentrationValue);
@@ -141,17 +153,29 @@ namespace DataView
             //Calculation of the angle XY between concentration vectors
             Vector<double> firstVector = Vector<double>.Build.DenseOfArray(new double[] { highConcentrationVector[0], highConcentrationVector[1] });
             Vector<double> secondVector = Vector<double>.Build.DenseOfArray(new double[] { lowConcentrationVector[0], lowConcentrationVector[1] });
-            double angleXY = Math.Acos(DotProduct(firstVector, secondVector) / (firstVector.L2Norm() * secondVector.L2Norm()));
+            double angleXY = calculateAngle(firstVector, secondVector);
 
             //Calculation of the angle XZ between concentration vectors
             firstVector = Vector<double>.Build.DenseOfArray(new double[] { highConcentrationVector[0], highConcentrationVector[2] });
-            secondVector= Vector<double>.Build.DenseOfArray(new double[] { lowConcentrationVector[0], lowConcentrationVector[2] });
-            double angleXZ = Math.Acos(DotProduct(firstVector, secondVector) / (firstVector.L2Norm() * secondVector.L2Norm()));
+            secondVector = Vector<double>.Build.DenseOfArray(new double[] { lowConcentrationVector[0], lowConcentrationVector[2] });
+            double angleXZ = calculateAngle(firstVector, secondVector);
+
+            firstVector = Vector<double>.Build.DenseOfArray(new double[] { highConcentrationVector[1], highConcentrationVector[2] });
+            secondVector = Vector<double>.Build.DenseOfArray(new double[] { lowConcentrationVector[1], lowConcentrationVector[2] });
+            double angleYZ = calculateAngle(firstVector, secondVector);
+
+            //Console.WriteLine("These are the angles: " + angleXY + "; " + angleXZ);
 
 
+            //return new PointSurrounding(highConcentrationVectorLength, highConcentrationValue, lowConcentrationValue, angleXY, angleXZ);
+            return new PointSurrounding(highConcentrationValue, lowConcentrationValue, angleXY, angleXZ, angleYZ);
+            //return new PointSurrounding(distributionValueAvg / sortedPointsArray.Length, highConcentrationValue, lowConcentrationValue, angleXY, angleXZ);
+            //return new PointSurrounding(distributionValueAvg / values.Count, highConcentrationValue, lowConcentrationValue, angleXY, angleXZ);
+        }
 
-            return new PointSurrounding(highConcentrationVectorLength, highConcentrationValue, lowConcentrationValue, angleXY, angleXZ);
-            return new PointSurrounding(distributionValueAvg/values.Count, highConcentrationValue, lowConcentrationValue, angleXY, angleXZ);
+        private static double calculateAngle(Vector<double> firstVector, Vector<double> secondVector)
+        {
+            return Math.Acos(DotProduct(firstVector, secondVector) / (firstVector.L2Norm() * secondVector.L2Norm()));
         }
 
         /// <summary>
@@ -233,7 +257,7 @@ namespace DataView
             Random random = new Random(seed);
 
             List<Point3D> listOfPoints = new List<Point3D>();
-            while(listOfPoints.Count < count)
+            while (listOfPoints.Count < count)
             {
                 double radius = GetRandomDouble(minRadius, maxRadius, random);
                 double angleTheta = random.NextDouble() * 2 * Math.PI;
@@ -242,10 +266,10 @@ namespace DataView
                 double y = radius * Math.Sin(angleTheta) * Math.Sin(anglePhi);
                 double z = radius * Math.Cos(angleTheta);
 
-                
+
                 if (x < 0 || y < 0 || z < 0)
                     continue;
-                
+
                 listOfPoints.Add(new Point3D(x, y, z));
             }
 
@@ -261,6 +285,24 @@ namespace DataView
         private double GetRandomDouble(double minValue, double maxValue, Random random)
         {
             return random.NextDouble() * (maxValue - minValue) + minValue;
+        }
+
+        private double QuickSelect()
+        {
+            /*
+             * function quickSelect (list, left, right, k)
+  if left = right
+    return list [left]
+  Select a pivotIndex between left and right
+  pivotIndex := partition (list, left, right, pivotIndex)
+  if k = pivotIndex
+    return list [k]
+  else if k < pivotIndex
+    right := pivotIndex - 1
+  else
+    left := pivotIndex + 1
+             */
+            return 0;
         }
 
         /// <summary>
@@ -336,6 +378,5 @@ namespace DataView
         }
     }
 
-    
-}
 
+}

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using MathNet.Numerics.LinearAlgebra;
-using MathNet.Numerics;
 
 namespace DataView
 {
@@ -40,25 +39,7 @@ namespace DataView
             }
             catch (Exception e) { throw e; }
 
-
-            Console.WriteLine(basisMacro);
-            Console.WriteLine(basisMicro);
             Matrix<double> resultMatrix = calculationRotationMatrix(basisMicro, basisMacro);
-            //Matrix<double> resultMatrix = calculateTransitionMatrix(basisMicro, basisMacro);
-            
-            if (pointMacro.Distance(pointMicro) <= 1)
-            {
-                Console.WriteLine("These points are relatively close: ");
-                Console.WriteLine(pointMicro);
-                Console.WriteLine(pointMacro);
-
-                Console.WriteLine("This is the basis for pointMicro: " + basisMicro);
-                Console.WriteLine("This is the basis for pointMacro: " + basisMacro);
-
-
-                Console.WriteLine(resultMatrix);
-            }
-            
 
             return resultMatrix;
         }
@@ -111,6 +92,8 @@ namespace DataView
         /// <returns>Returns rotation matrix to align micro to macro basis</returns>
         private static Matrix<double> calculationRotationMatrix(Matrix<double> basisMicro, Matrix<double> basisMacro)
         {
+            return calculateTransitionMatrix(basisMicro, basisMacro);
+
             EulerAngles eulerAnglesHigh = CalculateRotationMatrixForVectors(basisMicro.Column(0), basisMacro.Column(0));
             EulerAngles eulerAnglesLow = CalculateRotationMatrixForVectors(basisMicro.Column(1), basisMacro.Column(1));
             EulerAngles eulerAnglesCross = CalculateRotationMatrixForVectors(basisMicro.Column(2), basisMacro.Column(2));
@@ -383,23 +366,21 @@ namespace DataView
         // od pana Váši
         private static Matrix<double> GetPointBasis(IData d, Point3D point, double spacing, double radius)
         {
-            List<Point3D> pointsInSphere = GetSphere(point, radius, spacing);
+            List<Point3D> pointsInSphere = GetSphere(point, radius, spacing, d);
 
             List<double> values = new List<double>();
             double min = double.MaxValue;
             double max = double.MinValue;
 
-            Point3D wAvgHigh = new Point3D(0, 0, 0);
-            Point3D wAvgLow = new Point3D(0, 0, 0);
-
-            double wsHigh = 0;
-            double wsLow = 0;
-
+            Vector<double> meanVector = Vector<double>.Build.Dense(3);
 
             for (int i = 0; i < pointsInSphere.Count; i++)
             {
-                try { values.Add(d.GetValue(pointsInSphere[i])); }
-                catch { continue; } //The value is not within the bounds of the image
+                values.Add(d.GetValue(pointsInSphere[i])); //All values are within bounds, no need to test it
+                meanVector[0] += pointsInSphere[i].X / values.Count;
+                meanVector[1] += pointsInSphere[i].Y / values.Count;
+                meanVector[2] += pointsInSphere[i].Z / values.Count;
+
                 min = Math.Min(min, values[values.Count - 1]);
                 max = Math.Max(max, values[values.Count - 1]);
             }
@@ -408,81 +389,34 @@ namespace DataView
             if (Math.Abs(min - max) < Double.Epsilon)
                 throw new ArgumentException("Basis cannot be calculated because all sampled values in the point surrounding are the same.");
 
+            Matrix<double> covarianceMatrix = Matrix<double>.Build.Dense(3, 3);
+            double weightSum = 0;
             for (int i = 0; i < values.Count; i++)
             {
-                double wHigh = (values[i] - min) / (max - min); //percentage from the overall range
-                double wLow = 1 - wHigh;
+                Vector<double> currentVector = Vector<double>.Build.DenseOfArray(new double[] { pointsInSphere[i].X, pointsInSphere[i].Y, pointsInSphere[i].Z });
+                currentVector -= meanVector;
 
-                wsLow += wLow;
-                wsHigh += wHigh;
 
-                wAvgHigh.X += pointsInSphere[i].X * wHigh;
-                wAvgHigh.Y += pointsInSphere[i].Y * wHigh;
-                wAvgHigh.Z += pointsInSphere[i].Z * wHigh;
+                double weight = (values[i] - min) / (max - min); //percentage from the overall range
 
-                wAvgLow.X += pointsInSphere[i].X * wLow;
-                wAvgLow.Y += pointsInSphere[i].Y * wLow;
-                wAvgLow.Z += pointsInSphere[i].Z * wLow;
+                covarianceMatrix += weight * (currentVector.ToColumnMatrix() * currentVector.ToRowMatrix());
+                weightSum += weight;
             }
 
+            covarianceMatrix /= weightSum;
 
-            wAvgHigh.X /= wsHigh;
-            wAvgHigh.Y /= wsHigh;
-            wAvgHigh.Z /= wsHigh;
+            var evd = covarianceMatrix.Evd();
 
-            wAvgLow.X /= wsLow;
-            wAvgLow.Y /= wsLow;
-            wAvgLow.Z /= wsLow;
+            Matrix<double> basisMatrix = evd.EigenVectors;
 
-            double diffXHigh = wAvgHigh.X - point.X;
-            double diffYHigh = wAvgHigh.Y - point.Y;
-            double diffZHigh = wAvgHigh.Z - point.Z;
+            //Normalization
+            for (int i = 0; i<basisMatrix.ColumnCount; i++)
+            {
+                Vector<double> normalizedBase = NormalizeVector(basisMatrix.Column(i));
+                basisMatrix.SetColumn(i, normalizedBase);
+            }
 
-            double diffXLow = wAvgLow.X - point.X;
-            double diffYLow = wAvgLow.Y - point.Y;
-            double diffZLow = wAvgLow.Z - point.Z;
-
-
-            Vector<double> highConcentrationVector = Vector<double>.Build.Dense(3);
-            highConcentrationVector[0] = diffXHigh;
-            highConcentrationVector[1] = diffYHigh;
-            highConcentrationVector[2] = diffZHigh;
-
-            Vector<double> lowConcentrationVector = Vector<double>.Build.Dense(3);
-            lowConcentrationVector[0] = diffXLow;
-            lowConcentrationVector[1] = diffYLow;
-            lowConcentrationVector[2] = diffZLow;
-
-            highConcentrationVector = NormalizeVector(highConcentrationVector);
-            lowConcentrationVector = NormalizeVector(lowConcentrationVector);
-
-            Vector<double> crossProductVector = Vector<double>.Build.Dense(3);
-
-            if (ParallelVectors(highConcentrationVector, lowConcentrationVector))
-                crossProductVector = findOrthogonalVector(highConcentrationVector);
-            else
-                crossProductVector = CrossProduct(highConcentrationVector, lowConcentrationVector).Row(0);
-
-            crossProductVector = NormalizeVector(crossProductVector);
-
-
-            Matrix<double> resultMatrix = Matrix<double>.Build.Dense(3, 3);
-
-            //The matrix is composed out of unit vectors
-
-            resultMatrix[0, 0] = highConcentrationVector[0];
-            resultMatrix[1, 0] = highConcentrationVector[1];
-            resultMatrix[2, 0] = highConcentrationVector[2];
-
-            resultMatrix[0, 1] = lowConcentrationVector[0];
-            resultMatrix[1, 1] = lowConcentrationVector[1];
-            resultMatrix[2, 1] = lowConcentrationVector[2];
-
-            resultMatrix[0, 2] = crossProductVector[0];
-            resultMatrix[1, 2] = crossProductVector[1];
-            resultMatrix[2, 2] = crossProductVector[2];
-
-            return resultMatrix;
+            return basisMatrix;
         }
 
         /// <summary>
@@ -522,8 +456,9 @@ namespace DataView
         /// <param name="p">Center around which the points are generated</param>
         /// <param name="r">Generated point's distance from the center</param>
         /// <param name="spacing">Spacing between the points</param>
+        /// <param name="data">Data unsed for checking if the value is within bounds of the object.</param>
         /// <returns>A grid of points uniformly distributed in the sphere radius from a given point.</returns>
-        private static List<Point3D> GetSphere(Point3D p, double r, double spacing)
+        private static List<Point3D> GetSphere(Point3D p, double r, double spacing, IData data)
         {
             List<Point3D> points = new List<Point3D>();
 
@@ -537,11 +472,36 @@ namespace DataView
                     catch { continue; } //No point in z is in the bounds
 
                     for (double z = zBounds.MinCoordinate; z <= zBounds.MaxCoordinate; z += spacing)
-                        points.Add(new Point3D(x, y, z));
+                    {
+                        Point3D point = new Point3D(x + p.X, y + p.Y, z + p.Z);
+                        if (IsWithinBounds(data, point))
+                            points.Add(point);
+                    }
                 }
             }
 
             return points;
+        }
+
+
+        /// <summary>
+        /// This method tests if the point is within the bounds of an object provided as a parameter data
+        /// </summary>
+        /// <param name="data">Data instance for the object</param>
+        /// <param name="p">Point tested</param>
+        /// <returns>Returns true if point is within the bounds, false otherwise.</returns>
+        private static bool IsWithinBounds(IData data, Point3D p)
+        {
+            if (p.X < 0 || p.X > (data.Measures[0] - data.XSpacing))
+                return false;
+
+            if (p.Y < 0 || p.Y > (data.Measures[1] - data.YSpacing))
+                return false;
+
+            if (p.Z < 0 || p.Z > (data.Measures[2] - data.ZSpacing))
+                return false;
+
+            return true;
         }
 
 
@@ -622,7 +582,7 @@ namespace DataView
         {
             this.rotationX = rotationX;
             this.rotationY = rotationY;
-            this.rotationY = rotationZ;
+            this.rotationZ = rotationZ;
         }
 
         //GETTERS

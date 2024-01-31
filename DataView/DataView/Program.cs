@@ -50,6 +50,7 @@ namespace DataView
             string fileNameMicroSmallerRange = directorySmaller + @"ellipsoidMicroSmallerRange.mhd";
 
             configuration = new ConfigurationBuilder().AddJsonFile("config.json", optional: true).Build();
+            //TestClass testClass = new TestClass();
 
             MainFunction(fileNameMicroBiggerRange, fileNameMacroBiggerRange, new Point3D[0], new Point3D[0]);
 
@@ -180,11 +181,15 @@ namespace DataView
             Console.WriteLine("Sampling.");
             pointsMicro = s.Sample(iDataMicro, numberOfPointsMicro);
 
-            FeatureVector[] featureVectorsMicro = new FeatureVector[pointsMicro.Length];
+            //FeatureVector[] featureVectorsMicro = new FeatureVector[pointsMicro.Length];
+            List<FeatureVector> featureVectorsMicro = new List<FeatureVector>();
 
             Console.WriteLine("Computing micro feature vectors.");
             for (int i = 0; i < pointsMicro.Length; i++)
-                featureVectorsMicro[i] = fc.ComputeFeatureVector(iDataMicro, pointsMicro[i]);
+            {
+                try { featureVectorsMicro.Add(fc.ComputeFeatureVector(iDataMicro, pointsMicro[i])); }
+                catch { continue; }
+            }
 
             //----------------------------------------MACRO CT------------------------------------------------
             Console.WriteLine("\nReading macro data.");
@@ -194,11 +199,15 @@ namespace DataView
             Console.WriteLine("Sampling.");
             pointsMacro = s.Sample(iDataMacro, numberOfPointsMacro);
 
-            FeatureVector[] featureVectorsMacro = new FeatureVector[pointsMacro.Length];
+            //FeatureVector[] featureVectorsMacro = new FeatureVector[pointsMacro.Length];
+            List<FeatureVector> featureVectorsMacro = new List<FeatureVector>();
 
             Console.WriteLine("Computing macro feature vectors.");
             for (int i = 0; i < pointsMacro.Length; i++)
-                featureVectorsMacro[i] = fc.ComputeFeatureVector(iDataMacro, pointsMacro[i]);
+            {
+                try { featureVectorsMacro.Add(fc.ComputeFeatureVector(iDataMacro, pointsMacro[i])); }
+                catch { continue; }
+            }
 
             //----------------------------------------SETUP TRANSFORMATION METRICS------------------------------------------------
             //What object is the result transformation going to be applied on (in this case, micro)
@@ -211,9 +220,8 @@ namespace DataView
             //----------------------------------------MATCHES-------------------------------------------------
             Console.WriteLine("Matching.");
 
-            Match[] matches = matcher.Match(featureVectorsMicro, featureVectorsMacro, threshold);
-
-            Console.WriteLine("Matches are " + CalculateCorrectMatches(matches, 3) + " % correct");
+            Match[] matches = matcher.Match(featureVectorsMicro.ToArray(), featureVectorsMacro.ToArray(), threshold);
+            Console.WriteLine("Matches are " + CalculateCorrectMatches(matches, 1) + " % correct");
 
             //------------------------------------GET TRANSFORMATION -----------------------------------------
 
@@ -236,35 +244,26 @@ namespace DataView
                 }
             }
 
-            Candidate.initSums(iDataMicro.Measures[0] / iDataMicro.XSpacing, iDataMicro.Measures[1] / iDataMicro.YSpacing, iDataMicro.Measures[2] / iDataMicro.ZSpacing);
-
             
+            for(int i = 0; i<transformations.Count; i++)
+            {
+                Console.WriteLine(transformations[i]);
+            }
 
-            //Density density = new Density();
+            DensityStructure densityStructure = new DensityStructure(transformations.ToArray());
+
+            Transform3D result = densityStructure.FindBestTransformation(0.5, 25);
+            Console.WriteLine("This is the output from density: " + result);
 
             TestDensityAccurate testDensity = new TestDensityAccurate();
             Transform3D tr = testDensity.Find(transformations.ToArray());
 
-            //Density testDensity = new Density();
-            //Transform3D t = testDensity.Find(transformations.ToArray());
-
-
-            /*
-            NewDensity newDensity = new NewDensity();
-            NewDensity.radius = Math.Sqrt(Math.Pow((iDataMicro.Measures[0] / 2.0), 2) + Math.Pow((iDataMicro.Measures[1] / 2.0), 2) + Math.Pow((iDataMicro.Measures[2] / 2.0), 2));
-            Transform3D t = newDensity.Find(transformations.ToArray());
-            */
-
-            /*
-            Density d = new Density(); // finder, we need an instance for certain complicated reason
-            Transform3D solution = d.Find(transformations.ToArray());
-            */
             Console.WriteLine("Solution found.");
             Console.WriteLine(tr);
             
             
             //Cut(solution.RotationMatrix, solution.TranslationVector);
-        }
+         }
 
         /// <summary>
         /// ONLY FOR TEST PURPOSES
@@ -346,6 +345,7 @@ namespace DataView
             foreach (Match currentMatch in matches)
             {
                 Point3D microPoint = new Point3D(currentMatch.F1.Point.X, currentMatch.F1.Point.Y, currentMatch.F1.Point.Z + (iDataMacro.Measures[2]/2.0));
+                microPoint = new Point3D(currentMatch.F1.Point.X, currentMatch.F1.Point.Y, currentMatch.F1.Point.Z);
 
                 if (microPoint.Distance(currentMatch.F2.Point) <= threshold)
                     correctMatches++;

@@ -136,7 +136,7 @@ namespace DataView
         }
 
         /// <summary>
-        /// Calculates the distance between given transformations in O(1)
+        /// Calculates the distance between given transformations at BigO(1)
         /// </summary>
         /// <param name="transformation1">Transformation 1</param>
         /// <param name="transformation2">Transformation 2</param>
@@ -149,11 +149,6 @@ namespace DataView
 
             Vector<double> translationVector1 = transformation1.TranslationVector;
             Vector<double> translationVector2 = transformation2.TranslationVector;
-
-            /*
-            if (!IsRotationMatrix(rotationMatrix1) || !IsRotationMatrix(rotationMatrix2))
-                throw new ArgumentException("Matrix isn't rotation matrix");
-            */
 
 
             //The centroid of the object was translated to the origin, thus the translation
@@ -217,6 +212,7 @@ namespace DataView
         /// <returns>Returns the result of the expression written above.</returns>
         private double calculateBlackPart(Vector<double> translationVector1, Vector<double> translationVector2)
         {
+
             double result = (numberOfVertices * DotProduct(translationVector1, translationVector1));
             result += (-2 * numberOfVertices * DotProduct(translationVector1, translationVector2));
             result += (numberOfVertices * DotProduct(translationVector2, translationVector2));

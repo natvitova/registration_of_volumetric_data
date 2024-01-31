@@ -1,52 +1,67 @@
 ﻿<Properties StartupConfiguration="{8585798C-2C5E-4E5E-B160-210E9F2C5318}|Default">
-  <MultiItemStartupConfigurations />
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.ItemProperties.DataView PreferredExecutionTarget="MonoDevelop.Default" />
   <MonoDevelop.Ide.Workbench ActiveDocument="DataView/DataView/Program.cs">
     <Files>
-      <File FileName="DataView/DataView/Program.cs" Line="548" Column="42" />
-      <File FileName="DataView/DataView/FeatureComputerVectorDeviation.cs" Line="31" Column="1" />
-      <File FileName="DataView/TransformSelect/Candidate.cs" Line="74" Column="15" />
-      <File FileName="DataView/DataView/TestUniformRotationComputerPCA.cs" Line="56" Column="1" />
-      <File FileName="DataView/DataView/TransformationDistanceMetrics/ITransformationDistance.cs" />
+      <File FileName="DataView/DataView/Program.cs" Line="258" Column="1" />
+      <File FileName="DataView/DataView/FeatureComputerVectorDeviation.cs" Line="15" Column="15" />
+      <File FileName="DataView/TransformSelect/Candidate.cs" />
+      <File FileName="DataView/DataView/TestUniformRotationComputerPCA.cs" Line="95" Column="20" />
       <File FileName="DataView/DataView/IData.cs" />
-      <File FileName="DataView/DataView/VolumetricData.cs" Line="55" Column="1" />
+      <File FileName="DataView/DataView/VolumetricData.cs" />
       <File FileName="DataView/DataView/Data.cs" />
       <File FileName="DataView/TransformSelect/Density.cs" />
       <File FileName="DataView/TransformSelect/DistanceTree.cs" />
       <File FileName="DataView/TransformSelect/ThreadedExecution.cs" />
       <File FileName="DataView/DataView/EquationComputer.cs" />
-      <File FileName="DataView/DataView/Transformer3D.cs" Line="32" Column="1" />
+      <File FileName="DataView/DataView/Transformer3D.cs" Line="32" Column="78" />
       <File FileName="DataView/TransformSelect/DensityFastest.cs" />
-      <File FileName="DataView/TransformSelect/TestDensityMoreComparisons.cs" Line="1" Column="1" />
-      <File FileName="DataView/TransformSelect/TestDensityAccurate.cs" Line="25" Column="1" />
+      <File FileName="DataView/TransformSelect/TestDensityMoreComparisons.cs" />
+      <File FileName="DataView/TransformSelect/TestDensityAccurate.cs" />
       <File FileName="DataView/TransformSelect/App.config" />
       <File FileName="DataView/TransformSelect/Transform3D.cs" />
       <File FileName="DataView/TransformSelect/packages.config" />
       <File FileName="DataView/TransformSelect/TestDensity.cs" />
-      <File FileName="DataView/DataView/Match.cs" Line="31" Column="37" />
-      <File FileName="DataView/DataView/TestRotationComputer.cs" Line="73" Column="91" />
-      <File FileName="DataView/DataView/TestRotationComputerPCA.cs" Line="43" Column="39" />
-      <File FileName="DataView/TransformSelect/NewDensity.cs" Line="45" Column="1" />
-      <File FileName="DataView/DataView/ISampler.cs" Line="11" Column="18" />
-      <File FileName="DataView/DataView/Sampler.cs" Line="16" Column="16" />
-      <File FileName="DataView/DataView/App.config" Line="1" Column="1" />
-      <File FileName="DataView/packages.config" Line="1" Column="1" />
-      <File FileName="DataView/DataView/IMatcher.cs" Line="11" Column="17" />
-      <File FileName="DataView/DataView/PointWithFeatures.cs" Line="1" Column="1" />
-      <File FileName="DataView/DataView/Point3D.cs" Line="51" Column="36" />
-      <File FileName="DataView/DataView/FeatureVector.cs" Line="1" Column="1" />
-      <File FileName="DataView/DataView/Form1.cs" Line="1" Column="1" />
+      <File FileName="DataView/DataView/Match.cs" />
+      <File FileName="DataView/DataView/TestRotationComputer.cs" />
+      <File FileName="DataView/DataView/TestRotationComputerPCA.cs" />
+      <File FileName="DataView/TransformSelect/NewDensity.cs" />
+      <File FileName="DataView/DataView/ISampler.cs" />
+      <File FileName="DataView/DataView/Sampler.cs" />
+      <File FileName="DataView/DataView/App.config" />
+      <File FileName="DataView/packages.config" />
+      <File FileName="DataView/DataView/IMatcher.cs" />
+      <File FileName="DataView/DataView/PointWithFeatures.cs" />
+      <File FileName="DataView/DataView/Point3D.cs" />
+      <File FileName="DataView/DataView/FeatureVector.cs" />
+      <File FileName="DataView/DataView/Form1.cs" />
+      <File FileName="DataView/DataView/SamplerFeatureVector.cs" />
+      <File FileName="DataView/DataView/SamplerFake.cs" />
+      <File FileName="DataView/DataView/TransformationDistance.cs" />
+      <File FileName="DataView/TransformSelect/NewDistanceTree.cs" />
+      <File FileName="DataView/DataView/ITransformationDistance.cs" />
+      <File FileName="DataView/DataView/IFeatureComputer.cs" />
+      <File FileName="DataView/DataView/FeatureComputerRings.cs" />
+      <File FileName="DataView/DataView/TestClass.cs" />
+      <File FileName="DataView/DataView/KDTree.cs" />
+      <File FileName="DataView/DataView/Matcher.cs" />
+      <File FileName="DataView/DataView/Test.cs" />
+      <File FileName="DataView/DataView/TestDataBuilder.cs" />
+      <File FileName="DataView/UpdatedDensity/DensityStructure.cs" Line="64" Column="33" />
+      <File FileName="../../../../Applications/Visual Studio.app/Contents/MonoBundle/MSBuild/Current/bin/Microsoft.Common.CurrentVersion.targets" />
+      <File FileName="DataView/DataView/PictureMaker.cs" />
+      <File FileName="DataView/DataView/TransformationDistanceMetrics/ITransformationDistance.cs" />
+      <File FileName="DataView/DataView/TransformationDistanceMetrics/TransformationDistance.cs" />
+      <File FileName="DataView/DataView/ITransformer.cs" Line="13" Column="21" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State name="__root__">
           <Node name="DataView">
-            <Node name="DataView">
+            <Node name="DataView" expanded="True">
               <Node name="DataView" expanded="True">
                 <Node name="Program.cs" selected="True" />
               </Node>
               <Node name="TransformSelect" expanded="True" />
+              <Node name="UpdatedDensity" expanded="True" />
             </Node>
           </Node>
         </State>
@@ -62,12 +77,14 @@
       <Breakpoint file="/Users/pepazetek/Desktop/registration_of_volumetric_data/DataView/TransformSelect/DensityFastest.cs" relfile="DataView/TransformSelect/DensityFastest.cs" line="19" column="1" />
       <Breakpoint file="/Users/pepazetek/Desktop/registration_of_volumetric_data/DataView/DataView/TransformationDistanceMetrics/TransformationDistanceFinal.cs" relfile="DataView/DataView/TransformationDistanceMetrics/TransformationDistanceFinal.cs" line="126" column="1" />
       <Breakpoint file="/Users/pepazetek/Desktop/registration_of_volumetric_data/DataView/DataView/TransformationDistanceMetrics/TransformationDistanceSix.cs" relfile="DataView/DataView/TransformationDistanceMetrics/TransformationDistanceSix.cs" line="80" column="1" />
-      <Breakpoint file="/Users/pepazetek/Desktop/registration_of_volumetric_data/DataView/DataView/Program.cs" relfile="DataView/DataView/Program.cs" line="449" column="1" />
-      <Breakpoint file="/Users/pepazetek/Desktop/registration_of_volumetric_data/DataView/TransformSelect/NewDensity.cs" relfile="DataView/TransformSelect/NewDensity.cs" line="44" column="1" />
       <Breakpoint file="/Users/pepazetek/Desktop/registration_of_volumetric_data/DataView/DataView/TestUniformRotationComputerPCAAngle.cs" relfile="DataView/DataView/TestUniformRotationComputerPCAAngle.cs" line="38" column="1" />
-      <Breakpoint file="/Users/pepazetek/Desktop/registration_of_volumetric_data/DataView/DataView/Program.cs" relfile="DataView/DataView/Program.cs" line="298" column="1" />
-      <Breakpoint file="/Users/pepazetek/Desktop/registration_of_volumetric_data/DataView/DataView/Program.cs" relfile="DataView/DataView/Program.cs" line="217" column="1" />
+      <Breakpoint file="/Users/pepazetek/Desktop/registration_of_volumetric_data/DataView/DataView/Program.cs" relfile="DataView/DataView/Program.cs" line="261" column="1" />
+      <Breakpoint file="/Users/pepazetek/Desktop/registration_of_volumetric_data/DataView/DataView/Program.cs" relfile="DataView/DataView/Program.cs" line="248" column="1" />
+      <Breakpoint file="/Users/pepazetek/Desktop/registration_of_volumetric_data/DataView/DataView/Program.cs" relfile="DataView/DataView/Program.cs" line="253" column="1" />
     </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.ItemProperties.DataView PreferredExecutionTarget="MonoDevelop.Default" />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MultiItemStartupConfigurations />
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
 </Properties>

@@ -163,6 +163,8 @@
     <Compile Include="TransformSelect\NewDensity.cs" />
     <Compile Include="TransformSelect\NewDistanceTree.cs" />
     <Compile Include="DataView\TestUniformRotationComputerPCA.cs" />
+    <Compile Include="DataView\TestClass.cs" />
+    <Compile Include="UpdatedDensity\DensityStructure.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -181,6 +183,7 @@
     <Folder Include="DataView\" />
     <Folder Include="TransformSelect\" />
     <Folder Include="DataView\TransformationDistanceMetrics\" />
+    <Folder Include="UpdatedDensity\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

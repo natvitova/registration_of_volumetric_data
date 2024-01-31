@@ -1,9 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Framework;
 
 namespace DataView
 {
@@ -35,33 +31,31 @@ namespace DataView
 
                 
 
-                //May be a list of candidates that are considered close to the checked one
-                List<int> c = new List<int>();
+                List<int> closeNodes = new List<int>();
 
-                //May be a list of candidates that are not considered close to the checked one
-                List<int> f = new List<int>();
+                List<int> farNodes = new List<int>();
 
                 foreach(int i in children)
                 {
                     double distance = cands[node].SqrtDistanceTo(cands[i]);
                     if (cands[node].SqrtDistanceTo(cands[i]) >= threshold)
-                        f.Add(i);
+                        farNodes.Add(i);
                     else
-                        c.Add(i);
+                        closeNodes.Add(i);
                 }
 
-                if (c.Count != 0)
+                if (closeNodes.Count != 0)
                 {
-                    int cn = c[c.Count - 1];
-                    c.RemoveAt(c.Count - 1);
-                    this.close = new DTNode(cn, c, depth+1);
+                    int cn = closeNodes[closeNodes.Count - 1];
+                    closeNodes.RemoveAt(closeNodes.Count - 1);
+                    this.close = new DTNode(cn, closeNodes, depth+1);
                 }
 
-                if(f.Count != 0)
+                if(farNodes.Count != 0)
                 {
-                    int fn = f[f.Count - 1];
-                    f.RemoveAt(f.Count - 1);
-                    this.far = new DTNode(fn, f, depth + 1);
+                    int fn = farNodes[farNodes.Count - 1];
+                    farNodes.RemoveAt(farNodes.Count - 1);
+                    this.far = new DTNode(fn, farNodes, depth + 1);
                 }
             }
         }
@@ -90,7 +84,7 @@ namespace DataView
         }
 
         /// <summary>
-        /// This method outputs the median in terms of distance between the candidate transformations
+        /// This method outputs the median of distances from a selected node
         /// </summary>
         /// <param name="node">Index of a currently checked node in the original array</param>
         /// <param name="children">List of children of the specified node</param>

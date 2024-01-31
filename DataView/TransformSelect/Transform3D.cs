@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using MathNet.Numerics.LinearAlgebra;
 
 namespace DataView
 {
-    class Transform3D
+    class Transform3D : IComparable<Transform3D>
     {
         private static ITransformationDistance transformationDistance;
 
@@ -48,6 +44,11 @@ namespace DataView
         public double SqrtDistanceTo(Transform3D anotherTransformation)
         {
             return Math.Sqrt(Math.Abs(DistanceTo(anotherTransformation)));
+        }
+
+        public int CompareTo(Transform3D other)
+        {
+            return Math.Sign(DistanceTo(other));
         }
     }
 }
