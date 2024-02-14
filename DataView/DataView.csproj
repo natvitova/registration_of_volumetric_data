@@ -138,7 +138,6 @@
     <Compile Include="DataView\SamplerFeatureVector.cs" />
     <Compile Include="DataView\SamplerHalfFake.cs" />
     <Compile Include="DataView\SamplerRandomFake.cs" />
-    <Compile Include="DataView\Test.cs" />
     <Compile Include="DataView\TestDataBuilder.cs" />
     <Compile Include="DataView\TestFeatureComputer.cs" />
     <Compile Include="DataView\TestRotationComputer.cs" />
@@ -155,16 +154,15 @@
     <Compile Include="TransformSelect\TestDensityAccurate.cs" />
     <Compile Include="TransformSelect\DensityFastest.cs" />
     <Compile Include="DataView\FeatureComputerVectorDeviation.cs" />
-    <Compile Include="DataView\PointSurrounding.cs" />
     <Compile Include="DataView\VolumetricDataDistribution.cs" />
     <Compile Include="DataView\TestRotationComputerPCA.cs" />
     <Compile Include="DataView\TransformationDistanceMetrics\ITransformationDistance.cs" />
     <Compile Include="DataView\TransformationDistanceMetrics\TransformationDistance.cs" />
-    <Compile Include="TransformSelect\NewDensity.cs" />
-    <Compile Include="TransformSelect\NewDistanceTree.cs" />
     <Compile Include="DataView\TestUniformRotationComputerPCA.cs" />
-    <Compile Include="DataView\TestClass.cs" />
+    <Compile Include="DataView\QuickSelectClass.cs" />
     <Compile Include="UpdatedDensity\DensityStructure.cs" />
+    <Compile Include="DataView\PointApproximation.cs" />
+    <Compile Include="DataView\Test.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

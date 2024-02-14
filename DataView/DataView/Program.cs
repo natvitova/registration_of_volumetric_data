@@ -223,6 +223,35 @@ namespace DataView
             Match[] matches = matcher.Match(featureVectorsMicro.ToArray(), featureVectorsMacro.ToArray(), threshold);
             Console.WriteLine("Matches are " + CalculateCorrectMatches(matches, 1) + " % correct");
 
+            //------------------------------------FINDING CLOSE POINTS----------------------------------------
+
+            /*
+            PointApproximation pointApproximation = new PointApproximation(iDataMicro, fc, 0.01);
+            for(int i = 0; i<matches.Length; i++)
+            {
+                
+                Point3D newPoint = pointApproximation.FindClosePoint(matches[i].F1.Point, iDataMacro.GetValueDistribution(iDataMacro.GetValue(matches[i].F2.Point)), 0.01);
+
+                Console.WriteLine("Original F1 (micro) point: ");
+                Console.WriteLine("Value: " + iDataMicro.GetValueDistribution(iDataMicro.GetValue(matches[i].F1.Point)));
+                Console.WriteLine("Point: " + matches[i].F1.Point);
+                Console.WriteLine();
+
+                Console.WriteLine("Original F2 (macro) point: ");
+                Console.WriteLine("Value: " + iDataMacro.GetValueDistribution(iDataMacro.GetValue(matches[i].F2.Point)));
+                Console.WriteLine("Point: " + matches[i].F2.Point);
+                Console.WriteLine();
+
+                Console.WriteLine("New F1 (micro) point: ");
+                Console.WriteLine("Value: " + iDataMicro.GetValueDistribution(iDataMicro.GetValue(newPoint)));
+                Console.WriteLine("Point: " + newPoint);
+                Console.WriteLine();
+
+                matches[i].F1.Point = newPoint;
+            }
+            */
+            
+
             //------------------------------------GET TRANSFORMATION -----------------------------------------
 
             Console.WriteLine("Computing transformations.\n");
@@ -252,15 +281,10 @@ namespace DataView
 
             DensityStructure densityStructure = new DensityStructure(transformations.ToArray());
 
-            Transform3D result = densityStructure.FindBestTransformation(0.5, 25);
-            Console.WriteLine("This is the output from density: " + result);
-
-            TestDensityAccurate testDensity = new TestDensityAccurate();
-            Transform3D tr = testDensity.Find(transformations.ToArray());
+            Transform3D tr = densityStructure.FindBestTransformation(0.5, 25);
 
             Console.WriteLine("Solution found.");
             Console.WriteLine(tr);
-            
             
             //Cut(solution.RotationMatrix, solution.TranslationVector);
          }

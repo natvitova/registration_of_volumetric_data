@@ -4,12 +4,12 @@ using System.Collections.Generic;
 
 namespace DataView
 {
-    public class TestClass
+    public class QuickSelectClass
 	{
 
 		Random random;
 
-        public TestClass()
+        public QuickSelectClass()
 		{
             random = new Random();
         }
