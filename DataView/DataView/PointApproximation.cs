@@ -3,37 +3,54 @@ using MathNet.Numerics.LinearAlgebra;
 
 namespace DataView
 {
-	
-	class PointApproximation
+
+    /// <summary>
+    /// Class that uses Gradient Descent to find point with closest value to target value
+    /// This found point should be in the surrounding of given original point
+    /// Doesn't significantly improve accuracy of points at the moment, tested with cost function implemented as difference of feature vectors and difference in points distribution values
+    /// </summary>
+    class PointApproximation
 	{
 
 		private IData data;
+		private IFeatureComputer featureComputer;
 
-		private double targetPointValue;
+		private FeatureVector targetPointValue;
 		private double learningRate;
+		private double maxStep;
+		private double convergenceValue;
 
         /// <summary>
-        /// Class that uses Gradient Descent to find point with closest value to target value
-        /// This found point should be in the surrounding of given original point
-        /// Doesn't significantly improve accuracy of points at the moment, tested with cost function implemented as difference of feature vectors and difference in points distribution values
-        /// </summary>
+		/// 
+		/// </summary>
         /// <param name="data">Interface for getting data for a given point to be moved towards optimum (to have as close value to target value as possible)</param>
+		/// <param name="featureComputer">Class used for computing feature vectors of given points</param>
         /// <param name="learningRate">Coeficient that influences programs sensitivity to calculate result. The lower it is, the more accurate the result is, but the more time it takes to be fully calculated.</param>
-        public PointApproximation(IData data, IFeatureComputer featureComputer, double learningRate)
+		/// <param name="maxStep">Maximum possible step in a direction of a derivative</param>
+        public PointApproximation(IData data, IFeatureComputer featureComputer, double learningRate, double maxStep, double convergenceValue)
 		{
 			this.data = data;
+			this.featureComputer = featureComputer;
+
 			this.learningRate = learningRate;
+			this.maxStep = maxStep;
+			this.convergenceValue = convergenceValue;
 		}
 
-		public Point3D FindClosePoint(Point3D originalPoint, double targetPointValue, double epsilon)
+        public Point3D FindClosePoint(Point3D originalPoint, FeatureVector targetPointValue, double epsilon)
 		{
 			Point3D currentPoint = originalPoint.Copy();
 
 			this.targetPointValue = targetPointValue;
 
-			//condition if diverges needs to be implemented
-			while(true)
+			double previousDx = double.MaxValue;
+            double previousDy = double.MaxValue;
+            double previousDz = double.MaxValue;
+
+            while (true)
 			{
+
+				//ShowSurroundingValues(currentPoint.X, currentPoint.Y, currentPoint.Z, epsilon);
 
 				Point3D offsetPointX = new Point3D(currentPoint.X + epsilon, currentPoint.Y, currentPoint.Z);
 				Point3D offsetPointY = new Point3D(currentPoint.X, currentPoint.Y + epsilon, currentPoint.Z);
@@ -43,14 +60,23 @@ namespace DataView
                 if (OutOfBounds(offsetPointX.X, offsetPointY.Y, offsetPointZ.Z))
                     break;
 
-                double dx = learningRate * DerivativeFunction(currentPoint, offsetPointX, epsilon);
-				double dy = learningRate * DerivativeFunction(currentPoint, offsetPointY, epsilon);
-				double dz = learningRate * DerivativeFunction(currentPoint, offsetPointZ, epsilon);
+                double dx = Math.Min(maxStep, learningRate * DerivativeFunction(currentPoint, offsetPointX, epsilon));
+				double dy = Math.Min(maxStep, learningRate * DerivativeFunction(currentPoint, offsetPointY, epsilon));
+				double dz = Math.Min(maxStep, learningRate * DerivativeFunction(currentPoint, offsetPointZ, epsilon));
+
+				dx = Math.Max(-maxStep, dx);
+                dy = Math.Max(-maxStep, dy);
+                dz = Math.Max(-maxStep, dz);
+
+
                 double newX = currentPoint.X - dx;
                 double newY = currentPoint.Y - dy;
                 double newZ = currentPoint.Z - dz;
 
-				if (FunctionConverges(newX, currentPoint.X, 1E-12))
+				if (FunctionDiverges(previousDx, dx) && FunctionDiverges(previousDy, dy) && FunctionDiverges(previousDz, dz))
+					break;
+
+				if (FunctionConverges(dx, convergenceValue) && FunctionConverges(dy, convergenceValue) && FunctionConverges(dz, convergenceValue))
 					break;
 
                 if (OutOfBounds(newX, newY, newZ))
@@ -59,6 +85,10 @@ namespace DataView
                 currentPoint.X = newX;
                 currentPoint.Y = newY;
                 currentPoint.Z = newZ;
+
+				previousDx = dx;
+				previousDy = dy;
+				previousDz = dz;
             }
 
 			return currentPoint;
@@ -71,12 +101,43 @@ namespace DataView
 
 		private double CalculateFunction(Point3D point)
 		{
-			return Math.Abs(targetPointValue - data.GetValueDistribution(data.GetValue(point)));
+			return targetPointValue.DistTo2(featureComputer.ComputeFeatureVector(data, point));
+			//return Math.Abs(targetPointValue - data.GetValueDistribution(data.GetValue(point)));
 		}
 
-		private bool FunctionConverges(double newCoordinate, double oldCoordinate, double epsilon)
+		private bool FunctionConverges(double derivative, double epsilon)
 		{
-			return Math.Abs(newCoordinate - oldCoordinate) < epsilon;
+			return Math.Abs(derivative) < epsilon;
+        }
+
+		private bool FunctionDiverges(double previousDerivative, double currentDerivative)
+		{
+			return (previousDerivative < currentDerivative);
+		}
+
+		private void ShowSurroundingValues(double x, double y, double z, double epsilon)
+		{
+			/*
+			double positiveX = data.GetValueDistribution(data.GetValue(new Point3D(x + epsilon, y, z)));
+			double negativeX = data.GetValueDistribution(data.GetValue(new Point3D(x - epsilon, y, z)));
+			double positiveY = data.GetValueDistribution(data.GetValue(new Point3D(x, y + epsilon, z)));
+            double negativeY = data.GetValueDistribution(data.GetValue(new Point3D(x, y - epsilon, z)));
+			double positiveZ = data.GetValueDistribution(data.GetValue(new Point3D(x, y, z + epsilon)));
+            double negativeZ = data.GetValueDistribution(data.GetValue(new Point3D(x, y, z - epsilon)));
+
+            Console.WriteLine("------------------------------------------------");
+			Console.WriteLine("Target value: " + targetPointValue);
+            Console.WriteLine("");
+			Console.WriteLine("Surrounding of X");
+			Console.WriteLine("Positive X: " + positiveX + ", difference: " + Math.Abs(targetPointValue - positiveX));
+            Console.WriteLine("Negative X: " + negativeX + ", difference: " + Math.Abs(targetPointValue - negativeX));
+            Console.WriteLine("");
+            Console.WriteLine("Positive Y: " + data.GetValueDistribution(data.GetValue(new Point3D(x, y + epsilon, z))) + ", difference: " + Math.Abs(targetPointValue - positiveY));
+            Console.WriteLine("Negative Y: " + data.GetValueDistribution(data.GetValue(new Point3D(x, y - epsilon, z))) + ", difference: " + Math.Abs(targetPointValue - negativeY));
+            Console.WriteLine("");
+            Console.WriteLine("Positive Z: " + data.GetValueDistribution(data.GetValue(new Point3D(x, y, z + epsilon))) + ", difference: " + Math.Abs(targetPointValue - positiveZ));
+            Console.WriteLine("Negative Z: " + data.GetValueDistribution(data.GetValue(new Point3D(x, y, z - epsilon))) + ", difference: " + Math.Abs(targetPointValue - negativeZ));
+			*/
         }
 
 		private bool OutOfBounds(double x, double y, double z)

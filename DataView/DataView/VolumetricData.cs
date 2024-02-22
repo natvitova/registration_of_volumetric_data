@@ -14,7 +14,7 @@ namespace DataView
     {
 
         private int[][,] vData;
-        private VolumetricDataDistribution volumetricDataDistribution;
+        private VolumetricDataDistribution dataDistribution;
         private double xSpacing;
         private double ySpacing;
         private double zSpacing;
@@ -62,9 +62,11 @@ namespace DataView
                 int c = 0;
                 if (Data.ElementType == "MET_USHORT")
                 {
-                    int numberOfBits = 16; //Two byte data type
-                    volumetricDataDistribution = new VolumetricDataDistribution(step: 1, (1 << numberOfBits) - 1);
+                    //int numberOfBits = 16; //Two byte data type
+                    //volumetricDataDistribution = new VolumetricDataDistribution(step: 1, (1 << numberOfBits) - 1);
 
+                    //dataDistribution = new SortedSetDistribution();
+                    dataDistribution = new VolumetricDataDistribution();
 
                     for (int k = 0; k < height; k++)
                     {
@@ -81,7 +83,7 @@ namespace DataView
 
                                 VData[k][i, j] = c;
 
-                                volumetricDataDistribution.AddValue(c);
+                                dataDistribution.AddValue(c);
                             }
                         }
                     }
@@ -89,8 +91,10 @@ namespace DataView
 
                 else if (Data.ElementType == "MET_UCHAR")
                 {
-                    int numberOfBits = 8; //One byte data type
-                    volumetricDataDistribution = new VolumetricDataDistribution(step: 1, (1 << numberOfBits) - 1);
+                    //int numberOfBits = 8; //One byte data type
+                    //volumetricDataDistribution = new VolumetricDataDistribution(step: 1, (1 << numberOfBits) - 1);
+
+                    dataDistribution = new VolumetricDataDistribution();
 
                     for (int k = 0; k < height; k++)
                     {
@@ -103,7 +107,7 @@ namespace DataView
 
                                 VData[k][i, j] = c;
 
-                                volumetricDataDistribution.AddValue(c);
+                                dataDistribution.AddValue(c);
                             }
                         }
                     }
@@ -115,7 +119,6 @@ namespace DataView
                 }
 
                 br.Close();
-                volumetricDataDistribution.CreateDistributionArray();
                 return VData;
             }
         }
@@ -593,7 +596,7 @@ namespace DataView
 
         public double GetValueDistribution(double value)
         {
-            return this.volumetricDataDistribution.GetDistributionPercentage(value);
+            return this.dataDistribution.GetDistributionPercentage(value);
         }
 
         public double XSpacing { get => xSpacing; set => xSpacing = value; }

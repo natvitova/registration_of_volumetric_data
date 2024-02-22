@@ -7,7 +7,7 @@ namespace DataView
 {
     public class FeatureComputerVectorDeviation : IFeatureComputer
     {
-        private QuickSelectClass testClass;
+        private QuickSelectClass quickSelectClass;
 
         FeatureVector IFeatureComputer.ComputeFeatureVector(IData d, Point3D p)
         {
@@ -18,14 +18,13 @@ namespace DataView
             const int RADIUS = 5;
 
             Random random = new Random();
-            testClass = new QuickSelectClass();
+            quickSelectClass = new QuickSelectClass();
+
             int seed = random.Next();
 
             seed = 20; //Currently set to 20 for test purposes
 
             PointSurrounding pointSurrounding = GetPointSurrounding(d, p, COUNT, RADIUS, seed);
-
-            //use low and high concentration vector's magnitudes - replacement for the last value (distribution value avg)
             return new FeatureVector(p, pointSurrounding.HighConcentrationValue, pointSurrounding.LowConcentrationValue, pointSurrounding.AngleXY, pointSurrounding.AngleXZ, pointSurrounding.DistributionValueAvg);
         }
 
@@ -40,7 +39,7 @@ namespace DataView
             for (int i = 0; i < pointsInSphere.Count; i++)
                 pointValues.Add(d.GetValue(pointsInSphere[i]));
 
-            double maxLow = testClass.QuickSelect<double>(pointValues, pointValues.Count / 2);
+            double maxLow = quickSelectClass.QuickSelect<double>(pointValues, pointValues.Count / 2);
 
             double minLow = double.MaxValue;
             double minHigh = double.MaxValue;
@@ -154,17 +153,18 @@ namespace DataView
             Vector<double> firstVector = Vector<double>.Build.DenseOfArray(new double[] { highConcentrationVector[0], highConcentrationVector[1] });
             Vector<double> secondVector = Vector<double>.Build.DenseOfArray(new double[] { lowConcentrationVector[0], lowConcentrationVector[1] });
             double angleXY = calculateAngle(firstVector, secondVector);
+            angleXY /= Math.PI;
 
             //Calculation of the angle XZ between concentration vectors
             firstVector = Vector<double>.Build.DenseOfArray(new double[] { highConcentrationVector[0], highConcentrationVector[2] });
             secondVector = Vector<double>.Build.DenseOfArray(new double[] { lowConcentrationVector[0], lowConcentrationVector[2] });
             double angleXZ = calculateAngle(firstVector, secondVector);
+            angleXZ /= Math.PI;
 
             firstVector = Vector<double>.Build.DenseOfArray(new double[] { highConcentrationVector[1], highConcentrationVector[2] });
             secondVector = Vector<double>.Build.DenseOfArray(new double[] { lowConcentrationVector[1], lowConcentrationVector[2] });
             double angleYZ = calculateAngle(firstVector, secondVector);
-
-            //Console.WriteLine("These are the angles: " + angleXY + "; " + angleXZ);
+            angleYZ /= Math.PI;
 
 
             //return new PointSurrounding(highConcentrationVectorLength, highConcentrationValue, lowConcentrationValue, angleXY, angleXZ);

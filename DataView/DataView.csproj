@@ -163,6 +163,8 @@
     <Compile Include="UpdatedDensity\DensityStructure.cs" />
     <Compile Include="DataView\PointApproximation.cs" />
     <Compile Include="DataView\Test.cs" />
+    <Compile Include="DataView\SortedSetDistribution.cs" />
+    <Compile Include="DataView\FakeFeatureComputer.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

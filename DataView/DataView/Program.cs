@@ -9,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using CsvHelper;
 using System.Globalization;
 using System.Threading;
+using System.Threading.Tasks;
 using DataView;
 
 namespace DataView
@@ -50,7 +51,6 @@ namespace DataView
             string fileNameMicroSmallerRange = directorySmaller + @"ellipsoidMicroSmallerRange.mhd";
 
             configuration = new ConfigurationBuilder().AddJsonFile("config.json", optional: true).Build();
-            //TestClass testClass = new TestClass();
 
             MainFunction(fileNameMicroBiggerRange, fileNameMacroBiggerRange, new Point3D[0], new Point3D[0]);
 
@@ -167,7 +167,7 @@ namespace DataView
             ISampler s = new Sampler(configuration);
             //IFeatureComputer fc = new FeatureComputer();
             //IFeatureComputer fc = new TestFeatureComputer();
-            IFeatureComputer fc = new FeatureComputerVectorDeviation();
+            IFeatureComputer fc = new FakeFeatureComputer();
             IMatcher matcher = new Matcher();
 
             ITransformer transformer = new Transformer3D();
@@ -185,6 +185,7 @@ namespace DataView
             List<FeatureVector> featureVectorsMicro = new List<FeatureVector>();
 
             Console.WriteLine("Computing micro feature vectors.");
+
             for (int i = 0; i < pointsMicro.Length; i++)
             {
                 try { featureVectorsMicro.Add(fc.ComputeFeatureVector(iDataMicro, pointsMicro[i])); }
@@ -225,32 +226,17 @@ namespace DataView
 
             //------------------------------------FINDING CLOSE POINTS----------------------------------------
 
-            /*
-            PointApproximation pointApproximation = new PointApproximation(iDataMicro, fc, 0.01);
+            PointApproximation pointApproximation = new PointApproximation(iDataMicro, fc, 0.01, 0.1, 1E-6);
             for(int i = 0; i<matches.Length; i++)
             {
-                
-                Point3D newPoint = pointApproximation.FindClosePoint(matches[i].F1.Point, iDataMacro.GetValueDistribution(iDataMacro.GetValue(matches[i].F2.Point)), 0.01);
-
-                Console.WriteLine("Original F1 (micro) point: ");
-                Console.WriteLine("Value: " + iDataMicro.GetValueDistribution(iDataMicro.GetValue(matches[i].F1.Point)));
-                Console.WriteLine("Point: " + matches[i].F1.Point);
-                Console.WriteLine();
-
-                Console.WriteLine("Original F2 (macro) point: ");
-                Console.WriteLine("Value: " + iDataMacro.GetValueDistribution(iDataMacro.GetValue(matches[i].F2.Point)));
-                Console.WriteLine("Point: " + matches[i].F2.Point);
-                Console.WriteLine();
-
-                Console.WriteLine("New F1 (micro) point: ");
-                Console.WriteLine("Value: " + iDataMicro.GetValueDistribution(iDataMicro.GetValue(newPoint)));
-                Console.WriteLine("Point: " + newPoint);
-                Console.WriteLine();
-
+                Point3D newPoint = pointApproximation.FindClosePoint(matches[i].F1.Point, fc.ComputeFeatureVector(iDataMacro, matches[i].F2.Point), 0.01);
                 matches[i].F1.Point = newPoint;
+
+                Console.WriteLine();
+                Console.WriteLine("F1 point: " + matches[i].F1.Point);
+                Console.WriteLine("F2 point: " + matches[i].F2.Point);
+                Console.WriteLine();
             }
-            */
-            
 
             //------------------------------------GET TRANSFORMATION -----------------------------------------
 
@@ -368,8 +354,7 @@ namespace DataView
 
             foreach (Match currentMatch in matches)
             {
-                Point3D microPoint = new Point3D(currentMatch.F1.Point.X, currentMatch.F1.Point.Y, currentMatch.F1.Point.Z + (iDataMacro.Measures[2]/2.0));
-                microPoint = new Point3D(currentMatch.F1.Point.X, currentMatch.F1.Point.Y, currentMatch.F1.Point.Z);
+                Point3D microPoint = new Point3D(currentMatch.F1.Point.X, currentMatch.F1.Point.Y, currentMatch.F1.Point.Z);
 
                 if (microPoint.Distance(currentMatch.F2.Point) <= threshold)
                     correctMatches++;
